@@ -14,19 +14,27 @@ public class UDPClient {
 
         DatagramSocket clientSocket = new DatagramSocket();
 
-        InetAddress IPAddress = InetAddress.getByName("localhost");
+        InetAddress IPAddress = InetAddress.getByName("192.168.5.2");
         int port = 5555;
 
-        byte[] sendData = new byte[1024];
+        byte[] sendData;
+
+        while(true){
+
+            String sentence = inFromUser.readLine();
+
+            if(sentence.equals("exit")){
+                break;
+            }
+
+            sendData = sentence.getBytes();
+
+            DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, IPAddress, port);
+
+            clientSocket.send(sendPacket);
+        }
+
         byte[] receiveData = new byte[1024];
-
-        String sentence = inFromUser.readLine();
-
-        sendData = sentence.getBytes();
-
-        DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, IPAddress, port);
-
-        clientSocket.send(sendPacket);
 
         DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
 
