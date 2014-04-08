@@ -1,10 +1,16 @@
 import Network.UDPClient;
 import Network.UDPServer;
 
+import java.io.IOException;
+import java.net.InetAddress;
+import java.net.MulticastSocket;
+import java.net.UnknownHostException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
+ * Main class to start SAMPCA.
+ *
  * Created by kevin on 4/7/14.
  */
 public class SAMPCA {
@@ -14,35 +20,60 @@ public class SAMPCA {
     private UDPServer server;
     private UDPClient client;
 
+    private String ip;
     private int port;
     private String username;
+
+    private MulticastSocket socket;
+    private InetAddress group;
 
     private Thread serverThread;
     private Thread clientThread;
 
     public static void main(String[] args){
-        SAMPCA app = new SAMPCA(5555, "Kurocon");
+        new SAMPCA(5555, "228.133.102.88", "Kurocon");
     }
 
-    public SAMPCA(int port, String username){
+    public SAMPCA(int port, String ip, String username){
         LOGGER.log(Level.INFO, "SAMPCA is starting...");
 
         this.port = port;
+        this.ip = ip;
         this.username = username;
-        this.startServer();
-        this.startClient();
+
+        try {
+            this.socket = new MulticastSocket(this.port);
+        } catch (IOException e) {
+            LOGGER.log(Level.SEVERE, "Could not open a socket to the rest of the group! ["+e.getMessage()+"]");
+            System.exit(1);
+        }
+
+        try {
+            this.group = InetAddress.getByName(this.ip);
+        } catch (UnknownHostException e) {
+            LOGGER.log(Level.SEVERE, "Could not determine correct IP address for group! ["+e.getMessage()+"]");
+        }
+
+        try {
+            this.socket.joinGroup(group);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        this.startListener();
+        this.startSender();
 
         LOGGER.log(Level.INFO, "SAMPCA successfully started");
     }
 
-    private void startServer(){
-        this.server = new UDPServer(this.port);
+    private void startListener(){
+        this.server = new UDPServer(this.socket);
         this.serverThread = new Thread(this.server);
         this.serverThread.start();
     }
 
-    private void startClient(){
-        this.client = new UDPClient("localhost", this.port);
+    private void startSender(){
+        this.client = new UDPClient(this.socket, this.group, this.port);
         this.clientThread = new Thread(this.client);
         this.clientThread.start();
     }
