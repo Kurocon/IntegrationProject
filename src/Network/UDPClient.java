@@ -57,6 +57,7 @@ public class UDPClient implements Client, Runnable {
                 this.socket.send(sendPacket);
             } catch (IOException e) {
                 LOGGER.log(Level.WARNING, "Could not send message to client! [" + e.getMessage() + "]");
+                e.printStackTrace();
             }
         }
     }
