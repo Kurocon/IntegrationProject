@@ -51,4 +51,4 @@ tput setaf 2
 echo -ne "OK"
 tput setaf 7
 echo "]     "
-echo "You are now connected to the ad-hoc network with IP address 192.168.5.4"
+echo "You are now connected to the ad-hoc network with IP address 192.168.5.1"
