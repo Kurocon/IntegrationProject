@@ -45,7 +45,7 @@ tput setaf 7
 echo "]     "
 echo -ne "Setting up correct routing paths..."
 route add -net 228.0.0.0/8 dev wlan0
-tput cuf $($(tput cols)-44))
+tput cuf $(($(tput cols)-44))
 echo -ne "["
 tput setaf 2
 echo -ne "OK"
