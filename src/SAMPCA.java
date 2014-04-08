@@ -2,9 +2,8 @@ import Network.UDPClient;
 import Network.UDPServer;
 
 import java.io.IOException;
-import java.net.InetAddress;
-import java.net.MulticastSocket;
-import java.net.UnknownHostException;
+import java.net.*;
+import java.util.Enumeration;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -23,6 +22,7 @@ public class SAMPCA {
     private String ip;
     private int port;
     private String username;
+    private NetworkInterface iface;
 
     private MulticastSocket socket;
     private InetAddress group;
@@ -41,6 +41,26 @@ public class SAMPCA {
         this.ip = ip;
         this.username = username;
 
+        // Get wireless interface
+        Enumeration<NetworkInterface> interfaces = null;
+        try {
+            interfaces = NetworkInterface.getNetworkInterfaces();
+        } catch (SocketException e) {
+            LOGGER.log(Level.SEVERE, "No network devices found on this computer ["+e.getMessage()+"]");
+            System.exit(1);
+        }
+
+        boolean not_found = true;
+        while(not_found && interfaces.hasMoreElements()){
+            NetworkInterface n = interfaces.nextElement();
+            if(n.getName().contains("wlan")){
+                // We got the WLAN interface!
+                LOGGER.log(Level.INFO, "Using wireless interface "+n.getName()+" for communications.");
+                this.iface = n;
+                not_found = false;
+            }
+        }
+
         try {
             this.socket = new MulticastSocket(this.port);
         } catch (IOException e) {
@@ -55,7 +75,7 @@ public class SAMPCA {
         }
 
         try {
-            this.socket.joinGroup(group);
+            this.socket.joinGroup(new InetSocketAddress(this.group, this.port), this.iface);
         } catch (IOException e) {
             e.printStackTrace();
         }
