@@ -1,5 +1,5 @@
-import Network.UDPClient;
-import Network.UDPServer;
+import Network.UDPSender;
+import Network.UDPListener;
 
 import java.io.IOException;
 import java.net.*;
@@ -16,8 +16,8 @@ public class SAMPCA {
 
     private static final Logger LOGGER = Logger.getLogger(SAMPCA.class.getName());
 
-    private UDPServer server;
-    private UDPClient client;
+    private UDPListener server;
+    private UDPSender client;
 
     private String ip;
     private int port;
@@ -87,13 +87,13 @@ public class SAMPCA {
     }
 
     private void startListener(){
-        this.server = new UDPServer(this.socket);
+        this.server = new UDPListener(this.socket);
         this.serverThread = new Thread(this.server);
         this.serverThread.start();
     }
 
     private void startSender(){
-        this.client = new UDPClient(this.socket, this.group, this.port);
+        this.client = new UDPSender(this.socket, this.group, this.port);
         this.clientThread = new Thread(this.client);
         this.clientThread.start();
     }

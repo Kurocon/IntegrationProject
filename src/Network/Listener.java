@@ -1,11 +1,12 @@
 package Network;
 
 /**
+ * Listener
+ *
  * Created by kevin on 4/7/14.
  */
-public interface Client {
+public interface Listener {
 
     public void run();
-    public void close();
 
 }

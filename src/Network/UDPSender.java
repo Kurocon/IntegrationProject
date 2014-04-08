@@ -9,9 +9,9 @@ import java.util.logging.Logger;
  * Sender to send messages from stdin to the multicast group.
  * Created by kevin on 4/7/14.
  */
-public class UDPClient implements Client, Runnable {
+public class UDPSender implements Sender, Runnable {
 
-    private static final Logger LOGGER = Logger.getLogger(UDPServer.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(UDPListener.class.getName());
     private static final int PACKET_SIZE = 1024;
 
     private MulticastSocket socket = null;
@@ -24,7 +24,7 @@ public class UDPClient implements Client, Runnable {
 
     public boolean should_run = true;
 
-    public UDPClient(MulticastSocket socket, InetAddress group, int port){
+    public UDPSender(MulticastSocket socket, InetAddress group, int port){
         this.socket = socket;
         this.group = group;
         this.port = port;
@@ -49,15 +49,17 @@ public class UDPClient implements Client, Runnable {
                 this.close();
             }
 
-            sendData = sentence.getBytes();
+            if(sentence != null){
+                sendData = sentence.getBytes();
 
-            sendPacket = new DatagramPacket(sendData, sendData.length, this.group, this.port);
+                sendPacket = new DatagramPacket(sendData, sendData.length, this.group, this.port);
 
-            try {
-                this.socket.send(sendPacket);
-            } catch (IOException e) {
-                LOGGER.log(Level.WARNING, "Could not send message to client! [" + e.getMessage() + "]");
-                e.printStackTrace();
+                try {
+                    this.socket.send(sendPacket);
+                } catch (IOException e) {
+                    LOGGER.log(Level.WARNING, "Could not send message to client! [" + e.getMessage() + "]");
+                    e.printStackTrace();
+                }
             }
         }
     }
