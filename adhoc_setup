@@ -22,7 +22,7 @@ tput setaf 7
 echo -ne "Configuring ad-hoc network..."
 iwconfig wlan0 mode ad-hoc
 iwconfig wlan0 channel 4
-iwconfig wlan0 ap f8:d1:11:64:5e:a4
+iwconfig wlan0 ap f8:d1:11:64:5e:a1
 iwconfig wlan0 essid groep4
 iwconfig wlan0 key 1234567890
 tput cuf $(($(tput cols)-38))
@@ -30,7 +30,7 @@ tput setaf 2
 echo "[OK]     "
 tput setaf 7
 echo -ne "Starting wireless network interface..."
-ifconfig wlan0 192.168.5.4 up
+ifconfig wlan0 192.168.5.1 up
 tput cuf $(($(tput cols)-47))
 tput setaf 2
 echo "[OK]     "
