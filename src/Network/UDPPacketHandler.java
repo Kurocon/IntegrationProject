@@ -8,14 +8,14 @@ import java.util.logging.Logger;
  * Packet handler to handle incoming input packets and forwarding them to the right method in the protocol.
  * Created by kevin on 4/7/14.
  */
-public class UDPHandler implements Handler{
+public class UDPPacketHandler implements PacketHandler {
 
-    private static final Logger LOGGER = Logger.getLogger(UDPServer.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(UDPListener.class.getName());
 
     WHASProtocol protocol = null;
 
-    public UDPHandler(){
-        LOGGER.log(Level.INFO, "UDPHandler is starting...");
+    public UDPPacketHandler(){
+        LOGGER.log(Level.INFO, "UDPPacketHandler is starting...");
         this.protocol = new WHASProtocol();
         LOGGER.log(Level.INFO, "Ready to handle input from server!");
     }
@@ -26,6 +26,6 @@ public class UDPHandler implements Handler{
         // Print it, it might be important!
         String s = new String(packet.getData());
 
-        LOGGER.log(Level.INFO, "Handler received: " + s);
+        LOGGER.log(Level.INFO, "PacketHandler received: " + s);
     }
 }
