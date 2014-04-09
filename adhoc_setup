@@ -13,7 +13,7 @@ tput cuf $(($(tput cols)-36))
 echo -ne "["
 tput setaf 2
 echo -ne "OK"
-tput setaf 7
+tput sgr0
 echo "]     "
 echo -ne "Taking down wireless interface..."
 ifconfig wlan0 down
@@ -21,7 +21,7 @@ tput cuf $(($(tput cols)-42))
 echo -ne "["
 tput setaf 2
 echo -ne "OK"
-tput setaf 7
+tput sgr0
 echo -ne "]     "
 echo -ne "Configuring ad-hoc network..."
 iwconfig wlan0 mode ad-hoc
@@ -33,7 +33,7 @@ tput cuf $(($(tput cols)-38))
 echo -ne "["
 tput setaf 2
 echo -ne "OK"
-tput setaf 7
+tput sgr0
 echo "]     "
 echo -ne "Starting wireless network interface..."
 ifconfig wlan0 192.168.5.1 up
@@ -41,7 +41,7 @@ tput cuf $(($(tput cols)-47))
 echo -ne "["
 tput setaf 2
 echo -ne "OK"
-tput setaf 7
+tput sgr0
 echo "]     "
 echo -ne "Setting up correct routing paths..."
 route add -net 228.0.0.0/8 dev wlan0
@@ -49,6 +49,6 @@ tput cuf $(($(tput cols)-44))
 echo -ne "["
 tput setaf 2
 echo -ne "OK"
-tput setaf 7
+tput sgr0
 echo "]     "
 echo "You are now connected to the ad-hoc network with IP address 192.168.5.1"
