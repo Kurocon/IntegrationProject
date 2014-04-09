@@ -12,7 +12,7 @@ tput cuf $(($(tput cols)-48))
 echo -ne "["
 tput setaf 2
 echo -ne "OK"
-tput setaf 7
+tput setaf 0
 echo "]     "
 echo -ne "Changing interface back to managed networks..."
 iwconfig wlan0 mode Managed
@@ -20,7 +20,7 @@ tput cuf $(($(tput cols)-55))
 echo -ne "["
 tput setaf 2
 echo -ne "OK"
-tput setaf 7
+tput setaf 0
 echo "]     "
 echo -ne "Starting NetworkManager..."
 service network-manager start &> /dev/null
@@ -28,7 +28,7 @@ tput cuf $(($(tput cols)-35))
 echo -ne "["
 tput setaf 2
 echo -ne "OK"
-tput setaf 7
+tput setaf 0
 echo "]     "
 echo -ne "Restarting NetworkManager to reconnect..."
 sleep 1
@@ -37,6 +37,6 @@ tput cuf $(($(tput cols)-50))
 echo -ne "["
 tput setaf 2
 echo -ne "OK"
-tput setaf 7
+tput setaf 0
 echo -ne "]     "
 echo "You are now being connected to normal wireless communications."
