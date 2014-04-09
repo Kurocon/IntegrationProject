@@ -1,9 +1,7 @@
-package Protocol;
+package protocol;
 
+import Exceptions.ArrayTooLongException;
 import Exceptions.WrongArrayLengthException;
-
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 
 /**
  * Shell for a databuilder. Can be extended upon for individual data types.
@@ -18,7 +16,7 @@ public class DataBuilder {
         if(dataType.length != 2){
             throw new WrongArrayLengthException("DataType must be 2 bytes long.");
         }else{
-            this.dataType = getDataType();
+            this.dataType = dataType;
         }
     }
 
@@ -27,7 +25,11 @@ public class DataBuilder {
     }
 
     public void setData(byte[] data){
-        this.data = data;
+        if(data.length <= 1000){
+            this.data = data;
+        }else{
+            throw new ArrayTooLongException("Data must be shorter then 1000 bytes.");
+        }
     }
 
     public byte[] getData(){
