@@ -31,6 +31,15 @@ public class CaController implements ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
+		int i = view.tabs.getSelectedIndex();
+        String tabName;
+        if (i != -1) {
+        	tabName = view.tabs.getTitleAt(i);
+        }else{
+        	tabName = "ERROR TAB NOT FOUND";
+        }
+        view.frame.setTitle(SAMPCA.PROGRAM_NAME + " - " + tabName  +" - " + CaUI.WINDOW_TITLE);
+        
 //		if (e.getSource() == this.view.getCreateGameButton()) {
 //			LOGGER.log(Level.INFO, "Creating game.");
 //			this.client.getServerHandler().sendCommand(

@@ -49,7 +49,7 @@ public class CaUI extends Observable implements Observer {
 	private static final Logger LOGGER = Logger.getLogger(SAMPCA.class
 			.getName());
 
-	public static final String WINDOW_TITLE = " - Chat and File Transfer";
+	public static final String WINDOW_TITLE = "Chat and File Transfer";
 	public static final String CONNECTED_USERS = "Users";
 	public static final String ONLINE = "Online";
 	public static final String MAIN_TAB = "Educafé";
@@ -64,7 +64,7 @@ public class CaUI extends Observable implements Observer {
 	/**
 	 * . Variable to store the frame of the UI
 	 */
-	private JFrame frame;
+	public JFrame frame;
 	/**
 	 * . Variable to store the message field of the chat
 	 */
@@ -101,7 +101,7 @@ public class CaUI extends Observable implements Observer {
 	/**
 	 * Variable to store the chat area tabs
 	 */
-	private JTabbedPane tabs;
+	public JTabbedPane tabs;
 
 	/**
 	 * Variable to store the chat area tabs
@@ -149,7 +149,8 @@ public class CaUI extends Observable implements Observer {
 		keyEvents[8] = KeyEvent.VK_9;
 		keyEvents[9] = KeyEvent.VK_0;
 		
-		frame = new JFrame(SAMPCA.PROGRAM_NAME + CaUI.WINDOW_TITLE);
+		frame = new JFrame();
+		frame.setTitle(SAMPCA.PROGRAM_NAME + " - " + CaUI.MAIN_TAB  +" - " + CaUI.WINDOW_TITLE);
 		frame.setMinimumSize(new Dimension(500, 400));
 		frame.setBounds(100, 100, 500, 400);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -183,10 +184,10 @@ public class CaUI extends Observable implements Observer {
 		contentPane.setRightComponent(chatPane);
 
 		tabs = new JTabbedPane();
-		tabs.addTab(MAIN_TAB, serverIcon, newTextArea(),
+		tabs.addTab(MAIN_TAB, tabIcon, newTextArea(),
 				MAIN_TAB_HINT);
 		tabs.setMnemonicAt(0, keyEvents[0]);
-		tabs.addTab(FILE_TAB, serverIcon, newTextArea(),
+		tabs.addTab(FILE_TAB, tabIcon, newTextArea(),
 				FILE_TAB_HINT);
 		tabs.setMnemonicAt(1, keyEvents[1]);
 		addTab("someone");
