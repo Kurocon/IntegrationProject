@@ -18,7 +18,7 @@ public class DataBuilder {
         if(dataType.length != 2){
             throw new WrongArrayLengthException("DataType must be 2 bytes long.");
         }else{
-            this.dataType = getDataType();
+            this.dataType = dataType;
         }
     }
 
@@ -32,6 +32,15 @@ public class DataBuilder {
 
     public byte[] getData(){
         return this.data;
+    }
+    
+    public byte[] concatByteArrays(byte[] a, byte[] b){
+        int aLen = a.length;
+        int bLen = b.length;
+        byte[] c = new byte[aLen+bLen];
+        System.arraycopy(a, 0, c, 0, aLen);
+        System.arraycopy(b, 0, c, aLen, bLen);
+        return c;
     }
 
 }

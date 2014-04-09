@@ -8,7 +8,7 @@ public class Datatype {
     /*
         Reserved datatypes.
      */
-    public static final byte[] CONNECTION_SETUP     = new byte[]{  0,  0}; // 0x0000
+    public static final byte[] GENERIC_ACK		    = new byte[]{  0,  0}; // 0x0000
     public static final byte[] BROADCAST_MESSAGE    = new byte[]{  0,  1}; // 0x0001
     public static final byte[] CHAT_MESSAGE         = new byte[]{  0,  2}; // 0x0002
     public static final byte[] PRIVATE_MESSAGE      = new byte[]{  0,  3}; // 0x0003
