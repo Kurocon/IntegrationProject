@@ -9,7 +9,7 @@ public class PrivateChatBuilder extends DataBuilder{
 	
 	public PrivateChatBuilder(){
 		super();
-		this.setDataType(Datatype.PRIVATE_MESSAGE);
+		super.setDataType(Datatype.PRIVATE_MESSAGE);
 	}
 	
 	public void setDestination(byte[] dest){
@@ -29,8 +29,11 @@ public class PrivateChatBuilder extends DataBuilder{
 	}
 	
 	public byte[] getData(){
-		this.setDataLength(ByteBuffer.allocate(2).putInt(this.message.length));
-		return concatByteArrays(this.getDestination(), this.getMessage());
+		super.setDataLength(ByteBuffer.allocate(2).putInt(this.message.length));
+		super.setData(concatByteArrays(this.getDestination(), this.getMessage()));
+		return super.getData();
+		
+
 	}
 
 }

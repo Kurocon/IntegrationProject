@@ -9,7 +9,7 @@ public class ChatBuilder extends DataBuilder{
 	
 	public ChatBuilder(){
 		super();
-		setDataType(Datatype.CHAT_MESSAGE);
+		super.setDataType(Datatype.CHAT_MESSAGE);
 	}
 	
 	public void setMessage(String msg){
@@ -21,8 +21,9 @@ public class ChatBuilder extends DataBuilder{
 	}
 	
 	public byte[] getData(){
-		this.setDataLength(ByteBuffer.allocate(2).putInt(this.message.length));
-		return this.getMessage();
+		super.setDataLength(ByteBuffer.allocate(2).putInt(this.message.length));
+		super.setData(this.getMessage());
+		return super.getData();
 	}
 
 }

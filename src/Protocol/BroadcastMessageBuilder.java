@@ -6,7 +6,7 @@ public class BroadcastMessageBuilder extends DataBuilder{
 	
 	public BroadcastMessageBuilder(){
 		super();
-		this.setDataType(Datatype.BROADCAST_MESSAGE);
+		super.setDataType(Datatype.BROADCAST_MESSAGE);
 	}
 	
 	public void setNick(String nick){
@@ -26,6 +26,7 @@ public class BroadcastMessageBuilder extends DataBuilder{
 	}
 	
 	public byte[] getData(){
-		return concatByteArrays(getNick(), getData());
+		super.setData(concatByteArrays(getNick(), getData()));
+		return super.getData();
 	}
 }

@@ -6,7 +6,7 @@ private byte[] AckNumber;
 
 public AckBuilder(){
 	super();
-	setDataType(Datatype.GENERIC_ACK);
+	super.setDataType(Datatype.GENERIC_ACK);
 	
 }
 
@@ -19,7 +19,8 @@ public byte[] getAckNumber(){
 }
 
 public byte[] getData(){
-	return this.getAckNumber();
+	super.setData(this.getAckNumber());
+	return super.getData();
 }
 
 }
