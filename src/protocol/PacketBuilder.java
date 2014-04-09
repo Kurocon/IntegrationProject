@@ -39,8 +39,6 @@ public class PacketBuilder {
          +---------+---------+---------+---------+
          |    data_length    |      reserved     |
          +---------+---------+---------+---------+
-
-
      */
 
     public PacketBuilder(){
@@ -114,12 +112,9 @@ public class PacketBuilder {
 
     private byte[] getHeader(){
         byte[] octet1       = this.concatByteArrays(this.source_address, this.destination_address);
-        byte[] hopVersion   = this.concatByteArrays(this.hopcount, this.version);
-        byte[] octet2       = this.concatByteArrays(hopVersion, this.dataType);
-        byte[] octet3       = this.concatByteArrays(this.timestamp, this.reserved);
-        byte[] interim_packet = this.concatByteArrays(octet1, octet2);
-
-        return this.concatByteArrays(interim_packet, octet3);
+        byte[] octet2       = this.concatThreeByteArrays(this.hopcount, this.version, this.dataType);
+        byte[] octet3       = this.concatThreeByteArrays(this.timestamp, this.dataLength, this.reserved);
+        return this.concatThreeByteArrays(octet1, octet2, octet3);
     }
 
     private byte[] concatByteArrays(byte[] a, byte[] b){
