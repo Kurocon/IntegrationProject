@@ -6,6 +6,8 @@ import java.util.Enumeration;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import gui.CaUI;
+import network.Security;
 import network.UDPListener;
 import network.UDPSender;
 
@@ -20,32 +22,41 @@ public class SAMPCA {
 
 	public static final String PROGRAM_NAME = "SAMPCA";
 
-    private UDPListener server;
-    private UDPSender client;
+    private UDPListener listener;
+    private UDPSender sender;
 
     private String ip;
     private int port;
     private String username;
+    private String password;
     private NetworkInterface iface;
+
+    private Security crypto;
 
     private MulticastSocket socket;
     private InetAddress group;
 
-    private Thread serverThread;
-    private Thread clientThread;
+    private Thread listenerThread;
+    private Thread senderThread;
+
+    private CaUI chatGui = null;
 
     public boolean finished = false;
 
     public static void main(String[] args){
-        new SAMPCA(5555, "228.133.102.88", "Kurocon");
+        new SAMPCA(5555, "228.133.102.88", "Kurocon", "testpassword");
     }
 
-    public SAMPCA(int port, String ip, String username){
+    public SAMPCA(int port, String ip, String username, String password){
         LOGGER.log(Level.INFO, "SAMPCA is starting...");
 
         this.port = port;
         this.ip = ip;
         this.username = username;
+        this.password = password;
+
+        this.crypto = new Security();
+        this.crypto.setPassword(this.password);
 
         // Get wireless interface
         Enumeration<NetworkInterface> interfaces = null;
@@ -90,18 +101,35 @@ public class SAMPCA {
         this.startSender();
 
         LOGGER.log(Level.INFO, "SAMPCA successfully started");
+
+        this.openChatGui();
     }
 
     private void startListener(){
-        this.server = new UDPListener(this.socket);
-        this.serverThread = new Thread(this.server);
-        this.serverThread.start();
+        this.listener = new UDPListener(this.socket);
+        this.listener.setCrypto(this.crypto);
+        this.listenerThread = new Thread(this.listener);
+        this.listenerThread.start();
     }
 
     private void startSender(){
-        this.client = new UDPSender(this.socket, this.group, this.port);
-        this.clientThread = new Thread(this.client);
-        this.clientThread.start();
+        this.sender = new UDPSender(this.socket, this.group, this.port);
+        this.sender.setCrypto(this.crypto);
+        this.senderThread = new Thread(this.sender);
+        this.senderThread.start();
     }
+
+    private void openChatGui(){
+        this.chatGui = new CaUI(this);
+    }
+
+    /*
+
+    SAMPCA Hooks:
+    - Send message
+    - Stop
+    - Upload file (datatype, data)
+
+     */
 
 }

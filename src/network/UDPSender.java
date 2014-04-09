@@ -23,6 +23,7 @@ public class UDPSender implements Sender, Runnable {
     private byte[] sendData = new byte[PACKET_SIZE];
 
     public boolean should_run = true;
+    private Security crypto;
 
     public UDPSender(MulticastSocket socket, InetAddress group, int port){
         this.socket = socket;
@@ -52,6 +53,9 @@ public class UDPSender implements Sender, Runnable {
             if(sentence != null){
                 sendData = sentence.getBytes();
 
+                // Encrypt data!
+                this.crypto.encryptData(this.sendData);
+
                 sendPacket = new DatagramPacket(sendData, sendData.length, this.group, this.port);
 
                 try {
@@ -76,5 +80,9 @@ public class UDPSender implements Sender, Runnable {
         } catch (IOException e) {
             LOGGER.log(Level.WARNING, "Could not cleanly close stdin! ["+e.getMessage()+"]");
         }
+    }
+
+    public void setCrypto(Security crypto) {
+        this.crypto = crypto;
     }
 }
