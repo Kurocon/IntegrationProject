@@ -1,12 +1,13 @@
-import GUI.Login;
-import Network.UDPSender;
-import Network.UDPListener;
+package sampca;
 
 import java.io.IOException;
 import java.net.*;
 import java.util.Enumeration;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import network.UDPListener;
+import network.UDPSender;
 
 /**
  * Main class to start SAMPCA.
@@ -16,6 +17,8 @@ import java.util.logging.Logger;
 public class SAMPCA {
 
     private static final Logger LOGGER = Logger.getLogger(SAMPCA.class.getName());
+
+	public static final String PROGRAM_NAME = "SAMPCA";
 
     private UDPListener server;
     private UDPSender client;
@@ -30,6 +33,8 @@ public class SAMPCA {
 
     private Thread serverThread;
     private Thread clientThread;
+
+    public boolean finished = false;
 
     public static void main(String[] args){
         new SAMPCA(5555, "228.133.102.88", "Kurocon");
