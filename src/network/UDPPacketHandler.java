@@ -1,5 +1,7 @@
 package network;
 
+import protocol.WHASProtocol;
+
 import java.net.DatagramPacket;
 import java.util.logging.Level;
 import java.util.logging.Logger;
