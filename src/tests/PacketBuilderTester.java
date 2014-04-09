@@ -1,6 +1,6 @@
-package Tests;
+package tests;
 
-import OldNetwork.UDPPacketBuilder;
+import oldNetwork.UDPPacketBuilder;
 
 /**
  * Created by kevin on 4/7/14.

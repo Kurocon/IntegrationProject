@@ -1,4 +1,4 @@
-package Network;
+package network;
 
 import java.net.DatagramPacket;
 import java.util.logging.Level;

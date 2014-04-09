@@ -1,4 +1,4 @@
-package OldNetwork;
+package oldNetwork;
 
 import java.nio.ByteBuffer;
 

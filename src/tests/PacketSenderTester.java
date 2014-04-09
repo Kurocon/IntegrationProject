@@ -1,6 +1,6 @@
-package Tests;
+package tests;
 
-import OldNetwork.UDPHandler;
+import oldNetwork.UDPHandler;
 
 /**
  * Created by kevin on 4/7/14.
