@@ -1,7 +1,7 @@
 package protocol;
 
-import Exceptions.ArrayTooLongException;
-import Exceptions.WrongArrayLengthException;
+import exceptions.ArrayTooLongException;
+import exceptions.WrongArrayLengthException;
 
 import java.net.InetAddress;
 import java.nio.ByteBuffer;

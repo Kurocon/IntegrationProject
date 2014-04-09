@@ -1,4 +1,4 @@
-package protocol.Parsers;
+package protocol.parsers;
 
 /**
  * Created by kevin on 4/9/14.

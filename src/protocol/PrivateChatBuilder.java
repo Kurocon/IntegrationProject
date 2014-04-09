@@ -1,4 +1,4 @@
-package Protocol;
+package protocol;
 
 import java.nio.ByteBuffer;
 
@@ -29,7 +29,7 @@ public class PrivateChatBuilder extends DataBuilder{
 	}
 	
 	public byte[] getData(){
-		super.setDataLength(ByteBuffer.allocate(2).putInt(this.message.length));
+		super.setDataLength(ByteBuffer.allocate(2).putInt(this.message.length).array());
 		super.setData(concatByteArrays(this.getDestination(), this.getMessage()));
 		return super.getData();
 		

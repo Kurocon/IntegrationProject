@@ -1,6 +1,6 @@
 package protocol;
 
-import Exceptions.WrongArrayLengthException;
+import exceptions.WrongArrayLengthException;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;

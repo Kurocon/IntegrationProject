@@ -1,4 +1,4 @@
-package Protocol;
+package protocol;
 
 import java.nio.ByteBuffer;
 
@@ -21,7 +21,7 @@ public class ChatBuilder extends DataBuilder{
 	}
 	
 	public byte[] getData(){
-		super.setDataLength(ByteBuffer.allocate(2).putInt(this.message.length));
+		super.setDataLength(ByteBuffer.allocate(2).putInt(this.message.length).array());
 		super.setData(this.getMessage());
 		return super.getData();
 	}

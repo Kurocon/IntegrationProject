@@ -1,4 +1,4 @@
-package Protocol;
+package protocol;
 
 import exceptions.WrongArrayLengthException;
 
@@ -10,6 +10,7 @@ public class DataBuilder {
 
     private byte[] data;
     private byte[] dataType;
+    private byte[] dataLength;
 
     public void setDataType(byte[] dataType){
         if(dataType.length != 2){
@@ -21,6 +22,18 @@ public class DataBuilder {
 
     public byte[] getDataType(){
         return this.dataType;
+    }
+
+    public void setDataLength(byte[] dataLength){
+        if(dataLength.length != 2){
+            throw new WrongArrayLengthException("DataLength must be 2 bytes long.");
+        }else{
+            this.dataLength = dataLength;
+        }
+    }
+
+    public byte[] getDataLength(){
+        return this.dataLength;
     }
 
     public void setData(byte[] data){

@@ -1,4 +1,4 @@
-package Protocol;
+package protocol;
 
 public class BroadcastMessageBuilder extends DataBuilder{
 	private byte[] nickname;

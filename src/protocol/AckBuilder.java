@@ -1,4 +1,4 @@
-package Protocol;
+package protocol;
 
 public class AckBuilder extends DataBuilder{
 	

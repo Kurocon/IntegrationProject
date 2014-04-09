@@ -1,7 +1,5 @@
 package protocol;
 
-import protocol.Parsers.Parser;
-
 /**
  * Protocol implementation
  * Created by kevin on 4/7/14.
