@@ -1,10 +1,17 @@
 package protocol;
 
+import protocol.Parsers.Parser;
+
 /**
  * Protocol implementation
  * Created by kevin on 4/7/14.
  */
 public class WHASProtocol implements Protocol {
+
+    /*
+            SYSTEM AND CHAT HANDLERS
+     */
+
     @Override
     public void generic_ack(PacketParser data) {
 
@@ -24,6 +31,10 @@ public class WHASProtocol implements Protocol {
     public void private_message(PacketParser data) {
 
     }
+
+    /*
+            RESERVED TYPE HANDLERS
+     */
 
     @Override
     public void reserved_type1(PacketParser data) {
@@ -84,6 +95,10 @@ public class WHASProtocol implements Protocol {
     public void reserved_type12(PacketParser data) {
 
     }
+
+    /*
+            FILE HANDLERS
+     */
 
     @Override
     public void generic_file(PacketParser data) {
