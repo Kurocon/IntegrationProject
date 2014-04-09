@@ -1,10 +1,35 @@
 #!/bin/bash 
 
+# CHANGE YOUR VARIABLES HERE!
+
+WIRELESS_DEVICE=wlan0
+GROUP_NUMBER=4
+COMPUTER_NUMBER=4
+MULTICAST_SUBNET=226.0.0.0/8
+
+# DO NOT CHANGE BELOW THIS LINE!
+
+
+
 # Make sure only root can run our script
 if [ "$(id -u)" != "0" ]; then
    echo "This script must be run as root" 1>&2
+   echo "Example: sudo ./adhoc_setup" 1>&2
    exit 1
 fi
+
+
+echo "/**************************\\"
+echo " *   adhoc_setup script   * "
+echo " *     Kevin Alberts      * "
+echo "\**************************/"
+echo ""
+echo "Current settings: (edit the script with 'nano adhoc_setup' to change)"
+echo "Wireless device:  "$WIRELESS_DEVICE
+echo "Group number:     "$GROUP_NUMBER
+echo "Computer number:  "$COMPUTER_NUMBER
+echo "Multicast subnet: "$MULTICAST_SUBNET
+echo ""
 
 echo -ne "Stopping Network Manager..."
 service network-manager stop &> /dev/null
@@ -16,7 +41,7 @@ echo -ne "OK"
 tput sgr0
 echo "]     "
 echo -ne "Taking down wireless interface..."
-ifconfig wlan0 down
+ifconfig $WIRELESS_DEVICE down
 tput cuf $(($(tput cols)-42))
 echo -ne "["
 tput setaf 2
@@ -24,11 +49,11 @@ echo -ne "OK"
 tput sgr0
 echo -ne "]     "
 echo -ne "Configuring ad-hoc network..."
-iwconfig wlan0 mode ad-hoc
-iwconfig wlan0 channel 4
-iwconfig wlan0 ap f8:d1:11:64:5e:a4
-iwconfig wlan0 essid groep4
-iwconfig wlan0 key 1234567890
+iwconfig $WIRELESS_DEVICE mode ad-hoc
+iwconfig $WIRELESS_DEVICE channel $GROUP_NUMBER
+iwconfig $WIRELESS_DEVICE ap f8:d1:11:64:5e:a$GROUP_NUMBER
+iwconfig $WIRELESS_DEVICE essid groep$GROUP_NUMBER
+iwconfig $WIRELESS_DEVICE key 1234567890
 tput cuf $(($(tput cols)-38))
 echo -ne "["
 tput setaf 2
@@ -36,7 +61,7 @@ echo -ne "OK"
 tput sgr0
 echo "]     "
 echo -ne "Starting wireless network interface..."
-ifconfig wlan0 192.168.5.4 up
+ifconfig $WIRELESS_DEVICE 192.168.5.$COMPUTER_NUMBER up
 tput cuf $(($(tput cols)-47))
 echo -ne "["
 tput setaf 2
@@ -44,11 +69,11 @@ echo -ne "OK"
 tput sgr0
 echo "]     "
 echo -ne "Setting up correct routing paths..."
-route add -net 228.0.0.0/8 dev wlan0
+route add -net $MULTICAST_SUBNET dev $WIRELESS_DEVICE
 tput cuf $(($(tput cols)-44))
 echo -ne "["
 tput setaf 2
 echo -ne "OK"
 tput sgr0
 echo "]     "
-echo "You are now connected to the ad-hoc network with IP address 192.168.5.4"
+echo "You are now connected to the ad-hoc network with IP address 192.168.5."$COMPUTER_NUMBER
