@@ -1,9 +1,6 @@
 package Protocol;
 
-import Exceptions.WrongArrayLengthException;
-
-import java.net.InetAddress;
-import java.net.UnknownHostException;
+import exceptions.WrongArrayLengthException;
 
 /**
  * Shell for a databuilder. Can be extended upon for individual data types.
