@@ -1,5 +1,7 @@
 package network;
 
+import sampca.SAMPCA;
+
 import java.io.*;
 import java.net.*;
 import java.util.logging.Level;
@@ -18,13 +20,16 @@ public class UDPSender implements Sender, Runnable {
     private BufferedReader inFromUser = null;
     private InetAddress group = null;
     private int port = -1;
+    private SAMPCA sampca = null;
 
     private DatagramPacket sendPacket = null;
     private byte[] sendData = new byte[PACKET_SIZE];
 
     public boolean should_run = true;
+    private Security crypto;
 
-    public UDPSender(MulticastSocket socket, InetAddress group, int port){
+    public UDPSender(SAMPCA s, MulticastSocket socket, InetAddress group, int port){
+        this.sampca = s;
         this.socket = socket;
         this.group = group;
         this.port = port;
@@ -37,29 +42,10 @@ public class UDPSender implements Sender, Runnable {
         LOGGER.log(Level.INFO, "Sender is ready to send!");
 
         while(should_run){
-
-            String sentence = null;
             try {
-                sentence = inFromUser.readLine();
-            } catch (IOException e) {
-                LOGGER.log(Level.WARNING, "Could not read from stdin! [" + e.getMessage() + "]");
-            }
-
-            if(sentence != null && sentence.equals("/exit")){
-                this.close();
-            }
-
-            if(sentence != null){
-                sendData = sentence.getBytes();
-
-                sendPacket = new DatagramPacket(sendData, sendData.length, this.group, this.port);
-
-                try {
-                    this.socket.send(sendPacket);
-                } catch (IOException e) {
-                    LOGGER.log(Level.WARNING, "Could not send message to client! [" + e.getMessage() + "]");
-                    e.printStackTrace();
-                }
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                LOGGER.log(Level.WARNING, "Thread interrupted. ["+e.getMessage()+"]");
             }
         }
     }
@@ -76,5 +62,24 @@ public class UDPSender implements Sender, Runnable {
         } catch (IOException e) {
             LOGGER.log(Level.WARNING, "Could not cleanly close stdin! ["+e.getMessage()+"]");
         }
+    }
+
+    public void setCrypto(Security crypto) {
+        this.crypto = crypto;
+    }
+
+    public void send(DatagramPacket p){
+        try {
+            this.socket.send(p);
+        } catch (IOException e) {
+            LOGGER.log(Level.WARNING, "Could not send message to client! [" + e.getMessage() + "]");
+        }
+    }
+
+    public void sendPacket(byte[] packet) {
+        // Encrypt data!
+        this.crypto.encryptData(packet);
+        DatagramPacket sendPacket = new DatagramPacket(packet, packet.length, this.group, this.port);
+        this.send(sendPacket);
     }
 }

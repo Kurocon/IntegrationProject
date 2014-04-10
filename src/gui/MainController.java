@@ -48,11 +48,12 @@ public class MainController implements ActionListener {
 			String serverIP = this.view.getServerField().getText();
 			String portText = this.view.getPortField().getText();
 			String nickname = this.view.getUsernameField().getText();
+            String password = "password";
 			if (!serverIP.equals("") && !portText.equals("")
 					&& !nickname.equals("")) {
 				try {
 					int port = Integer.parseInt(portText);
-					SAMPCA client = new SAMPCA(port, MainUI.LBL_DEF_First_IP_PART + serverIP, nickname);
+					SAMPCA client = new SAMPCA(port, MainUI.LBL_DEF_First_IP_PART + serverIP, nickname, password);
 					// Client client = new Client("luna", 5555, "Kurocon");
 //					synchronized (client) {
 //						try {

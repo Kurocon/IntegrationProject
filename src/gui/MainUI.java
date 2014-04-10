@@ -87,7 +87,6 @@ public class MainUI implements Observer {
 			public void run() {
 				try {
 					MainUI window = new MainUI();
-					window.frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -101,6 +100,7 @@ public class MainUI implements Observer {
 	public MainUI() {
 		initialize();
 		frame.setResizable(false);
+        frame.setVisible(true);
 	}
 
 	/**

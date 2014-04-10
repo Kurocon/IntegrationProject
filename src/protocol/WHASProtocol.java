@@ -1,10 +1,18 @@
 package protocol;
 
+import network.UDPPacketHandler;
+
 /**
  * Protocol implementation
  * Created by kevin on 4/7/14.
  */
 public class WHASProtocol implements Protocol {
+
+    private UDPPacketHandler handler = null;
+
+    public WHASProtocol(UDPPacketHandler h){
+        this.handler = h;
+    }
 
     /*
             SYSTEM AND CHAT HANDLERS

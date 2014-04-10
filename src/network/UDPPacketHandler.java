@@ -16,11 +16,13 @@ public class UDPPacketHandler implements PacketHandler {
 
     private static final Logger LOGGER = Logger.getLogger(UDPListener.class.getName());
 
-    WHASProtocol protocol = null;
+    private WHASProtocol protocol = null;
+    private UDPListener listener = null;
 
-    public UDPPacketHandler(){
+    public UDPPacketHandler(UDPListener l){
         LOGGER.log(Level.INFO, "UDPPacketHandler is starting...");
-        this.protocol = new WHASProtocol();
+        this.listener = l;
+        this.protocol = new WHASProtocol(this);
         LOGGER.log(Level.INFO, "Ready to handle input from server!");
     }
 
@@ -29,6 +31,28 @@ public class UDPPacketHandler implements PacketHandler {
         // My god, we received something.
         // Throw it through a PacketParser!
         PacketParser pp = new PacketParser(packet.getData());
+
+        /*
+if is not destination then
+    if is source then
+        drop packet
+    end if
+    if hopcount greater than 0 then
+        decrease hopcount by 1;
+        forward packet
+    else
+        drop packet
+    end if
+else
+    if hop count equals 0 then
+        accept the packet and process;
+    else
+        drop packet
+    end if
+end if
+         */
+
+
 
         switch (Datatype.getDataTypeAsInt(pp.getDataType())){
             case Datatype.INT_GENERIC_ACK:
