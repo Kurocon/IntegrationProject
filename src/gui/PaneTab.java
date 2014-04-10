@@ -3,17 +3,21 @@ package gui;
 import java.net.InetAddress;
 
 import javax.swing.JButton;
-import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
+@SuppressWarnings("serial")
 public class PaneTab extends JSplitPane {
-	
+
 	/**
 	 * . Variable to store the message field of the chat
 	 */
 	private JTextField messageField;
+	/**
+	 * . Variable to store the message field of the chat
+	 */
+	private JTextArea textArea;
 	/**
 	 * . Variable to store the button to send a message
 	 */
@@ -35,6 +39,7 @@ public class PaneTab extends JSplitPane {
 		this.nickName = nickname;
 		this.address = address;
 		this.controller = controller;
+		this.textArea = newTextArea();
 		initialize();
 	}
 	
@@ -43,8 +48,7 @@ public class PaneTab extends JSplitPane {
 		super.setOrientation(JSplitPane.VERTICAL_SPLIT);
 		super.setEnabled(false);
 		super.setDividerSize(1);
-		
-		super.setLeftComponent(newTextArea());
+		super.setLeftComponent(this.textArea);
 	
 		JSplitPane messagePane = new JSplitPane();
 		messagePane.setResizeWeight(1.0);
@@ -69,5 +73,23 @@ public class PaneTab extends JSplitPane {
 		tempTextArea.setLineWrap(true);
 		return tempTextArea;
 	}
+	
+	public JTextField getMessageField(){
+		return this.messageField;
+	}
+	
+	public JButton getSendButton(){
+		return this.btnSend;
+	}
+	
+	public String getNickName(){
+		return this.nickName;
+	}
+	
+	public InetAddress getAddress(){
+		return this.address;
+	}
+	
+	
 	
 }

@@ -263,6 +263,7 @@ public class CaUI extends Observable implements Observer {
 		return new ImageIcon(img);
 	}
 	
+	@SuppressWarnings("serial")
 	private void addTab(final JTabbedPane tabbedPane, final PaneTab paneTab, final String nickname,
 	          final Icon icon){
 		ImageIcon closeIcon = addIcon("close.png");	

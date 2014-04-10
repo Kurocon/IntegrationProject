@@ -2,7 +2,6 @@ package gui;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import sampca.SAMPCA;
@@ -72,13 +71,20 @@ public class CaController implements ActionListener {
 //			LOGGER.log(Level.INFO, "Joining game by player " + creator + ".");
 //			this.client.getServerHandler().sendCommand(
 //					ServerProtocol.JOIN_GAME, new String[] { creator });
-//			this.client.clientInfo.joiningGame = creator;
+//			this.client.clientInfo.joiningGame = creator;l
 //			this.client.clientInfo.joinAsComputer = true;
 //		} else 
-        if (e.getSource() == this.view.getSendButton()) {
-			if (!this.view.getMessageField().getText().isEmpty()) {
-				String message = this.view.getMessageField().getText();
-				if(true){
+        PaneTab selectedTab = (PaneTab) this.view.tabs.getSelectedComponent();
+//        if (e.getSource()){
+//        System.out.println("|||||||||||||||||||| test a");
+//        }
+        if (e.getSource() == selectedTab.getSendButton()) {
+        	System.out.println("|||||||||||||||||||| test");
+			if (!selectedTab.getMessageField().getText().isEmpty()) {
+        		System.out.println("|||||||||||||||||||| test 1");
+				String message = selectedTab.getMessageField().getText();
+				if(this.view.tabs.getSelectedIndex() == 0){
+					System.out.println("|||||||||||||||||||| test 2");
 					//Public message
 					int it = 0;
 					while(it + 1000 < message.length()){
@@ -90,16 +96,17 @@ public class CaController implements ActionListener {
 					
 					
 				}else{
+					System.out.println("|||||||||||||||||||| test 3");
 					//private message
 					int it = 0;
 					while((it < message.length()) && (it + 996 < message.length())){
-//						client.sendPrivateMessage(message.substring(it, it+995), InetAddress);
+						client.sendPrivateMessage(message.substring(it, it+995), selectedTab.getAddress());
 						it = it+996;
 					}
-//					client.sendPrivateMessage(message.substring(it, message.length() - it - 1), InetAddress);
+					client.sendPrivateMessage(message.substring(it, message.length()), selectedTab.getAddress());
 				}
 			}
-			this.view.getMessageField().setText("");
+        	selectedTab.getMessageField().setText("");
 
 		}
         
