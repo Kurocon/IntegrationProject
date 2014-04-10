@@ -416,8 +416,7 @@ public class CaUI extends Observable implements Observer {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					CaUI window = new CaUI(new SAMPCA(5555, "228.133.102.88",
-							"Kurocon"));
+					CaUI window = new CaUI(new SAMPCA(5555, "228.133.102.88", "Kurocon", "password"));
 					window.frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
