@@ -1,22 +1,23 @@
 package protocol.parsers;
 
 public class ChatParser extends Parser{
-	private String dataAsString;
-	private byte[] dataAsBytes ;
+	private String messageAsString;
+	private byte[] messageAsBytes ;
+	
 
 	public ChatParser(byte[] data, int length) {
 		super(data);
-		dataAsBytes = new byte[length];
-		System.arraycopy(data, 0, dataAsBytes, 0, length);
-		this.dataAsString = new String(dataAsBytes);
-		this.dataAsBytes = data;
+		messageAsBytes = new byte[length];
+		System.arraycopy(data, 0, messageAsBytes, 0, length);
+		this.messageAsString = new String(messageAsBytes);
+		this.messageAsBytes = data;
 	}
 	
-	public String getDataAsString(){
-		return this.dataAsString;
+	public String getMessage(){
+		return this.messageAsString;
 	}
 	
-	public byte[] getDataAsBytes(){
-		return this.dataAsBytes;
+	public byte[] getMessageAsBytes(){
+		return this.messageAsBytes;
 	}
 }

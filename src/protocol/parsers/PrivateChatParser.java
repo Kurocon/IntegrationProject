@@ -4,8 +4,8 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 
 public class PrivateChatParser extends Parser{
-	private String dataAsString;
-	private byte[] dataAsBytes;
+	private String messageAsString;
+	private byte[] messageAsBytes;
 	private byte[] destination;
 	private String destinationAsString;
 
@@ -19,10 +19,10 @@ public class PrivateChatParser extends Parser{
 			e.printStackTrace();
 		}
 		
-		dataAsBytes = new byte[length];
-		System.arraycopy(data, 4, dataAsBytes, 0, length);
-		this.dataAsString = new String(dataAsBytes);
-		this.dataAsBytes = data;
+		messageAsBytes = new byte[length];
+		System.arraycopy(data, 4, messageAsBytes, 0, length);
+		this.messageAsString = new String(messageAsBytes);
+		this.messageAsBytes = data;
 	}
 	
 	public byte[] getDestinationAsBytes(){
@@ -33,11 +33,11 @@ public class PrivateChatParser extends Parser{
 		return this.destinationAsString;
 	}
 	
-	public String getDataAsString(){
-		return this.dataAsString;
+	public String getMessageAsString(){
+		return this.messageAsString;
 	}
 	
-	public byte[] getDataAsBytes(){
-		return this.dataAsBytes;
+	public byte[] getMessageAsBytes(){
+		return this.messageAsBytes;
 	}
 }
