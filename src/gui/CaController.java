@@ -81,11 +81,12 @@ public class CaController implements ActionListener {
 				if(true){
 					//Public message
 					int it = 0;
-					while((it < message.length()) && (it + 1000 < message.length())){
+					while(it + 1000 < message.length()){
 						client.sendPublicMessage(message.substring(it, it+999));
 						it = it+1000;
 					}
-					client.sendPublicMessage(message.substring(it, message.length() - it - 1));
+					
+					client.sendPublicMessage(message.substring(it, message.length()));
 					
 					
 				}else{
