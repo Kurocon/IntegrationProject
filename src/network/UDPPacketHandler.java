@@ -55,83 +55,124 @@ end if
         InetAddress dest_addr = pp.getDestinationAddress();
         InetAddress src_addr = pp.getSourceAddress();
         InetAddress our_addr = this.listener.getSAMPCA().getOwnUser().getIP();
+        InetAddress mcast_addr = this.listener.getSAMPCA().getMulticastAddress();
 
-        if(!our_addr.equals(dest_addr)){
+        if(mcast_addr.equals(dest_addr)){
+            // This is a multicast packet meant for everyone!
+            // You gotta share, you gotta care!
+            if(pp.getHopcount() > 0 && !our_addr.equals(src_addr)){
+                int newHopCount = pp.getHopcount()-1;
+                // Forward packet to all.
+                this.getListener().getSAMPCA().forwardPacket(pp);
+            }else if(pp.getHopcount() <= 0){
+                // Hop count expired. Drop it.
+                LOGGER.log(Level.INFO, "Dropping packet from "+pp.getSourceAddress().getHostName()+", reason: Hopcount expired.");
+                return;
+            }
+        }else if(!our_addr.equals(dest_addr)){
             if(pp.getHopcount() > 0 && !our_addr.equals(src_addr)){
                 int newHopCount = pp.getHopcount()-1;
                 // Forward packet to all.
                 this.getListener().getSAMPCA().forwardPacket(pp);
             }else{
                 // Hop count expired or this is a packet we sent. Drop it.
+                if(pp.getHopcount()<=0){
+                    LOGGER.log(Level.INFO, "Dropping packet from "+pp.getSourceAddress().getHostName()+", reason: Hopcount expired.");
+                }else if(our_addr.equals(src_addr)){
+                    LOGGER.log(Level.INFO, "Dropping packet from "+pp.getSourceAddress().getHostName()+", reason: This is a packet we have sent.");
+                }else{
+                    LOGGER.log(Level.INFO, "Dropping packet from "+pp.getSourceAddress().getHostName()+", reason: Unknown.");
+                }
                 return;
             }
-        }else{
-            // This packet is meant for us! We need to parse it!
-            switch (Datatype.getDataTypeAsInt(pp.getDataType())){
-                case Datatype.INT_GENERIC_ACK:
-                    this.protocol.generic_ack(pp);
-                    break;
-                case Datatype.INT_BROADCAST_MESSAGE:
-                    this.protocol.broadcast_message(pp);
-                    break;
-                case Datatype.INT_CHAT_MESSAGE:
-                    this.protocol.chat_message(pp);
-                    break;
-                case Datatype.INT_PRIVATE_MESSAGE:
-                    this.protocol.private_message(pp);
-                    break;
-                case Datatype.INT_RESERVED_TYPE_1:
-                    this.protocol.reserved_type1(pp);
-                    break;
-                case Datatype.INT_RESERVED_TYPE_2:
-                    this.protocol.reserved_type2(pp);
-                    break;
-                case Datatype.INT_RESERVED_TYPE_3:
-                    this.protocol.reserved_type3(pp);
-                    break;
-                case Datatype.INT_RESERVED_TYPE_4:
-                    this.protocol.reserved_type4(pp);
-                    break;
-                case Datatype.INT_RESERVED_TYPE_5:
-                    this.protocol.reserved_type5(pp);
-                    break;
-                case Datatype.INT_RESERVED_TYPE_6:
-                    this.protocol.reserved_type6(pp);
-                    break;
-                case Datatype.INT_RESERVED_TYPE_7:
-                    this.protocol.reserved_type7(pp);
-                    break;
-                case Datatype.INT_RESERVED_TYPE_8:
-                    this.protocol.reserved_type8(pp);
-                    break;
-                case Datatype.INT_RESERVED_TYPE_9:
-                    this.protocol.reserved_type9(pp);
-                    break;
-                case Datatype.INT_RESERVED_TYPE_10:
-                    this.protocol.reserved_type10(pp);
-                    break;
-                case Datatype.INT_RESERVED_TYPE_11:
-                    this.protocol.reserved_type11(pp);
-                    break;
-                case Datatype.INT_RESERVED_TYPE_12:
-                    this.protocol.reserved_type12(pp);
-                    break;
-                case Datatype.INT_GENERIC_FILE:
-                    this.protocol.generic_file(pp);
-                    break;
-                case Datatype.INT_IMAGE_FILE_JPEG:
-                    this.protocol.image_file_jpeg(pp);
-                    break;
-                case Datatype.INT_IMAGE_FILE_PNG:
-                    this.protocol.image_file_png(pp);
-                    break;
-                case Datatype.INT_IMAGE_FILE_BMP:
-                    this.protocol.image_file_bmp(pp);
-                    break;
-                case Datatype.INT_IMAGE_FILE_GIF:
-                    this.protocol.image_file_gif(pp);
-                    break;
-            }
+        }
+
+        // This packet is (also) meant for us! We need to parse it!
+        switch (Datatype.getDataTypeAsInt(pp.getDataType())){
+            case Datatype.INT_GENERIC_ACK:
+                LOGGER.log(Level.INFO, "Received generic ACK from "+pp.getSourceAddress().getHostName());
+                this.protocol.generic_ack(pp);
+                break;
+            case Datatype.INT_BROADCAST_MESSAGE:
+                LOGGER.log(Level.INFO, "Received broadcast message from "+pp.getSourceAddress().getHostName());
+                this.protocol.broadcast_message(pp);
+                break;
+            case Datatype.INT_CHAT_MESSAGE:
+                LOGGER.log(Level.INFO, "Received chat message from "+pp.getSourceAddress().getHostName());
+                this.protocol.chat_message(pp);
+                break;
+            case Datatype.INT_PRIVATE_MESSAGE:
+                LOGGER.log(Level.INFO, "Received private message from "+pp.getSourceAddress().getHostName());
+                this.protocol.private_message(pp);
+                break;
+            case Datatype.INT_RESERVED_TYPE_1:
+                LOGGER.log(Level.INFO, "Received reserved type 1 from "+pp.getSourceAddress().getHostName());
+                this.protocol.reserved_type1(pp);
+                break;
+            case Datatype.INT_RESERVED_TYPE_2:
+                LOGGER.log(Level.INFO, "Received reserved type 2 from "+pp.getSourceAddress().getHostName());
+                this.protocol.reserved_type2(pp);
+                break;
+            case Datatype.INT_RESERVED_TYPE_3:
+                LOGGER.log(Level.INFO, "Received reserved type 3 from "+pp.getSourceAddress().getHostName());
+                this.protocol.reserved_type3(pp);
+                break;
+            case Datatype.INT_RESERVED_TYPE_4:
+                LOGGER.log(Level.INFO, "Received reserved type 4 from "+pp.getSourceAddress().getHostName());
+                this.protocol.reserved_type4(pp);
+                break;
+            case Datatype.INT_RESERVED_TYPE_5:
+                LOGGER.log(Level.INFO, "Received reserved type 5 from "+pp.getSourceAddress().getHostName());
+                this.protocol.reserved_type5(pp);
+                break;
+            case Datatype.INT_RESERVED_TYPE_6:
+                LOGGER.log(Level.INFO, "Received reserved type 6 from "+pp.getSourceAddress().getHostName());
+                this.protocol.reserved_type6(pp);
+                break;
+            case Datatype.INT_RESERVED_TYPE_7:
+                LOGGER.log(Level.INFO, "Received reserved type 7 from "+pp.getSourceAddress().getHostName());
+                this.protocol.reserved_type7(pp);
+                break;
+            case Datatype.INT_RESERVED_TYPE_8:
+                LOGGER.log(Level.INFO, "Received reserved type 8 from "+pp.getSourceAddress().getHostName());
+                this.protocol.reserved_type8(pp);
+                break;
+            case Datatype.INT_RESERVED_TYPE_9:
+                LOGGER.log(Level.INFO, "Received reserved type 9 from "+pp.getSourceAddress().getHostName());
+                this.protocol.reserved_type9(pp);
+                break;
+            case Datatype.INT_RESERVED_TYPE_10:
+                LOGGER.log(Level.INFO, "Received reserved type 10 from "+pp.getSourceAddress().getHostName());
+                this.protocol.reserved_type10(pp);
+                break;
+            case Datatype.INT_RESERVED_TYPE_11:
+                LOGGER.log(Level.INFO, "Received reserved type 11 from "+pp.getSourceAddress().getHostName());
+                this.protocol.reserved_type11(pp);
+                break;
+            case Datatype.INT_RESERVED_TYPE_12:
+                LOGGER.log(Level.INFO, "Received reserved type 12 from "+pp.getSourceAddress().getHostName());
+                this.protocol.reserved_type12(pp);
+                break;
+            case Datatype.INT_GENERIC_FILE:
+                LOGGER.log(Level.INFO, "Received generic file from "+pp.getSourceAddress().getHostName());
+                this.protocol.generic_file(pp);
+                break;
+            case Datatype.INT_IMAGE_FILE_JPEG:
+                LOGGER.log(Level.INFO, "Received JPEG image file from "+pp.getSourceAddress().getHostName());
+                this.protocol.image_file_jpeg(pp);
+                break;
+            case Datatype.INT_IMAGE_FILE_PNG:
+                LOGGER.log(Level.INFO, "Received PNG image file from "+pp.getSourceAddress().getHostName());
+                this.protocol.image_file_png(pp);
+                break;
+            case Datatype.INT_IMAGE_FILE_BMP:
+                LOGGER.log(Level.INFO, "Received BMP image file from "+pp.getSourceAddress().getHostName());
+                this.protocol.image_file_bmp(pp);
+                break;
+            case Datatype.INT_IMAGE_FILE_GIF:
+                LOGGER.log(Level.INFO, "Received GIF image file from "+pp.getSourceAddress().getHostName());
+                this.protocol.image_file_gif(pp);
+                break;
         }
     }
     

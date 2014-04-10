@@ -57,7 +57,6 @@ public class Security {
 	
 	public byte[] encryptData(byte[] msg){
 		try {
-            LOGGER.log(Level.INFO, "Encrypting packet");
             try {
                 this.cipher.init(Cipher.ENCRYPT_MODE, this.key, this.ivspec);
             } catch (InvalidAlgorithmParameterException e) {
@@ -77,7 +76,6 @@ public class Security {
 	
 	public byte[] decryptData(byte[] encryptedData){
 		try {
-            LOGGER.log(Level.INFO, "Decrypting packet");
             try {
                 this.cipher.init(Cipher.DECRYPT_MODE, this.key, this.ivspec);
             } catch (InvalidAlgorithmParameterException e) {

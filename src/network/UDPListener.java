@@ -58,7 +58,7 @@ public class UDPListener implements Listener, Runnable {
             this.crypto.decryptData(data);
             this.receivePacket = new DatagramPacket(data, data.length);
 
-            LOGGER.log(Level.INFO, "Received data from "+IPAddress.getHostName()+":"+port);
+            //LOGGER.log(Level.INFO, "Received data from "+IPAddress.getHostName()+":"+port);
 
             this.handler.handleInput(receivePacket);
 

@@ -291,6 +291,10 @@ public class SAMPCA {
         return this.ownUser;
     }
 
+    public InetAddress getMulticastAddress() {
+        return this.group;
+    }
+
     /*
 
     SAMPCA Hooks:
