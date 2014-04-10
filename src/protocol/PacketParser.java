@@ -1,6 +1,7 @@
 package protocol;
 
 import exceptions.WrongArrayLengthException;
+import sampca.SAMPCA;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -26,8 +27,8 @@ public class PacketParser {
     public PacketParser(byte[] packet){
         this.packet = packet;
 
-        if(packet.length != 1024){
-            throw new WrongArrayLengthException("Packet length is not 1024!");
+        if(packet.length != SAMPCA.MAX_PACKET_SIZE){
+            throw new WrongArrayLengthException("Packet length is not "+SAMPCA.MAX_PACKET_SIZE+"! Packet size is "+packet.length);
         }else{
             // Parse the packet according to our own headers.
             /*

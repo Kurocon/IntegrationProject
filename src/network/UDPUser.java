@@ -25,6 +25,9 @@ public class UDPUser implements User {
         this.name = name;
     }
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> kevin
 
 =======
     
@@ -64,6 +67,9 @@ public class UDPUser implements User {
         return this.name;
     }
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> kevin
 
 =======
     

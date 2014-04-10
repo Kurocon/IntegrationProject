@@ -14,16 +14,12 @@ import java.util.logging.Logger;
 public class UDPSender implements Sender, Runnable {
 
     private static final Logger LOGGER = Logger.getLogger(UDPListener.class.getName());
-    private static final int PACKET_SIZE = 1024;
 
     private MulticastSocket socket = null;
     private BufferedReader inFromUser = null;
     private InetAddress group = null;
     private int port = -1;
     private SAMPCA sampca = null;
-
-    private DatagramPacket sendPacket = null;
-    private byte[] sendData = new byte[PACKET_SIZE];
 
     public boolean should_run = true;
     private Security crypto;
@@ -78,7 +74,7 @@ public class UDPSender implements Sender, Runnable {
 
     public void sendPacket(byte[] packet) {
         // Encrypt data!
-        //this.crypto.encryptData(packet);
+        this.crypto.encryptData(packet);
         DatagramPacket sendPacket = new DatagramPacket(packet, packet.length, this.group, this.port);
         this.send(sendPacket);
     }

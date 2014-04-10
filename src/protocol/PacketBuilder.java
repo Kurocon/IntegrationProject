@@ -2,6 +2,7 @@ package protocol;
 
 import exceptions.ArrayTooLongException;
 import exceptions.WrongArrayLengthException;
+import sampca.SAMPCA;
 
 import java.net.InetAddress;
 import java.nio.ByteBuffer;
@@ -93,12 +94,28 @@ public class PacketBuilder {
         byte[] data = this.dataBuilder.getData();
         byte[] length = this.dataBuilder.getDataLength();
 
-        if(data.length < 1000){
-            byte[] newdata = new byte[1000];
+        if(data.length < (SAMPCA.MAX_PACKET_SIZE - SAMPCA.GENERAL_HEADER_SIZE)){
+            byte[] newdata = new byte[SAMPCA.MAX_PACKET_SIZE - SAMPCA.GENERAL_HEADER_SIZE];
             System.arraycopy(data, 0, newdata, 0, data.length);
             this.data = newdata;
-        }else if(data.length > 1000){
-            throw new ArrayTooLongException("Data can be a maximum of 1000 bytes long.");
+        }else if(data.length > (SAMPCA.MAX_PACKET_SIZE - SAMPCA.GENERAL_HEADER_SIZE)){
+            throw new ArrayTooLongException("Data can be a maximum of "+(SAMPCA.MAX_PACKET_SIZE - SAMPCA.GENERAL_HEADER_SIZE)+" bytes long.");
+        }else{
+            this.data = data;
+        }
+
+        this.dataLength = length;
+    }
+
+    public void setData(byte[] data){
+        byte[] length = this.dataBuilder.getDataLength();
+
+        if(data.length < (SAMPCA.MAX_PACKET_SIZE - SAMPCA.GENERAL_HEADER_SIZE)){
+            byte[] newdata = new byte[SAMPCA.MAX_PACKET_SIZE - SAMPCA.GENERAL_HEADER_SIZE];
+            System.arraycopy(data, 0, newdata, 0, data.length);
+            this.data = newdata;
+        }else if(data.length > (SAMPCA.MAX_PACKET_SIZE - SAMPCA.GENERAL_HEADER_SIZE)){
+            throw new ArrayTooLongException("Data can be a maximum of "+(SAMPCA.MAX_PACKET_SIZE - SAMPCA.GENERAL_HEADER_SIZE)+" bytes long.");
         }else{
             this.data = data;
         }
