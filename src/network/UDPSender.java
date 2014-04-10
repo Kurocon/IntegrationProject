@@ -78,7 +78,7 @@ public class UDPSender implements Sender, Runnable {
 
     public void sendPacket(byte[] packet) {
         // Encrypt data!
-        this.crypto.encryptData(packet);
+        //this.crypto.encryptData(packet);
         DatagramPacket sendPacket = new DatagramPacket(packet, packet.length, this.group, this.port);
         this.send(sendPacket);
     }
