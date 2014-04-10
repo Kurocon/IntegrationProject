@@ -44,7 +44,8 @@ public class PacketBuilder {
     public PacketBuilder(){
         this.hopcount = new byte[]{0x0F};
         this.version = new byte[]{2};
-        this.timestamp = ByteBuffer.allocate(4).putInt(Timestamp.getCurrentTimeAsInt()).array();
+        this.timestamp = ByteBuffer.allocate(8).putLong(Timestamp.getCurrentTimeAsLong()).array();
+        this.reserved = new byte[]{0x00,0x00};
     }
 
     public void setSourceAddress(InetAddress i){
@@ -80,7 +81,7 @@ public class PacketBuilder {
     }
 
     public void setReserved(byte[] reserved){
-        if(reserved.length != 4){
+        if(reserved.length != 2){
             throw new WrongArrayLengthException("Reserved must be 4 bytes long.");
         }else{
             this.reserved = reserved;
@@ -97,7 +98,7 @@ public class PacketBuilder {
             System.arraycopy(data, 0, newdata, 0, data.length);
             this.data = newdata;
         }else if(data.length > 1000){
-            throw new ArrayTooLongException("Data can be a maximum of 1008 bytes long.");
+            throw new ArrayTooLongException("Data can be a maximum of 1000 bytes long.");
         }else{
             this.data = data;
         }
@@ -107,7 +108,8 @@ public class PacketBuilder {
 
     public byte[] getPacket(){
         byte[] header = this.getHeader();
-        return this.concatByteArrays(header, this.data);
+        byte[] packet = this.concatByteArrays(header, this.data);
+        return packet;
     }
 
     private byte[] getHeader(){

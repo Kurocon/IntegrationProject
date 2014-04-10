@@ -12,6 +12,10 @@ public class DataBuilder {
     private byte[] dataType;
     private byte[] dataLength;
 
+    public DataBuilder(){
+        this.dataLength = new byte[]{0x00, 0x00};
+    }
+
     public void setDataType(byte[] dataType){
         if(dataType.length != 2){
             throw new WrongArrayLengthException("DataType must be 2 bytes long.");
