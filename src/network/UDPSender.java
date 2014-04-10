@@ -38,32 +38,10 @@ public class UDPSender implements Sender, Runnable {
         LOGGER.log(Level.INFO, "Sender is ready to send!");
 
         while(should_run){
-
-            String sentence = null;
             try {
-                sentence = inFromUser.readLine();
-            } catch (IOException e) {
-                LOGGER.log(Level.WARNING, "Could not read from stdin! [" + e.getMessage() + "]");
-            }
-
-            if(sentence != null && sentence.equals("/exit")){
-                this.close();
-            }
-
-            if(sentence != null){
-                sendData = sentence.getBytes();
-
-                // Encrypt data!
-                this.crypto.encryptData(this.sendData);
-
-                sendPacket = new DatagramPacket(sendData, sendData.length, this.group, this.port);
-
-                try {
-                    this.socket.send(sendPacket);
-                } catch (IOException e) {
-                    LOGGER.log(Level.WARNING, "Could not send message to client! [" + e.getMessage() + "]");
-                    e.printStackTrace();
-                }
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                LOGGER.log(Level.WARNING, "Thread interrupted. ["+e.getMessage()+"]");
             }
         }
     }
@@ -84,5 +62,20 @@ public class UDPSender implements Sender, Runnable {
 
     public void setCrypto(Security crypto) {
         this.crypto = crypto;
+    }
+
+    public void send(DatagramPacket p){
+        try {
+            this.socket.send(p);
+        } catch (IOException e) {
+            LOGGER.log(Level.WARNING, "Could not send message to client! [" + e.getMessage() + "]");
+        }
+    }
+
+    public void sendPacket(byte[] packet) {
+        // Encrypt data!
+        this.crypto.encryptData(packet);
+        DatagramPacket sendPacket = new DatagramPacket(packet, packet.length, this.group, this.port);
+        this.send(sendPacket);
     }
 }
