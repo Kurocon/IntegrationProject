@@ -11,6 +11,7 @@ import java.net.InetAddress;
 public interface User {
 
     public void setName(String name);
+    public void setHostname(String hostname);
     public void setIP(InetAddress ip);
     public void setPort(int port);
     public void logChatMessage(String msg);
@@ -18,6 +19,7 @@ public interface User {
     public void setLastSeen(long currentTimeAsLong);
 
     public String getName();
+    public String getHostname();
     public InetAddress getIP();
     public int getPort();
     public long getLastSeen();

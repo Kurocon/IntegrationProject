@@ -26,6 +26,11 @@ public class UDPUser implements User {
     }
 
     @Override
+    public void setHostname(String hostname) {
+        this.hostname = hostname;
+    }
+
+    @Override
     public void setIP(InetAddress ip) {
         this.ip=ip;
     }
@@ -53,6 +58,11 @@ public class UDPUser implements User {
     @Override
     public String getName() {
         return this.name;
+    }
+
+    @Override
+    public String getHostname() {
+        return this.hostname;
     }
 
     @Override
