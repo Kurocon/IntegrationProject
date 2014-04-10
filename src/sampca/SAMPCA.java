@@ -7,9 +7,14 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import gui.CaUI;
+import gui.MainUI;
 import network.Security;
 import network.UDPListener;
 import network.UDPSender;
+import protocol.ChatBuilder;
+import protocol.DataBuilder;
+import protocol.Datatype;
+import protocol.PacketBuilder;
 
 /**
  * Main class to start SAMPCA.
@@ -30,6 +35,7 @@ public class SAMPCA {
     private String username;
     private String password;
     private NetworkInterface iface;
+    private InetAddress iface_addr;
 
     private Security crypto;
 
@@ -44,7 +50,8 @@ public class SAMPCA {
     public boolean finished = false;
 
     public static void main(String[] args){
-        new SAMPCA(5555, "228.133.102.88", "Kurocon", "testpassword");
+        //new SAMPCA(5555, "228.133.102.88", "Kurocon", "testpassword");
+        new MainUI();
     }
 
     public SAMPCA(int port, String ip, String username, String password){
@@ -97,6 +104,29 @@ public class SAMPCA {
             e.printStackTrace();
         }
 
+        Enumeration<InetAddress> iface_addrs = this.iface.getInetAddresses();
+        InetAddress iface_addr= iface_addrs.nextElement();
+        while((iface_addr.getHostAddress().startsWith("fe80:") || iface_addr.getHostAddress().startsWith("2001:")) && iface_addrs.hasMoreElements()){
+            this.iface_addr = iface_addrs.nextElement();
+        }
+
+        LOGGER.log(Level.INFO, "-- Current configuration: --");
+        LOGGER.log(Level.INFO, "ip="+this.ip);
+        LOGGER.log(Level.INFO, "port="+this.port);
+        LOGGER.log(Level.INFO, "username="+this.username);
+        LOGGER.log(Level.INFO, "password="+this.password);
+        LOGGER.log(Level.INFO, "interface="+this.iface.getName());
+        LOGGER.log(Level.INFO, "interface_ip="+this.iface_addr.getHostAddress());
+        LOGGER.log(Level.INFO, "groupip="+this.group.getHostAddress());
+        /*
+    private String ip;
+    private int port;
+    private String username;
+    private String password;
+    private NetworkInterface iface;
+    private InetAddress group;
+         */
+
         this.startListener();
         this.startSender();
 
@@ -121,6 +151,30 @@ public class SAMPCA {
 
     private void openChatGui(){
         this.chatGui = new CaUI(this);
+    }
+
+    public void sendMessage(String msg){
+
+    }
+
+    public void sendMessage(String msg, InetAddress destination){
+        ChatBuilder b = new ChatBuilder();
+        b.setMessage(msg);
+        PacketBuilder pb = new PacketBuilder();
+        pb.setSourceAddress(this.iface_addr);
+        pb.setDestinationAddress(destination);
+        pb.setDataType(Datatype.CHAT_MESSAGE);
+        pb.setData(b);
+        byte[] packet = pb.getPacket();
+        this.sender.sendPacket(packet);
+    }
+
+    public void stop(){
+
+    }
+
+    public void sendFile(String filename, byte[] data){
+
     }
 
     /*
