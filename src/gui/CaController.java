@@ -79,7 +79,7 @@ public class CaController implements ActionListener {
 			if (!this.view.getMessageField().getText().isEmpty()) {
 				String message = this.view.getMessageField().getText();
 				if(true){
-					//TODO is het een public message?
+					//Public message
 					int it = 0;
 					while((it < message.length()) && (it + 1000 < message.length())){
 						client.sendPublicMessage(message.substring(it, it+999));
@@ -89,6 +89,7 @@ public class CaController implements ActionListener {
 					
 					
 				}else{
+					//private message
 					int it = 0;
 					while((it < message.length()) && (it + 996 < message.length())){
 //						client.sendPrivateMessage(message.substring(it, it+995), InetAddress);
@@ -97,6 +98,10 @@ public class CaController implements ActionListener {
 //					client.sendPrivateMessage(message.substring(it, message.length() - it - 1), InetAddress);
 				}
 			}
+			this.view.getMessageField().setText("");
+
 		}
+        
+        
 	}
 }
