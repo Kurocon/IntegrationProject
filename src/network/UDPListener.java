@@ -76,4 +76,12 @@ public class UDPListener implements Listener, Runnable {
     public void setCrypto(Security crypto) {
         this.crypto = crypto;
     }
+    
+    public SAMPCA getSAMPCA(){
+    	return this.sampca;
+    }
+    
+    public UDPPacketHandler getHandler(){
+    	return this.handler;
+    }
 }

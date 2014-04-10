@@ -218,6 +218,9 @@ public class SAMPCA {
         return null;
     }
 
+    public int getPort(){
+    	return this.port;
+    }
     /*
 
     SAMPCA Hooks:

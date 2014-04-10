@@ -1,6 +1,8 @@
 package protocol;
 
+import protocol.parsers.BroadcastMessageParser;
 import network.UDPPacketHandler;
+import network.User;
 
 /**
  * Protocol implementation
@@ -25,6 +27,14 @@ public class WHASProtocol implements Protocol {
 
     @Override
     public void broadcast_message(PacketParser data) {
+    	BroadcastMessageParser bmp = new BroadcastMessageParser(data.getData());
+    	User u = this.handler.getListener().getSAMPCA().getUser(bmp.getHost());
+    	u.setName(bmp.getNick());
+    	u.setHostname(bmp.getHost());
+    	u.setIP(data.getSourceAddress());
+    	u.setPort(this.handler.getListener().getSAMPCA().getPort());
+    	u.setLastSeen(Timestamp.getCurrentTimeAsLong());
+    	this.handler.getListener().getSAMPCA().addUser(u);
 
     }
 
