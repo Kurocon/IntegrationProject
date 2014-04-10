@@ -11,6 +11,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 
 import java.io.IOException;
+import java.net.InetAddress;
 
 import java.util.ArrayList;
 import java.util.Observable;
@@ -73,26 +74,6 @@ public class CaUI extends Observable implements Observer {
 	 */
 	public JFrame frame;
 	/**
-	 * . Variable to store the message field of the chat
-	 */
-	private JTextField messageField;
-	/**
-	 * . Variable to store the button to join a game
-	 */
-	private JButton btnJoinGame;
-	/**
-	 * . Variable to store the button to join a game
-	 */
-	private JButton btnJoinGamePC;
-	/**
-	 * . Variable to store the button to create a game
-	 */
-	private JButton btnCreateGame;
-	/**
-	 * . Variable to store the button to send a message
-	 */
-	private JButton btnSend;
-	/**
 	 * . Variable to store the JTree which contains all connectedPlayers
 	 */
 	private JTree connectedPlayers;
@@ -123,7 +104,7 @@ public class CaUI extends Observable implements Observer {
 	public DefaultMutableTreeNode treeRoot;
 	public DefaultMutableTreeNode mainRoot;
 
-	public String selectedPlayer = "";
+	public String nickName = "";
 	private JLabel lblUsername;
 
 	/**
@@ -184,40 +165,27 @@ public class CaUI extends Observable implements Observer {
 		contentPane.setDividerSize(1);
 		wrapperPane.setRightComponent(contentPane);
 
-		JSplitPane chatPane = new JSplitPane();
-		chatPane.setResizeWeight(1.0);
-		chatPane.setOrientation(JSplitPane.VERTICAL_SPLIT);
-		chatPane.setEnabled(false);
-		chatPane.setDividerSize(1);
-		contentPane.setRightComponent(chatPane);
-
+		
+		JTextArea transferTextArea = new JTextArea();
+		transferTextArea.setEditable(false);
+		transferTextArea.setAutoscrolls(true);
+		transferTextArea.setFocusable(false);
+		transferTextArea.setLineWrap(true);
+		
 		tabs = new JTabbedPane();
-		tabs.addTab(MAIN_TAB, serverIcon, newTextArea(),
+		tabs.addTab(MAIN_TAB, serverIcon, new PaneTab(nickName, null, this.controller),
 				MAIN_TAB_HINT);
 		tabs.setMnemonicAt(0, keyEvents[0]);
-		tabs.addTab(FILE_TAB, transferIcon, newTextArea(),
+		tabs.addTab(FILE_TAB, transferIcon, transferTextArea,
 				FILE_TAB_HINT);
 		tabs.setMnemonicAt(1, keyEvents[1]);
 		//addTab("someone");
-		addTab(tabs, new JTextArea(), "someone", tabIcon);
-		addTab(tabs, new JTextArea(), "Kurocon", tabIcon);
-		addTab(tabs, new JTextArea(), "Someone else", tabIcon);
+		addTab(tabs, new PaneTab(nickName, null, this.controller), "someone", tabIcon);
+		addTab(tabs, new PaneTab(nickName, null, this.controller), "Kurocon", tabIcon);
+		addTab(tabs, new PaneTab(nickName, null, this.controller), "Someone else", tabIcon);
 		
-		//addTab("Kurocon");
-		chatPane.setLeftComponent(tabs);
-
-		JSplitPane messagePane = new JSplitPane();
-		messagePane.setResizeWeight(1.0);
-		messagePane.setDividerSize(1);
-		chatPane.setRightComponent(messagePane);
-
-		messageField = new JTextField();
-		messageField.setColumns(10);
-		messagePane.setLeftComponent(messageField);
-
-		btnSend = new JButton(CaUI.BTN_SEND);
-		messagePane.setRightComponent(btnSend);
-
+		contentPane.setRightComponent(tabs);
+		
 		JSplitPane menuPane = new JSplitPane();
 		menuPane.setEnabled(false);
 		menuPane.setDividerSize(1);
@@ -283,7 +251,6 @@ public class CaUI extends Observable implements Observer {
 		frame.setSize(1000, 800);
 		frame.setLocationRelativeTo(null);
 		this.controller = new CaController(this, client);
-		btnSend.addActionListener(this.controller);
 	}
 
 	private ImageIcon addIcon(String image){
@@ -299,23 +266,14 @@ public class CaUI extends Observable implements Observer {
 		return new ImageIcon(img);
 	}
 	
-	private JTextArea newTextArea(){
-		JTextArea tempTextArea = new JTextArea();
-		tempTextArea.setEditable(false);
-		tempTextArea.setAutoscrolls(true);
-		tempTextArea.setFocusable(false);
-		tempTextArea.setLineWrap(true);
-		return tempTextArea;
-	}
-	
-	private void addTab(final JTabbedPane tabbedPane, final JComponent c, final String nickname,
+	private void addTab(final JTabbedPane tabbedPane, final PaneTab paneTab, final String nickname,
 	          final Icon icon){
 		ImageIcon closeIcon = addIcon("close.png");	
 		ImageIcon closeIcon2 = addIcon("close2.png");	
-		tabs.addTab(null, c);
+		tabs.addTab(null, paneTab);
 		tabs.setMnemonicAt(this.nextKeyEvents, keyEvents[this.nextKeyEvents]);
 		this.nextKeyEvents++;
-	    int pos = tabbedPane.indexOfComponent(c);
+	    int pos = tabbedPane.indexOfComponent(paneTab);
 
 	    // Create a FlowLayout that will space things 5px apart
 	    FlowLayout f = new FlowLayout(FlowLayout.CENTER, 5, 0);
@@ -362,13 +320,13 @@ public class CaUI extends Observable implements Observer {
 	      public void actionPerformed(ActionEvent e) {
 	        // The component parameter must be declared "final" so that it can be
 	        // referenced in the anonymous listener class like this.
-	        tabbedPane.remove(c);
+	        tabbedPane.remove(paneTab);
 	      }
 	    };
 	    btnClose.addActionListener(listener);
 
 	    // Optionally bring the new tab to the front
-	    tabbedPane.setSelectedComponent(c);
+	    tabbedPane.setSelectedComponent(paneTab);
 
 	    //-------------------------------------------------------------
 	    // Bonus: Adding a <Ctrl-W> keystroke binding to close the tab
@@ -376,7 +334,7 @@ public class CaUI extends Observable implements Observer {
 	    AbstractAction closeTabAction = new AbstractAction() {
 	      @Override
 	      public void actionPerformed(ActionEvent e) {
-	        tabbedPane.remove(c);
+	        tabbedPane.remove(paneTab);
 	      }
 	    };
 
@@ -385,13 +343,13 @@ public class CaUI extends Observable implements Observer {
 
 	    // Get the appropriate input map using the JComponent constants.
 	    // This one works well when the component is a container. 
-	    InputMap inputMap = c.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+	    InputMap inputMap = paneTab.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
 
 	    // Add the key binding for the keystroke to the action name
 	    inputMap.put(controlW, "closeTab");
 
 	    // Now add a single binding for the action name to the anonymous action
-	    c.getActionMap().put("closeTab", closeTabAction);
+	    paneTab.getActionMap().put("closeTab", closeTabAction);
 		
 	}
 	
@@ -431,52 +389,7 @@ public class CaUI extends Observable implements Observer {
 			}
 		}
 	}
-
-	/**
-	 * . Method to return the messageField
-	 * 
-	 * @return messageField - field containing chat message
-	 */
-	public JTextField getMessageField() {
-		return messageField;
-	}
-
-	/**
-	 * . Method to return the button to join a game
-	 * 
-	 * @return btnJoinGame - "Join game" button
-	 */
-	public JButton getJoinGameButton() {
-		return btnJoinGame;
-	}
-
-	/**
-	 * . Method to return the button to join a game as pc
-	 * 
-	 * @return btnJoinGame - "Join game" button
-	 */
-	public JButton getJoinGamePCButton() {
-		return btnJoinGamePC;
-	}
-
-	/**
-	 * . Method to return the button to create a game
-	 * 
-	 * @return btnCreateGame - "Create game" button
-	 */
-	public JButton getCreateGameButton() {
-		return btnCreateGame;
-	}
-
-	/**
-	 * . Method to return the button to send a chat message
-	 * 
-	 * @return btnSend - "Send" button
-	 */
-	public JButton getSendButton() {
-		return btnSend;
-	}
-
+	
 	/**
 	 * . Method to return the JTree containing all connected players
 	 * 
@@ -507,12 +420,7 @@ public class CaUI extends Observable implements Observer {
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
-				try {
-					CaUI window = new CaUI(new SAMPCA(5555, "228.133.102.88", "Kurocon", "password"));
-					window.frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
+				new SAMPCA(5555, "228.133.102.88", "Kurocon", "password");
 			}
 		});
 	}

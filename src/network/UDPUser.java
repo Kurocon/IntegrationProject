@@ -25,10 +25,6 @@ public class UDPUser implements User {
         this.name = name;
     }
     
-    public void setHostname(String name){
-    	this.hostname = name;
-    }
-
     @Override
     public void setHostname(String hostname) {
         this.hostname = hostname;
@@ -64,10 +60,6 @@ public class UDPUser implements User {
         return this.name;
     }
     
-    public String getHostname() {
-    	return this.hostname;
-    }
-
     @Override
     public String getHostname() {
         return this.hostname;
