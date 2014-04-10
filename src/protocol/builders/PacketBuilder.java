@@ -109,7 +109,7 @@ public class PacketBuilder {
     }
 
     public void setData(byte[] data){
-        byte[] length = this.dataBuilder.getDataLength();
+        byte[] length = ByteBuffer.allocate(2).putShort((short) data.length).array();
 
         if(data.length < (SAMPCA.MAX_PACKET_SIZE - SAMPCA.GENERAL_HEADER_SIZE)){
             byte[] newdata = new byte[SAMPCA.MAX_PACKET_SIZE - SAMPCA.GENERAL_HEADER_SIZE];
