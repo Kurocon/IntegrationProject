@@ -44,6 +44,7 @@ public class Security {
 			this.cipher.init(Cipher.ENCRYPT_MODE, this.key);
 			byte[] encryptedData = this.cipher.doFinal(msg);
 			LOGGER.log(Level.INFO, "Encrypting packet");
+
 			return encryptedData;
 		} catch (InvalidKeyException e) {
 			e.printStackTrace();
