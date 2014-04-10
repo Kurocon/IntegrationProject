@@ -21,7 +21,7 @@ public class ChatBuilder extends DataBuilder{
 	}
 	
 	public byte[] getData(){
-		super.setDataLength(ByteBuffer.allocate(2).putInt(this.message.length).array());
+		super.setDataLength(ByteBuffer.allocate(2).putShort((short) this.message.length).array());
 		super.setData(this.getMessage());
 		return super.getData();
 	}

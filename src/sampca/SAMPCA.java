@@ -179,8 +179,10 @@ public class SAMPCA {
         this.chatGui = new CaUI(this);
     }
 
-    public void sendMessage(String msg){
-        this.sendMessage(msg, this.group);
+    public void sendPublicMessage(String msg){
+    	ChatBuilder cb = new ChatBuilder();
+        cb.setMessage(msg);
+        this.sendBuilder(cb, this.group);
     }
 
     public void sendBuilder(DataBuilder b, InetAddress destination){
@@ -193,10 +195,11 @@ public class SAMPCA {
         this.sender.sendPacket(packet);
     }
 
-    public void sendMessage(String msg, InetAddress destination){
-        ChatBuilder b = new ChatBuilder();
-        b.setMessage(msg);
-        this.sendBuilder(b, destination);
+    public void sendPrivateMessage(String msg, InetAddress destination){
+        PrivateChatBuilder pcb = new PrivateChatBuilder();
+        pcb.setMessage(msg);
+        pcb.setDestination(destination);
+        this.sendBuilder(pcb, destination);
     }
 
     public void sendBroadcastMessage() {
