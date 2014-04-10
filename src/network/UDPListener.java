@@ -14,7 +14,6 @@ import java.util.logging.Logger;
 public class UDPListener implements Listener, Runnable {
 
     private static final Logger LOGGER = Logger.getLogger(UDPListener.class.getName());
-    private static final int PACKET_SIZE = 1024;
 
     private boolean should_run = true;
 
@@ -25,7 +24,7 @@ public class UDPListener implements Listener, Runnable {
 
     private SAMPCA sampca = null;
 
-    private byte[] receiveData = new byte[PACKET_SIZE];
+    private byte[] receiveData = new byte[SAMPCA.PACKET_SIZE_AFTER_ENCRYPTION];
     private Security crypto;
 
     public UDPListener(SAMPCA s, MulticastSocket socket){
@@ -40,7 +39,7 @@ public class UDPListener implements Listener, Runnable {
 
         while(should_run){
 
-            this.receiveData = new byte[PACKET_SIZE];
+            this.receiveData = new byte[SAMPCA.PACKET_SIZE_AFTER_ENCRYPTION];
 
             this.receivePacket = new DatagramPacket(receiveData, receiveData.length);
 
@@ -56,8 +55,8 @@ public class UDPListener implements Listener, Runnable {
 
             // Decryption!
             byte[] data = receivePacket.getData();
-            //this.crypto.decryptData(data);
-            //this.receivePacket = new DatagramPacket(data, data.length);
+            this.crypto.decryptData(data);
+            this.receivePacket = new DatagramPacket(data, data.length);
 
             LOGGER.log(Level.INFO, "Received data from "+IPAddress.getHostName()+":"+port);
 

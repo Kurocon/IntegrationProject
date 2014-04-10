@@ -21,10 +21,13 @@ import protocol.*;
 public class SAMPCA {
 
     private static final Logger LOGGER = Logger.getLogger(SAMPCA.class.getName());
-
 	public static final String PROGRAM_NAME = "SAMPCA";
-    private Timer timer;
+    public static final int MAX_PACKET_SIZE                 = 1024;
+    public static final int PACKET_SIZE_AFTER_ENCRYPTION    = 1024;
+    public static final int GENERAL_HEADER_SIZE             = 24;
 
+
+    private Timer timer;
     private UDPListener listener;
     private UDPSender sender;
 
@@ -94,22 +97,6 @@ public class SAMPCA {
             this.iface_addr = iface_addrs.nextElement();
         }
 
-        User main_channel = new UDPUser();
-        main_channel.setName("Educafé");
-        main_channel.setIP(this.group);
-        main_channel.setPort(this.port);
-        main_channel.setHostname("main_room");
-        main_channel.setLastSeen(Timestamp.getCurrentTimeAsLong());
-        this.addUser(main_channel);
-
-        this.ownUser = new UDPUser();
-        this.ownUser.setName(this.username);
-        this.ownUser.setIP(this.iface_addr);
-        this.ownUser.setPort(this.port);
-        this.ownUser.setHostname(this.iface_addr.getHostName());
-        this.ownUser.setLastSeen(Timestamp.getCurrentTimeAsLong());
-        this.addUser(this.ownUser);
-
         try {
             this.socket = new MulticastSocket(this.port);
         } catch (IOException e) {
@@ -128,6 +115,22 @@ public class SAMPCA {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        User main_channel = new UDPUser();
+        main_channel.setName("Educafé");
+        main_channel.setIP(this.group);
+        main_channel.setPort(this.port);
+        main_channel.setHostname("main_room");
+        main_channel.setLastSeen(Timestamp.getCurrentTimeAsLong());
+        this.addUser(main_channel);
+
+        this.ownUser = new UDPUser();
+        this.ownUser.setName(this.username);
+        this.ownUser.setIP(this.iface_addr);
+        this.ownUser.setPort(this.port);
+        this.ownUser.setHostname(this.iface_addr.getHostName());
+        this.ownUser.setLastSeen(Timestamp.getCurrentTimeAsLong());
+        this.addUser(this.ownUser);
 
         LOGGER.log(Level.INFO, "-- Current configuration: --");
         LOGGER.log(Level.INFO, "ip="+this.ip);
@@ -187,8 +190,20 @@ public class SAMPCA {
         PacketBuilder pb = new PacketBuilder();
         pb.setSourceAddress(this.iface_addr);
         pb.setDestinationAddress(destination);
-        pb.setDataType(Datatype.CHAT_MESSAGE);
+        pb.setDataType(b.getDataType());
         pb.setData(b);
+        byte[] packet = pb.getPacket();
+        this.sender.sendPacket(packet);
+    }
+
+    public void forwardPacket(PacketParser pp){
+        PacketBuilder pb = new PacketBuilder();
+        pb.setSourceAddress(pp.getSourceAddress());
+        pb.setDestinationAddress(pp.getDestinationAddress());
+        pb.setDataType(pp.getDataType());
+        pb.setData(pp.getData());
+        int newHopCount = pp.getHopcount()-1;
+        pb.setHopcount(new byte[]{(byte) newHopCount});
         byte[] packet = pb.getPacket();
         this.sender.sendPacket(packet);
     }
@@ -232,9 +247,12 @@ public class SAMPCA {
 
     public void removeUser(User u){
         if(!u.getIP().equals(this.group)){
+            LOGGER.log(Level.INFO, "Removing user "+u.getName()+" from connected users.");
             if(this.users.contains(u)){
                 this.users.remove(u);
             }
+        }else{
+            LOGGER.log(Level.INFO, "Someone tried to remove Educafe from users. Attempt blocked.");
         }
     }
 
