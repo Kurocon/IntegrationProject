@@ -75,12 +75,28 @@ public class CaController implements ActionListener {
 //			this.client.clientInfo.joiningGame = creator;
 //			this.client.clientInfo.joinAsComputer = true;
 //		} else 
-//        if (e.getSource() == this.view.getSendButton()) {
-//			if (this.view.getMessageField() != null) {
-//				String message = this.view.getMessageField().getText();
-//				this.client.getServerHandler().sendCommand(
-//						ServerProtocol.MESSAGE, new String[] { message });
-//			}
-//		}
+        if (e.getSource() == this.view.getSendButton()) {
+			if (!this.view.getMessageField().getText().isEmpty()) {
+				String message = this.view.getMessageField().getText();
+				if(true){
+					//TODO is het een public message?
+					int it = 0;
+					while((it < message.length()) && (it + 1000 < message.length())){
+						client.sendPublicMessage(message.substring(it, it+999));
+						it = it+1000;
+					}
+					client.sendPublicMessage(message.substring(it, message.length() - it - 1));
+					
+					
+				}else{
+					int it = 0;
+					while((it < message.length()) && (it + 996 < message.length())){
+//						client.sendPrivateMessage(message.substring(it, it+995), InetAddress);
+						it = it+996;
+					}
+//					client.sendPrivateMessage(message.substring(it, message.length() - it - 1), InetAddress);
+				}
+			}
+		}
 	}
 }

@@ -1,5 +1,6 @@
 package protocol;
 
+import java.net.InetAddress;
 import java.nio.ByteBuffer;
 
 public class PrivateChatBuilder extends DataBuilder{
@@ -12,8 +13,8 @@ public class PrivateChatBuilder extends DataBuilder{
 		super.setDataType(Datatype.PRIVATE_MESSAGE);
 	}
 	
-	public void setDestination(byte[] dest){
-		this.destination = dest;
+	public void setDestination(InetAddress dest){
+		this.destination = dest.getAddress();;
 	}
 	
 	public byte[] getDestination(){
@@ -29,7 +30,7 @@ public class PrivateChatBuilder extends DataBuilder{
 	}
 	
 	public byte[] getData(){
-		super.setDataLength(ByteBuffer.allocate(2).putInt(this.message.length).array());
+		super.setDataLength(ByteBuffer.allocate(2).putShort((short) this.message.length).array());
 		super.setData(concatByteArrays(this.getDestination(), this.getMessage()));
 		return super.getData();
 		
