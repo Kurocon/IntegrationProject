@@ -34,6 +34,8 @@ target/
 # Adhoc setups so the other users configs are not overwritten every merge.
 /adhoc_setup
 /adhoc_desetup
+/adhoc_setup~
+/adhoc_desetup~
 
 
 ######################
