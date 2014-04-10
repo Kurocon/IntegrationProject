@@ -24,14 +24,7 @@ public class UDPUser implements User {
     public void setName(String name) {
         this.name = name;
     }
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> kevin
 
-=======
-    
->>>>>>> jeroen
     @Override
     public void setHostname(String hostname) {
         this.hostname = hostname;
@@ -66,14 +59,7 @@ public class UDPUser implements User {
     public String getName() {
         return this.name;
     }
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> kevin
 
-=======
-    
->>>>>>> jeroen
     @Override
     public String getHostname() {
         return this.hostname;
