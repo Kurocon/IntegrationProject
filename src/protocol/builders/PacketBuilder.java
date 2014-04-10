@@ -1,7 +1,8 @@
-package protocol;
+package protocol.builders;
 
 import exceptions.ArrayTooLongException;
 import exceptions.WrongArrayLengthException;
+import protocol.Timestamp;
 import sampca.SAMPCA;
 
 import java.net.InetAddress;

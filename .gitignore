@@ -19,6 +19,7 @@ IntegrationProject.iml
 # Directories #
 /build/
 /bin/
+/out/
 target/
 
 # OS Files #

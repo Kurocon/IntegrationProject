@@ -1,4 +1,4 @@
-package includes;
+package gui;
 
 import javax.swing.JOptionPane;
 

@@ -1,4 +1,6 @@
-package protocol;
+package protocol.builders;
+
+import protocol.Datatype;
 
 import java.nio.ByteBuffer;
 

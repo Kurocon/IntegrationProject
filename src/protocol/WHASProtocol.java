@@ -3,6 +3,7 @@ package protocol;
 import protocol.parsers.BroadcastMessageParser;
 import network.UDPPacketHandler;
 import network.User;
+import protocol.parsers.PacketParser;
 
 /**
  * Protocol implementation

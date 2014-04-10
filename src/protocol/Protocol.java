@@ -1,5 +1,7 @@
 package protocol;
 
+import protocol.parsers.PacketParser;
+
 /**
  * Protocol interface
  * Created by kevin on 4/7/14.

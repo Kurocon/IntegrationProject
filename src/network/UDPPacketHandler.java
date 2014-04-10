@@ -1,6 +1,7 @@
 package network;
 
 import protocol.*;
+import protocol.parsers.PacketParser;
 
 import java.net.DatagramPacket;
 import java.net.InetAddress;

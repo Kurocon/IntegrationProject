@@ -1,4 +1,4 @@
-package protocol;
+package protocol.builders;
 
 import exceptions.WrongArrayLengthException;
 

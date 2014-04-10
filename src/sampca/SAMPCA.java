@@ -12,6 +12,8 @@ import gui.CaUI;
 import gui.MainUI;
 import network.*;
 import protocol.*;
+import protocol.builders.*;
+import protocol.parsers.PacketParser;
 
 /**
  * Main class to start SAMPCA.
@@ -188,6 +190,13 @@ public class SAMPCA {
         this.sendBuilder(cb, this.group);
     }
 
+    public void sendPrivateMessage(String msg, InetAddress destination){
+        PrivateChatBuilder pcb = new PrivateChatBuilder();
+        pcb.setMessage(msg);
+        pcb.setDestination(destination);
+        this.sendBuilder(pcb, destination);
+    }
+
     public void sendBuilder(DataBuilder b, InetAddress destination){
         PacketBuilder pb = new PacketBuilder();
         pb.setSourceAddress(this.iface_addr);
@@ -198,13 +207,6 @@ public class SAMPCA {
         this.sender.sendPacket(packet);
     }
 
-<<<<<<< HEAD
-    public void sendPrivateMessage(String msg, InetAddress destination){
-        PrivateChatBuilder pcb = new PrivateChatBuilder();
-        pcb.setMessage(msg);
-        pcb.setDestination(destination);
-        this.sendBuilder(pcb, destination);
-=======
     public void forwardPacket(PacketParser pp){
         PacketBuilder pb = new PacketBuilder();
         pb.setSourceAddress(pp.getSourceAddress());
@@ -215,13 +217,6 @@ public class SAMPCA {
         pb.setHopcount(new byte[]{(byte) newHopCount});
         byte[] packet = pb.getPacket();
         this.sender.sendPacket(packet);
-    }
-
-    public void sendMessage(String msg, InetAddress destination){
-        ChatBuilder b = new ChatBuilder();
-        b.setMessage(msg);
-        this.sendBuilder(b, destination);
->>>>>>> kevin
     }
 
     public void sendBroadcastMessage() {

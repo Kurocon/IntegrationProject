@@ -11,7 +11,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 
 import java.io.IOException;
-import java.net.InetAddress;
 
 import java.util.ArrayList;
 import java.util.Observable;
@@ -33,7 +32,6 @@ import javax.swing.JSplitPane;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
-import javax.swing.JTextField;
 import javax.swing.JButton;
 import javax.swing.KeyStroke;
 import javax.swing.event.TreeSelectionEvent;
@@ -44,7 +42,6 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeSelectionModel;
 
-import includes.Popup;
 import sampca.SAMPCA;
 
 import com.jgoodies.forms.layout.FormSpecs;
