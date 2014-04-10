@@ -2,6 +2,7 @@ package network;
 
 import protocol.Datatype;
 import protocol.PacketParser;
+import protocol.Protocol;
 import protocol.WHASProtocol;
 
 import java.net.DatagramPacket;
@@ -120,5 +121,13 @@ end if
                 break;
         }
 
+    }
+    
+    public UDPListener getListener(){
+    	return this.listener;
+    }
+    
+    public WHASProtocol getProtocol(){
+    	return this.protocol;
     }
 }
