@@ -31,6 +31,15 @@ public class CaController implements ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
+		int i = view.tabs.getSelectedIndex();
+        String tabName;
+        if (i != -1) {
+        	tabName = view.tabs.getTitleAt(i);
+        }else{
+        	tabName = "ERROR TAB NOT FOUND";
+        }
+        view.frame.setTitle(SAMPCA.PROGRAM_NAME + " - " + tabName  +" - " + CaUI.WINDOW_TITLE);
+        
 //		if (e.getSource() == this.view.getCreateGameButton()) {
 //			LOGGER.log(Level.INFO, "Creating game.");
 //			this.client.getServerHandler().sendCommand(
@@ -65,7 +74,8 @@ public class CaController implements ActionListener {
 //					ServerProtocol.JOIN_GAME, new String[] { creator });
 //			this.client.clientInfo.joiningGame = creator;
 //			this.client.clientInfo.joinAsComputer = true;
-//		} else if (e.getSource() == this.view.getSendButton()) {
+//		} else 
+//        if (e.getSource() == this.view.getSendButton()) {
 //			if (this.view.getMessageField() != null) {
 //				String message = this.view.getMessageField().getText();
 //				this.client.getServerHandler().sendCommand(

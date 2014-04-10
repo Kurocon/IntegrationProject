@@ -67,15 +67,16 @@ public class MainUI implements Observer {
 	public static final String BTN_CONNECT = "Connect";
 	public static final String BTN_EXIT = "Exit";
 
-	public static final String LBL_SERVER_IP = "Ad_Hoc IP:";
+	public static final String LBL_SERVER_IP = "Ad-Hoc IP:";
 	public static final String LBL_SERVER_PORT = "Port:";
 	public static final String LBL_USERNAME = "Username:";
+	private static final String LBL_PASSWORD = "Password:";
 
 	public static final String LBL_DEF_First_IP_PART = "228.";
 	public static final String LBL_DEF_SECOND_IP_PART = "133.102.88";
 	public static final String LBL_DEF_PORT = "5555";
 	public static final String LBL_DEF_NICK = "John Doe";
-
+	
 	/**
 	 * Launch the application.
 	 * 
@@ -133,11 +134,15 @@ public class MainUI implements Observer {
 		exitButton = new JButton(MainUI.BTN_EXIT);
 
 		JLabel usernameLabel = new JLabel(MainUI.LBL_USERNAME);
+		JLabel passwordLabel = new JLabel(MainUI.LBL_PASSWORD);
 
 		usernameField = new JTextField();
 		usernameField.setColumns(10);
 		usernameField.setText(LBL_DEF_NICK);
 
+		passwordField = new JPasswordField();
+		passwordField.setColumns(10);
+		
 		this.controller = new MainController(this);
 
 		GroupLayout groupLayoutPanel = new GroupLayout(panel);
@@ -184,21 +189,21 @@ public class MainUI implements Observer {
 																										.addComponent(
 																												serverLabel)
 																										.addGap(10)))
-																		.addGap(15)
+																		.addGap(5)
 																		.addGroup(
 																				groupLayoutPanel
-																						.createParallelGroup(
-																								Alignment.LEADING)
-																						.addComponent(
-																								portField,
-																								GroupLayout.PREFERRED_SIZE,
-																								81,
-																								GroupLayout.PREFERRED_SIZE)
-																						.addComponent(
-																								portLabel,
-																								GroupLayout.PREFERRED_SIZE,
-																								59,
-																								GroupLayout.PREFERRED_SIZE)))
+																				.createParallelGroup(
+																						Alignment.LEADING)
+																				.addComponent(
+																						portField,
+																						GroupLayout.PREFERRED_SIZE,
+																						81,
+																						GroupLayout.PREFERRED_SIZE)
+																				.addComponent(
+																						portLabel,
+																						GroupLayout.PREFERRED_SIZE,
+																						59,
+																						GroupLayout.PREFERRED_SIZE)))
 														.addGroup(
 																groupLayoutPanel
 																		.createSequentialGroup()
@@ -212,7 +217,19 @@ public class MainUI implements Observer {
 																								128,
 																								Short.MAX_VALUE)
 																						.addComponent(
-																								usernameLabel)))
+																								usernameLabel))
+																		.addGap(5)
+																		.addGroup(
+																				groupLayoutPanel
+																						.createParallelGroup(
+																								Alignment.LEADING)
+																						.addComponent(
+																								passwordField,
+																								GroupLayout.DEFAULT_SIZE,
+																								128,
+																								Short.MAX_VALUE)
+																						.addComponent(
+																								passwordLabel)))
 														.addGroup(
 																groupLayoutPanel
 																		.createSequentialGroup()
@@ -286,7 +303,9 @@ public class MainUI implements Observer {
 														.createParallelGroup(
 																Alignment.BASELINE)
 														.addComponent(
-																usernameLabel))
+																usernameLabel)
+														.addComponent(
+																passwordLabel))
 										.addPreferredGap(
 												ComponentPlacement.RELATED)
 										.addGroup(
@@ -295,6 +314,11 @@ public class MainUI implements Observer {
 																Alignment.BASELINE)
 														.addComponent(
 																usernameField,
+																GroupLayout.PREFERRED_SIZE,
+																GroupLayout.DEFAULT_SIZE,
+																GroupLayout.PREFERRED_SIZE)
+														.addComponent(
+																passwordField,
 																GroupLayout.PREFERRED_SIZE,
 																GroupLayout.DEFAULT_SIZE,
 																GroupLayout.PREFERRED_SIZE))
