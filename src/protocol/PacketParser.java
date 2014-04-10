@@ -78,9 +78,19 @@ public class PacketParser {
             this.hopcount = (int) hopcount;
             this.version = (int) version;
             this.dataType = dataType;
-            this.timestamp = ByteBuffer.allocate(8).put(timestamp).getLong();
-            this.dataLength = ByteBuffer.allocate(2).put(dataLength).getInt();
-            this.reserved = ByteBuffer.allocate(2).put(reserved).getInt();
+            ByteBuffer timestampBB = ByteBuffer.allocate(8).put(timestamp);
+            timestampBB.position(0);
+            this.timestamp = timestampBB.getLong();
+            ByteBuffer dataLengthBB = ByteBuffer.allocate(4);
+            dataLengthBB.position(2);
+            dataLengthBB.put(dataLength);
+            dataLengthBB.position(0);
+            this.dataLength = dataLengthBB.getInt();
+            ByteBuffer reservedBB = ByteBuffer.allocate(4);
+            reservedBB.position(2);
+            reservedBB.put(reserved);
+            reservedBB.position(0);
+            this.reserved = reservedBB.getInt();
             this.data = data;
         }
 
