@@ -26,7 +26,7 @@ public class BroadcastMessageBuilder extends DataBuilder{
 	}
 	
 	public byte[] getData(){
-		super.setData(concatByteArrays(getNick(), getData()));
+		super.setData(concatByteArrays(getNick(), getHostname()));
 		return super.getData();
 	}
 }
