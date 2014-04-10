@@ -74,7 +74,8 @@ public class CaController implements ActionListener {
 //					ServerProtocol.JOIN_GAME, new String[] { creator });
 //			this.client.clientInfo.joiningGame = creator;
 //			this.client.clientInfo.joinAsComputer = true;
-//		} else if (e.getSource() == this.view.getSendButton()) {
+//		} else 
+//        if (e.getSource() == this.view.getSendButton()) {
 //			if (this.view.getMessageField() != null) {
 //				String message = this.view.getMessageField().getText();
 //				this.client.getServerHandler().sendCommand(

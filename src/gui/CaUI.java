@@ -6,6 +6,8 @@ import java.awt.Font;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 
 import java.io.IOException;
@@ -18,6 +20,10 @@ import java.util.logging.Logger;
 
 import javax.imageio.ImageIO;
 
+import javax.swing.AbstractAction;
+import javax.swing.BorderFactory;
+import javax.swing.Icon;
+import javax.swing.InputMap;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -28,6 +34,7 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JButton;
+import javax.swing.KeyStroke;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.JTree;
@@ -136,7 +143,8 @@ public class CaUI extends Observable implements Observer {
 	private void initialize() {
 		// Icons
 		ImageIcon serverIcon = addIcon("server.png");
-		ImageIcon tabIcon = addIcon("server.png");
+		ImageIcon tabIcon = addIcon("user.png");
+		ImageIcon transferIcon = addIcon("transfer.png");
 		
 		keyEvents[0] = KeyEvent.VK_1;
 		keyEvents[1] = KeyEvent.VK_2;
@@ -184,14 +192,18 @@ public class CaUI extends Observable implements Observer {
 		contentPane.setRightComponent(chatPane);
 
 		tabs = new JTabbedPane();
-		tabs.addTab(MAIN_TAB, tabIcon, newTextArea(),
+		tabs.addTab(MAIN_TAB, serverIcon, newTextArea(),
 				MAIN_TAB_HINT);
 		tabs.setMnemonicAt(0, keyEvents[0]);
-		tabs.addTab(FILE_TAB, tabIcon, newTextArea(),
+		tabs.addTab(FILE_TAB, transferIcon, newTextArea(),
 				FILE_TAB_HINT);
 		tabs.setMnemonicAt(1, keyEvents[1]);
-		addTab("someone");
-		addTab("Kurocon");
+		//addTab("someone");
+		addTab(tabs, new JTextArea(), "someone", tabIcon);
+		addTab(tabs, new JTextArea(), "Kurocon", tabIcon);
+		addTab(tabs, new JTextArea(), "Someone else", tabIcon);
+		
+		//addTab("Kurocon");
 		chatPane.setLeftComponent(tabs);
 
 		JSplitPane messagePane = new JSplitPane();
@@ -296,12 +308,91 @@ public class CaUI extends Observable implements Observer {
 		return tempTextArea;
 	}
 	
-	private void addTab(String nickname){
-		ImageIcon tabIcon = addIcon("server.png");	
-		tabs.addTab(nickname, tabIcon, newTextArea(),
-				PRIVATE_TAB_HINT + nickname);
+	private void addTab(final JTabbedPane tabbedPane, final JComponent c, final String nickname,
+	          final Icon icon){
+		ImageIcon closeIcon = addIcon("close.png");	
+		ImageIcon closeIcon2 = addIcon("close2.png");	
+		tabs.addTab(null, c);
 		tabs.setMnemonicAt(this.nextKeyEvents, keyEvents[this.nextKeyEvents]);
 		this.nextKeyEvents++;
+	    int pos = tabbedPane.indexOfComponent(c);
+
+	    // Create a FlowLayout that will space things 5px apart
+	    FlowLayout f = new FlowLayout(FlowLayout.CENTER, 5, 0);
+
+	    // Make a small JPanel with the layout and make it non-opaque
+	    JPanel pnlTab = new JPanel(f);
+	    pnlTab.setOpaque(false);
+
+	    // Add a JLabel with title and the left-side tab icon
+	    JLabel lblTitle = new JLabel(nickname);
+	    lblTitle.setIcon(icon);
+
+	    // Create a JButton for the close tab button
+	    JButton btnClose = new JButton();
+	    btnClose.setBorderPainted(false); 
+	    btnClose.setContentAreaFilled(false); 
+	    btnClose.setFocusPainted(false); 
+	    btnClose.setOpaque(false);
+	    // Configure icon and rollover icon for button
+	    btnClose.setRolloverIcon(closeIcon2);
+	    btnClose.setRolloverEnabled(true);
+	    btnClose.setIcon(closeIcon);
+
+	    // Set border null so the button doesn't make the tab too big
+	    btnClose.setBorder(null);
+
+	    // Make sure the button can't get focus, otherwise it looks funny
+	    btnClose.setFocusable(false);
+
+	    // Put the panel together
+	    pnlTab.add(lblTitle);
+	    pnlTab.add(btnClose);
+
+	    // Add a thin border to keep the image below the top edge of the tab
+	    // when the tab is selected
+	    pnlTab.setBorder(BorderFactory.createEmptyBorder(2, 0, 0, 0));
+
+	    // Now assign the component for the tab
+	    tabbedPane.setTabComponentAt(pos, pnlTab);
+
+	    // Add the listener that removes the tab
+	    ActionListener listener = new ActionListener() {
+	      @Override
+	      public void actionPerformed(ActionEvent e) {
+	        // The component parameter must be declared "final" so that it can be
+	        // referenced in the anonymous listener class like this.
+	        tabbedPane.remove(c);
+	      }
+	    };
+	    btnClose.addActionListener(listener);
+
+	    // Optionally bring the new tab to the front
+	    tabbedPane.setSelectedComponent(c);
+
+	    //-------------------------------------------------------------
+	    // Bonus: Adding a <Ctrl-W> keystroke binding to close the tab
+	    //-------------------------------------------------------------
+	    AbstractAction closeTabAction = new AbstractAction() {
+	      @Override
+	      public void actionPerformed(ActionEvent e) {
+	        tabbedPane.remove(c);
+	      }
+	    };
+
+	    // Create a keystroke
+	    KeyStroke controlW = KeyStroke.getKeyStroke("control W");
+
+	    // Get the appropriate input map using the JComponent constants.
+	    // This one works well when the component is a container. 
+	    InputMap inputMap = c.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+
+	    // Add the key binding for the keystroke to the action name
+	    inputMap.put(controlW, "closeTab");
+
+	    // Now add a single binding for the action name to the anonymous action
+	    c.getActionMap().put("closeTab", closeTabAction);
+		
 	}
 	
 	@Override
