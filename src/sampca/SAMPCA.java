@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.*;
 import java.util.Enumeration;
 import java.util.LinkedList;
+import java.util.Timer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -22,6 +23,7 @@ public class SAMPCA {
     private static final Logger LOGGER = Logger.getLogger(SAMPCA.class.getName());
 
 	public static final String PROGRAM_NAME = "SAMPCA";
+    private Timer timer;
 
     private UDPListener listener;
     private UDPSender sender;
@@ -32,6 +34,7 @@ public class SAMPCA {
     private String password;
     private NetworkInterface iface;
     private InetAddress iface_addr;
+    private User ownUser;
 
     private LinkedList<User> users = null;
 
@@ -62,13 +65,6 @@ public class SAMPCA {
 
         this.users = new LinkedList<>();
 
-        User main_channel = new UDPUser();
-        main_channel.setName("Educafé");
-        main_channel.setIP(this.group);
-        main_channel.setPort(this.port);
-        main_channel.setLastSeen(Timestamp.getCurrentTimeAsLong());
-        this.addUser(main_channel);
-
         this.crypto = new Security();
         this.crypto.setPassword(this.password);
 
@@ -92,6 +88,28 @@ public class SAMPCA {
             }
         }
 
+        Enumeration<InetAddress> iface_addrs = this.iface.getInetAddresses();
+        InetAddress iface_addr= iface_addrs.nextElement();
+        while((iface_addr.getHostAddress().startsWith("fe80:") || iface_addr.getHostAddress().startsWith("2001:")) && iface_addrs.hasMoreElements()){
+            this.iface_addr = iface_addrs.nextElement();
+        }
+
+        User main_channel = new UDPUser();
+        main_channel.setName("Educafé");
+        main_channel.setIP(this.group);
+        main_channel.setPort(this.port);
+        main_channel.setHostname("main_room");
+        main_channel.setLastSeen(Timestamp.getCurrentTimeAsLong());
+        this.addUser(main_channel);
+
+        this.ownUser = new UDPUser();
+        this.ownUser.setName(this.username);
+        this.ownUser.setIP(this.iface_addr);
+        this.ownUser.setPort(this.port);
+        this.ownUser.setHostname(this.iface_addr.getHostName());
+        this.ownUser.setLastSeen(Timestamp.getCurrentTimeAsLong());
+        this.addUser(this.ownUser);
+
         try {
             this.socket = new MulticastSocket(this.port);
         } catch (IOException e) {
@@ -109,12 +127,6 @@ public class SAMPCA {
             this.socket.joinGroup(new InetSocketAddress(this.group, this.port), this.iface);
         } catch (IOException e) {
             e.printStackTrace();
-        }
-
-        Enumeration<InetAddress> iface_addrs = this.iface.getInetAddresses();
-        InetAddress iface_addr= iface_addrs.nextElement();
-        while((iface_addr.getHostAddress().startsWith("fe80:") || iface_addr.getHostAddress().startsWith("2001:")) && iface_addrs.hasMoreElements()){
-            this.iface_addr = iface_addrs.nextElement();
         }
 
         LOGGER.log(Level.INFO, "-- Current configuration: --");
@@ -138,6 +150,13 @@ public class SAMPCA {
         this.startSender();
 
         LOGGER.log(Level.INFO, "SAMPCA successfully started");
+
+        LOGGER.log(Level.INFO, "Starting Timer.");
+
+        this.timer = new Timer();
+        this.timer.scheduleAtFixedRate(new TimeoutTimerTask(this), 0, 15000);
+
+        LOGGER.log(Level.INFO, "Timer started, we are broadcasting.");
 
         this.openChatGui();
     }
@@ -164,9 +183,7 @@ public class SAMPCA {
         this.sendMessage(msg, this.group);
     }
 
-    public void sendMessage(String msg, InetAddress destination){
-        ChatBuilder b = new ChatBuilder();
-        b.setMessage(msg);
+    public void sendBuilder(DataBuilder b, InetAddress destination){
         PacketBuilder pb = new PacketBuilder();
         pb.setSourceAddress(this.iface_addr);
         pb.setDestinationAddress(destination);
@@ -176,12 +193,33 @@ public class SAMPCA {
         this.sender.sendPacket(packet);
     }
 
+    public void sendMessage(String msg, InetAddress destination){
+        ChatBuilder b = new ChatBuilder();
+        b.setMessage(msg);
+        this.sendBuilder(b, destination);
+    }
+
+    public void sendBroadcastMessage() {
+        BroadcastMessageBuilder b = new BroadcastMessageBuilder();
+        b.setNick(this.getOwnUser().getName());
+        b.setHostname(this.getOwnUser().getHostname());
+        this.sendBuilder(b, this.group);
+    }
+
     public void stop(){
 
     }
 
     public void sendFile(String filename, byte[] data){
 
+    }
+
+    public UDPListener getListener(){
+        return this.listener;
+    }
+
+    public UDPSender getSender(){
+        return this.sender;
     }
 
     public void addUser(User u){
@@ -216,6 +254,18 @@ public class SAMPCA {
             }
         }
         return null;
+    }
+
+    public int getPort(){
+        return this.port;
+    }
+
+    public LinkedList<User> getUsers(){
+        return this.users;
+    }
+
+    public User getOwnUser(){
+        return this.ownUser;
     }
 
     /*
