@@ -119,6 +119,7 @@ public class CaUI extends Observable implements Observer {
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
+        this.controller = new CaController(this, client);
 		// Icons
 		ImageIcon serverIcon = addIcon("server.png");
 		ImageIcon tabIcon = addIcon("user.png");
@@ -247,7 +248,6 @@ public class CaUI extends Observable implements Observer {
 		contentPane.setDividerLocation(190);
 		frame.setSize(1000, 800);
 		frame.setLocationRelativeTo(null);
-		this.controller = new CaController(this, client);
 	}
 
 	private ImageIcon addIcon(String image){
