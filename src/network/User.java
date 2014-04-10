@@ -1,5 +1,7 @@
 package network;
 
+import protocol.Datatype;
+
 import java.net.DatagramPacket;
 import java.net.InetAddress;
 
@@ -8,15 +10,15 @@ import java.net.InetAddress;
  */
 public interface User {
 
-    public void setName();
-    public void setIP();
-    public void setPort();
+    public void setName(String name);
+    public void setIP(InetAddress ip);
+    public void setPort(int port);
     public void logChatMessage(String msg);
-    public void logSpecialContent(String mimetype, byte[] data);
+    public void logSpecialContent(String filename, byte[] datatype, byte[] data);
+    public void setLastSeen(long currentTimeAsLong);
 
     public String getName();
     public InetAddress getIP();
     public int getPort();
-    public String getChatLog(int amount);
-
+    public long getLastSeen();
 }
