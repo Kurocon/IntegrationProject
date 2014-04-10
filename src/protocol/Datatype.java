@@ -68,6 +68,10 @@ public class Datatype {
     public static final int INT_IMAGE_FILE_GIF       =   20;
 
     public static int getDataTypeAsInt(byte[] dt){
-        return ByteBuffer.allocate(2).put(dt).getInt();
+        ByteBuffer bb = ByteBuffer.allocate(4);
+        bb.position(2);
+        bb.put(dt);
+        bb.position(0);
+        return bb.getInt();
     }
 }
