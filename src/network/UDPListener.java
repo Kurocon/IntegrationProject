@@ -1,5 +1,7 @@
 package network;
 
+import sampca.SAMPCA;
+
 import java.io.*;
 import java.net.*;
 import java.util.logging.Level;
@@ -21,12 +23,15 @@ public class UDPListener implements Listener, Runnable {
     private MulticastSocket socket = null;
     private DatagramPacket receivePacket;
 
+    private SAMPCA sampca = null;
+
     private byte[] receiveData = new byte[PACKET_SIZE];
     private Security crypto;
 
-    public UDPListener(MulticastSocket socket){
+    public UDPListener(SAMPCA s, MulticastSocket socket){
+        this.sampca = s;
         this.socket = socket;
-        this.handler = new UDPPacketHandler();
+        this.handler = new UDPPacketHandler(this);
     }
 
     @Override

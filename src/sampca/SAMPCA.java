@@ -3,18 +3,14 @@ package sampca;
 import java.io.IOException;
 import java.net.*;
 import java.util.Enumeration;
+import java.util.LinkedList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import gui.CaUI;
 import gui.MainUI;
-import network.Security;
-import network.UDPListener;
-import network.UDPSender;
-import protocol.ChatBuilder;
-import protocol.DataBuilder;
-import protocol.Datatype;
-import protocol.PacketBuilder;
+import network.*;
+import protocol.*;
 
 /**
  * Main class to start SAMPCA.
@@ -36,6 +32,8 @@ public class SAMPCA {
     private String password;
     private NetworkInterface iface;
     private InetAddress iface_addr;
+
+    private LinkedList<User> users = null;
 
     private Security crypto;
 
@@ -61,6 +59,15 @@ public class SAMPCA {
         this.ip = ip;
         this.username = username;
         this.password = password;
+
+        this.users = new LinkedList<>();
+
+        User main_channel = new UDPUser();
+        main_channel.setName("Educafé");
+        main_channel.setIP(this.group);
+        main_channel.setPort(this.port);
+        main_channel.setLastSeen(Timestamp.getCurrentTimeAsLong());
+        this.addUser(main_channel);
 
         this.crypto = new Security();
         this.crypto.setPassword(this.password);
@@ -136,14 +143,14 @@ public class SAMPCA {
     }
 
     private void startListener(){
-        this.listener = new UDPListener(this.socket);
+        this.listener = new UDPListener(this, this.socket);
         this.listener.setCrypto(this.crypto);
         this.listenerThread = new Thread(this.listener);
         this.listenerThread.start();
     }
 
     private void startSender(){
-        this.sender = new UDPSender(this.socket, this.group, this.port);
+        this.sender = new UDPSender(this, this.socket, this.group, this.port);
         this.sender.setCrypto(this.crypto);
         this.senderThread = new Thread(this.sender);
         this.senderThread.start();
@@ -154,7 +161,7 @@ public class SAMPCA {
     }
 
     public void sendMessage(String msg){
-
+        this.sendMessage(msg, this.group);
     }
 
     public void sendMessage(String msg, InetAddress destination){
@@ -175,6 +182,40 @@ public class SAMPCA {
 
     public void sendFile(String filename, byte[] data){
 
+    }
+
+    public void addUser(User u){
+        if(this.users.contains(u)){
+            this.users.get(this.users.indexOf(u)).setLastSeen(Timestamp.getCurrentTimeAsLong());
+        }else{
+            this.users.add(u);
+        }
+    }
+
+    public void removeUser(User u){
+        if(!u.getIP().equals(this.group)){
+            if(this.users.contains(u)){
+                this.users.remove(u);
+            }
+        }
+    }
+
+    public User getUser(String name){
+        for(User u : this.users){
+            if(u.getName().equals(name)){
+                return u;
+            }
+        }
+        return null;
+    }
+
+    public User getUser(InetAddress ip){
+        for(User u : this.users){
+            if(u.getIP().equals(ip)){
+                return u;
+            }
+        }
+        return null;
     }
 
     /*

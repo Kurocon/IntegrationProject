@@ -1,5 +1,7 @@
 package network;
 
+import sampca.SAMPCA;
+
 import java.io.*;
 import java.net.*;
 import java.util.logging.Level;
@@ -18,6 +20,7 @@ public class UDPSender implements Sender, Runnable {
     private BufferedReader inFromUser = null;
     private InetAddress group = null;
     private int port = -1;
+    private SAMPCA sampca = null;
 
     private DatagramPacket sendPacket = null;
     private byte[] sendData = new byte[PACKET_SIZE];
@@ -25,7 +28,8 @@ public class UDPSender implements Sender, Runnable {
     public boolean should_run = true;
     private Security crypto;
 
-    public UDPSender(MulticastSocket socket, InetAddress group, int port){
+    public UDPSender(SAMPCA s, MulticastSocket socket, InetAddress group, int port){
+        this.sampca = s;
         this.socket = socket;
         this.group = group;
         this.port = port;
