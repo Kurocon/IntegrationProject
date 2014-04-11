@@ -27,7 +27,8 @@ public class SAMPCA {
     public static final int MAX_PACKET_SIZE                 = 1024;
     public static final int PACKET_SIZE_AFTER_ENCRYPTION    = 1024;
     public static final int GENERAL_HEADER_SIZE             = 24;
-
+    public static final int PUBLIC_CHAT_HEADER_SIZE			= 0;
+    public static final int PRIVATE_CHAT_HEADER_SIZE		= 4;
 
     private Timer timer;
     private UDPListener listener;

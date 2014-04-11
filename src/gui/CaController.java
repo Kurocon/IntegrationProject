@@ -86,10 +86,11 @@ public class CaController implements ActionListener {
 				if(this.view.tabs.getSelectedIndex() == 0){
 					System.out.println("|||||||||||||||||||| test 2");
 					//Public message
+					int maxPublicMessageSize = SAMPCA.MAX_PACKET_SIZE - SAMPCA.GENERAL_HEADER_SIZE - SAMPCA.PUBLIC_CHAT_HEADER_SIZE;
 					int it = 0;
-					while(it + 1000 < message.length()){
-						client.sendPublicMessage(message.substring(it, it+999));
-						it = it+1000;
+					while(it + maxPublicMessageSize < message.length()){
+						client.sendPublicMessage(message.substring(it, it + maxPublicMessageSize - 1));
+						it = it+maxPublicMessageSize;
 					}
 					
 					client.sendPublicMessage(message.substring(it, message.length()));
@@ -98,10 +99,11 @@ public class CaController implements ActionListener {
 				}else{
 					System.out.println("|||||||||||||||||||| test 3");
 					//private message
+					int maxPrivateMessageSize = SAMPCA.MAX_PACKET_SIZE - SAMPCA.GENERAL_HEADER_SIZE - SAMPCA.PRIVATE_CHAT_HEADER_SIZE;
 					int it = 0;
-					while((it < message.length()) && (it + 996 < message.length())){
-						client.sendPrivateMessage(message.substring(it, it+995), selectedTab.getAddress());
-						it = it+996;
+					while(maxPrivateMessageSize < message.length()){
+						client.sendPrivateMessage(message.substring(it, it + maxPrivateMessageSize - 1), selectedTab.getAddress());
+						it = it + maxPrivateMessageSize;
 					}
 					client.sendPrivateMessage(message.substring(it, message.length()), selectedTab.getAddress());
 				}
