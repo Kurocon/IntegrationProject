@@ -1,5 +1,7 @@
 package network;
 
+import protocol.Datatype;
+import protocol.parsers.PacketParser;
 import sampca.SAMPCA;
 
 import java.io.*;
@@ -77,5 +79,9 @@ public class UDPSender implements Sender, Runnable {
         this.crypto.encryptData(packet);
         DatagramPacket sendPacket = new DatagramPacket(packet, packet.length, this.group, this.port);
         this.send(sendPacket);
+    }
+
+    public SAMPCA getSAMPCA(){
+        return this.sampca;
     }
 }
