@@ -28,11 +28,10 @@ public class SAMPCA {
     public static final int PACKET_SIZE_AFTER_ENCRYPTION    = 1024;
     public static final int GENERAL_HEADER_SIZE             = 24;
 
-
     private Timer timer;
     private UDPListener listener;
     private UDPSender sender;
-
+    private AckLog ackLog = new AckLog();
     private String ip;
     private int port;
     private String username;
@@ -204,6 +203,26 @@ public class SAMPCA {
         pb.setDataType(b.getDataType());
         pb.setData(b);
         byte[] packet = pb.getPacket();
+
+        // Add packet to logging.
+        PacketParser pp = new PacketParser(packet);
+        // Check if this is an ACK. There is no need to log or ACK an ACK.
+        if(pp.getDataType() != Datatype.GENERIC_ACK){
+            if(this.ackLog.getElement(pp.getTimestamp()) == null){
+                // This packet is new to us.
+                AckLogElement ackLogElement = new AckLogElement();
+                ackLogElement.setIndex(pp.getTimestamp());
+                ackLogElement.setData(pp);
+                for(User u : this.getUsers()){
+                    ackLogElement.setAck(u.getIP(), false);
+                }
+                this.ackLog.addElement(ackLogElement);
+            }else{
+                // This is a retransmission.
+            }
+        }
+
+        // Send it.
         this.sender.sendPacket(packet);
     }
 
