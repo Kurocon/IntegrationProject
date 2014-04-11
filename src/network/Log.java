@@ -1,6 +1,5 @@
 package network;
 
-import protocol.Timestamp;
 
 /**
  * Created by kevin on 4/10/14.
@@ -8,7 +7,7 @@ import protocol.Timestamp;
 public interface Log {
 
     public void addElement(LogElement e);
-    public LogElement getElement(Timestamp t);
+    public LogElement getElement(long t);
     public LogElement[] getAllElements();
 
 }
