@@ -10,7 +10,7 @@ public class ChatLog implements Log {
 	public void addElement(LogElement le) {
 		if (le instanceof ChatLogElement) {
 			ChatLogElement cle = (ChatLogElement) le;
-			log.put(cle.getTimestamp(), cle);
+			log.put(cle.getIndex(), cle);
 		}
 	}
 
