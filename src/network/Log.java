@@ -5,10 +5,10 @@ import protocol.Timestamp;
 /**
  * Created by kevin on 4/10/14.
  */
-public interface Log<E> {
+public interface Log {
 
-    public E[] getLog();
-    public void addElement(E e);
-    public E getElement(Timestamp t);
+    public void addElement(LogElement e);
+    public LogElement getElement(Timestamp t);
+    public LogElement[] getAllElements();
 
 }
