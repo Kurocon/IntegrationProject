@@ -96,10 +96,11 @@ public class CaController implements ActionListener, KeyListener {
     		String message = selectedTab.getMessageField().getText();
 			if(this.view.tabs.getSelectedIndex() == 0){
 				//Public message
+				int maxPublicMessageLength = this.client.MAX_PACKET_SIZE - this.client.GENERAL_HEADER_SIZE - this.client.PUBLIC_CHAT_HEADER_SIZE;
 				int it = 0;
-				while(it + 1000 < message.length()){
-					client.sendPublicMessage(message.substring(it, it+999));
-					it = it+1000;
+				while(it + maxPublicMessageLength < message.length()){
+					client.sendPublicMessage(message.substring(it, it+maxPublicMessageLength-1));
+					it = it+maxPublicMessageLength;
 				}
 				
 				client.sendPublicMessage(message.substring(it, message.length()));
@@ -107,10 +108,12 @@ public class CaController implements ActionListener, KeyListener {
 				
 			}else{
 				//private message
+				int maxPrivateMessageLength = this.client.MAX_PACKET_SIZE - this.client.GENERAL_HEADER_SIZE - this.client.PRIVATE_CHAT_HEADER_SIZE;
+
 				int it = 0;
-				while((it < message.length()) && (it + 996 < message.length())){
-					client.sendPrivateMessage(message.substring(it, it+995), selectedTab.getAddress());
-					it = it+996;
+				while(it + maxPrivateMessageLength < message.length()){
+					client.sendPrivateMessage(message.substring(it, it+maxPrivateMessageLength-1), selectedTab.getAddress());
+					it = it+maxPrivateMessageLength;
 				}
 				client.sendPrivateMessage(message.substring(it, message.length()), selectedTab.getAddress());
 			}
