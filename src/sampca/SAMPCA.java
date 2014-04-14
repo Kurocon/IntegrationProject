@@ -2,6 +2,7 @@ package sampca;
 
 import java.io.IOException;
 import java.net.*;
+import java.nio.ByteBuffer;
 import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.Timer;
@@ -27,6 +28,8 @@ public class SAMPCA {
     public static final int MAX_PACKET_SIZE                 = 1024;
     public static final int PACKET_SIZE_AFTER_ENCRYPTION    = 1024;
     public static final int GENERAL_HEADER_SIZE             = 24;
+
+    public static final boolean ENABLE_ENCRYPTION_OF_PACKETS    = true;
 
     private Timer timer;
     private UDPListener listener;
@@ -163,6 +166,12 @@ public class SAMPCA {
         LOGGER.log(Level.INFO, "Timer started, we are broadcasting.");
 
         this.openChatGui();
+
+
+        AckBuilder a = new AckBuilder();
+        a.setAck(ByteBuffer.allocate(8).putLong(Timestamp.getCurrentTimeAsLong()).array());
+        this.sendBuilder(a, this.group);
+
     }
 
     private void startListener(){
@@ -312,6 +321,10 @@ public class SAMPCA {
 
     public InetAddress getMulticastAddress() {
         return this.group;
+    }
+
+    public AckLog getAckLog(){
+        return this.ackLog;
     }
 
     /*

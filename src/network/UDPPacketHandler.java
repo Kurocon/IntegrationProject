@@ -68,7 +68,6 @@ end if
             this.packetLog.addElement(logElement);
 
             // Do stuff to the packet, horrible stuff.
-
             if (mcast_addr.equals(dest_addr)) {
                 // This is a multicast packet meant for everyone!
                 // You gotta share, you gotta care!
