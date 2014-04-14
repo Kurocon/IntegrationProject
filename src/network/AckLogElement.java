@@ -14,7 +14,7 @@ public class AckLogElement implements LogElement<Long, PacketParser> {
 
     private Long index;
     private PacketParser data;
-    private HashMap<InetAddress, Boolean> acks;
+    private HashMap<InetAddress, Boolean> acks = new HashMap<>();
 
     @Override
     public void setIndex(Long timestamp) {

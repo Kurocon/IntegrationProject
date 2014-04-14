@@ -18,6 +18,13 @@ public class AckLog implements Log {
     }
 
     @Override
+    public void removeElement(Long t){
+        if(this.log.containsKey(t)){
+            this.log.remove(t);
+        }
+    }
+
+    @Override
     public LogElement getElement(long t) {
         return this.log.get(t);
     }
