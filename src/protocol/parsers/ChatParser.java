@@ -10,6 +10,7 @@ public class ChatParser extends Parser{
 		messageAsBytes = new byte[length];
 		System.arraycopy(data, 0, messageAsBytes, 0, length);
 		this.messageAsString = new String(messageAsBytes);
+        this.messageAsString = this.messageAsString.substring(0,length-1);
 		this.messageAsBytes = data;
 	}
 	

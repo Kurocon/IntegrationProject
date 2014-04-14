@@ -1,11 +1,14 @@
 package protocol;
 
-import network.UDPUser;
+import network.*;
+import protocol.parsers.AckParser;
 import protocol.parsers.BroadcastMessageParser;
-import network.AckLogElement;
-import network.UDPPacketHandler;
-import network.User;
 import protocol.parsers.PacketParser;
+import sampca.SAMPCA;
+
+import java.net.InetAddress;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Protocol implementation
@@ -14,8 +17,10 @@ import protocol.parsers.PacketParser;
 public class WHASProtocol implements Protocol {
 
     private UDPPacketHandler handler = null;
+    private static final Logger LOGGER = Logger.getLogger(WHASProtocol.class.getName());
 
     public WHASProtocol(UDPPacketHandler h){
+        LOGGER.setLevel(SAMPCA.GLOBAL_LOGGER_LEVEL);
         this.handler = h;
     }
 
@@ -25,7 +30,23 @@ public class WHASProtocol implements Protocol {
 
     @Override
     public void generic_ack(PacketParser data) {
+        AckParser ap = new AckParser(data.getData());
+        long ackCode = ap.getAck();
+        LOGGER.log(Level.WARNING, "Received ACK with index "+ackCode+" with timestamp "+data.getTimestamp());
+        AckLogElement ale = (AckLogElement) this.handler.getListener().getSAMPCA().getAckLog().getElement(ackCode);
+        ale.setAck(data.getSourceAddress(), true);
 
+        System.out.println("Current ACK-Log: ");
+        for(LogElement le : this.handler.getListener().getSAMPCA().getAckLog().getAllElements()){
+            AckLogElement ale2 = (AckLogElement) le;
+
+            System.out.println(ale2.getIndex()+": ================");
+            for(InetAddress ia : ale2.getAckIps()){
+                System.out.println(ia.toString()+" - "+ale2.getAck(ia));
+            }
+            System.out.println("");
+            System.out.println("");
+        }
     }
 
     @Override
@@ -43,14 +64,7 @@ public class WHASProtocol implements Protocol {
             u.setLastSeen(Timestamp.getCurrentTimeAsLong());
         }
         this.handler.getListener().getSAMPCA().addUser(u);
-        
-        AckLogElement ale = new AckLogElement();
-        ale.setData(data);
-        ale.setIndex(data.getTimestamp());
-        
-        this.handler.getListener().getSAMPCA().getAckLog().addElement(ale);
-        this.handler.getListener().getSAMPCA().sendAckMessage(data.getTimestamp(), data.getSourceAddress());
-;    }
+    }
 
     @Override
     public void chat_message(PacketParser data) {

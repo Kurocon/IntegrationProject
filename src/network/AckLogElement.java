@@ -4,6 +4,7 @@ import protocol.Timestamp;
 import protocol.parsers.PacketParser;
 
 import java.net.InetAddress;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 
@@ -40,5 +41,13 @@ public class AckLogElement implements LogElement<Long, PacketParser> {
 
     public boolean getAck(InetAddress i){
         return this.acks.get(i);
+    }
+
+    public Collection<Boolean> getAcks(){
+        return this.acks.values();
+    }
+
+    public java.util.Set<InetAddress> getAckIps(){
+        return this.acks.keySet();
     }
 }
