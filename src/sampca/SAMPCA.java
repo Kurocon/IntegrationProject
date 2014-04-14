@@ -5,6 +5,7 @@ import java.net.*;
 import java.nio.ByteBuffer;
 import java.util.Enumeration;
 import java.util.LinkedList;
+import java.util.Observable;
 import java.util.Timer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -21,7 +22,7 @@ import protocol.parsers.PacketParser;
  *
  * Created by kevin on 4/7/14.
  */
-public class SAMPCA {
+public class SAMPCA extends Observable implements Runnable{
 
     private static final Logger LOGGER = Logger.getLogger(SAMPCA.class.getName());
 	public static final String PROGRAM_NAME = "SAMPCA";
@@ -76,7 +77,11 @@ public class SAMPCA {
 
         this.crypto = new Security();
         this.crypto.setPassword(this.password);
-
+        Thread thread = new Thread(this);
+		thread.start();
+    }
+    
+    public void run() { 
         // Get wireless interface
         Enumeration<NetworkInterface> interfaces = null;
         try {
@@ -277,6 +282,7 @@ public class SAMPCA {
             this.users.get(this.users.indexOf(u)).setLastSeen(Timestamp.getCurrentTimeAsLong());
         }else{
             this.users.add(u);
+            updateGUI();
         }
     }
 
@@ -285,6 +291,7 @@ public class SAMPCA {
             LOGGER.log(Level.INFO, "Removing user "+u.getName()+" from connected users.");
             if(this.users.contains(u)){
                 this.users.remove(u);
+                updateGUI();
             }
         }else{
             LOGGER.log(Level.INFO, "Someone tried to remove Educafe from users. Attempt blocked.");
@@ -324,6 +331,11 @@ public class SAMPCA {
     public InetAddress getMulticastAddress() {
         return this.group;
     }
+    
+    public void updateGUI() {
+		setChanged();
+		notifyObservers();
+	}
 
     public AckLog getAckLog(){
         return this.ackLog;

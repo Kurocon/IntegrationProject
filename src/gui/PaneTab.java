@@ -1,6 +1,8 @@
 package gui;
 
 import java.net.InetAddress;
+import java.util.Observable;
+import java.util.Observer;
 
 import javax.swing.JButton;
 import javax.swing.JSplitPane;
@@ -8,7 +10,7 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 @SuppressWarnings("serial")
-public class PaneTab extends JSplitPane {
+public class PaneTab extends JSplitPane implements Observer{
 
 	/**
 	 * . Variable to store the message field of the chat
@@ -63,6 +65,7 @@ public class PaneTab extends JSplitPane {
 		messagePane.setRightComponent(btnSend);
 
 		btnSend.addActionListener(controller);
+		messageField.addKeyListener(controller);
 	}
 	
 	private JTextArea newTextArea(){
@@ -88,6 +91,12 @@ public class PaneTab extends JSplitPane {
 	
 	public InetAddress getAddress(){
 		return this.address;
+	}
+
+	@Override
+	public void update(Observable arg0, Object arg1) {
+		// TODO Auto-generated method stub
+		
 	}
 	
 	
