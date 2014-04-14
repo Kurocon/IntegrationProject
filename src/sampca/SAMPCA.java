@@ -32,7 +32,7 @@ public class SAMPCA extends Observable implements Runnable{
     public static final int PUBLIC_CHAT_HEADER_SIZE			= 0;
     public static final int PRIVATE_CHAT_HEADER_SIZE		= 4;
 
-    public static final boolean ENABLE_ENCRYPTION_OF_PACKETS    = true;
+    public static final boolean ENABLE_ENCRYPTION_OF_PACKETS    = false;
 
     private Timer timer;
     private UDPListener listener;
@@ -173,12 +173,6 @@ public class SAMPCA extends Observable implements Runnable{
         LOGGER.log(Level.INFO, "Timer started, we are broadcasting.");
 
         this.openChatGui();
-
-
-        AckBuilder a = new AckBuilder();
-        a.setAck(ByteBuffer.allocate(8).putLong(Timestamp.getCurrentTimeAsLong()).array());
-        this.sendBuilder(a, this.group);
-
     }
 
     private void startListener(){
@@ -278,19 +272,37 @@ public class SAMPCA extends Observable implements Runnable{
     }
 
     public void addUser(User u){
-        if(this.users.contains(u)){
-            this.users.get(this.users.indexOf(u)).setLastSeen(Timestamp.getCurrentTimeAsLong());
-        }else{
-            this.users.add(u);
-            updateGUI();
+        boolean exists = false;
+        User existingUser = null;
+        for(User usr : this.users){
+            if(usr.getIP().getHostName().equals(u.getIP().getHostName())){
+                exists = true;
+                existingUser = usr;
+            }
         }
+        if(exists){
+            System.out.println("User "+existingUser.getName()+" already exists.");
+            this.users.get(this.users.indexOf(existingUser)).setLastSeen(Timestamp.getCurrentTimeAsLong());
+        }else{
+            System.out.println("User "+u.getName()+" does not exist.");
+            this.users.add(u);
+        }
+        updateGUI();
     }
 
     public void removeUser(User u){
+        boolean exists = false;
+        User existingUser = null;
+        for(User usr : this.users){
+            if(usr.getIP().getHostName().equals(u.getIP().getHostName())){
+                exists = true;
+                existingUser = usr;
+            }
+        }
         if(!u.getIP().equals(this.group)){
             LOGGER.log(Level.INFO, "Removing user "+u.getName()+" from connected users.");
-            if(this.users.contains(u)){
-                this.users.remove(u);
+            if(exists){
+                this.users.remove(existingUser);
                 updateGUI();
             }
         }else{

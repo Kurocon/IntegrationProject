@@ -112,9 +112,10 @@ public class CaUI extends Observable implements Observer {
 	 */
 	public CaUI(SAMPCA client) {
 		this.client = client;
-		initialize();
+        this.initialize();
 		this.client.addObserver(this);
 		this.frame.setVisible(true);
+        this.client.updateGUI();
 	}
 
 	/**
