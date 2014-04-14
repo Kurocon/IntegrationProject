@@ -190,7 +190,7 @@ public class CaUI extends Observable implements Observer {
 		transferTextArea.setLineWrap(true);
 
 		tabs = new JTabbedPane();
-		tabs.addTab(SAMPCA.PUBLIC_CHAT_ROOM_NAME, serverIcon, new PaneTab(nickName, null,
+		tabs.addTab(SAMPCA.PUBLIC_CHAT_ROOM_NAME, serverIcon, new PaneTab(nickName, client.getMulticastAddress(),
 				this.controller), MAIN_TAB_HINT);
 		tabs.setMnemonicAt(0, keyEvents[0]);
 		tabs.addTab(FILE_TAB, transferIcon, transferTextArea, FILE_TAB_HINT);
