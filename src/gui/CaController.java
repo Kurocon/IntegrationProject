@@ -76,15 +76,11 @@ public class CaController implements ActionListener {
 //		} else 
         PaneTab selectedTab = (PaneTab) this.view.tabs.getSelectedComponent();
 //        if (e.getSource()){
-//        System.out.println("|||||||||||||||||||| test a");
 //        }
         if (e.getSource() == selectedTab.getSendButton()) {
-        	System.out.println("|||||||||||||||||||| test");
 			if (!selectedTab.getMessageField().getText().isEmpty()) {
-        		System.out.println("|||||||||||||||||||| test 1");
 				String message = selectedTab.getMessageField().getText();
 				if(this.view.tabs.getSelectedIndex() == 0){
-					System.out.println("|||||||||||||||||||| test 2");
 					//Public message
 					int it = 0;
 					while(it + 1000 < message.length()){
@@ -96,7 +92,6 @@ public class CaController implements ActionListener {
 					
 					
 				}else{
-					System.out.println("|||||||||||||||||||| test 3");
 					//private message
 					int it = 0;
 					while((it < message.length()) && (it + 996 < message.length())){
