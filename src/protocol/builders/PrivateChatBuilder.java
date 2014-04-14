@@ -16,7 +16,7 @@ public class PrivateChatBuilder extends DataBuilder{
 	}
 	
 	public void setDestination(InetAddress dest){
-		this.destination = dest.getAddress();;
+		this.destination = dest.getAddress();
 	}
 	
 	public byte[] getDestination(){

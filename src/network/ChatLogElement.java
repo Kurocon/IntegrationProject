@@ -2,10 +2,11 @@ package network;
 
 import protocol.parsers.PacketParser;
 
-public class ChatLogElement implements LogElement<Long, PacketParser>{
+public class ChatLogElement implements LogElement<Long, String>{
 	
 	private long timestamp;
-	private PacketParser parser;
+	private String msg;
+    private User user;
 
 	@Override
 	public void setIndex(Long e) {
@@ -13,19 +14,25 @@ public class ChatLogElement implements LogElement<Long, PacketParser>{
 	}
 
 	@Override
-	public void setData(PacketParser f) {
-		this.parser = f;
-		this.timestamp = this.parser.getTimestamp();
-	}
-	
-	public long getTimestamp(){
-		return this.timestamp;
-	}
-	
-	public PacketParser getPacket(){
-		return this.parser;
+	public void setData(String f) {
+		this.msg = f;
 	}
 
-	
+    public void setUser(User u){
+        this.user = u;
+    }
 
+    @Override
+    public Long getIndex() {
+        return this.timestamp;
+    }
+
+    @Override
+    public String getData() {
+        return this.msg;
+    }
+
+    public User getUser(){
+        return this.user;
+    }
 }

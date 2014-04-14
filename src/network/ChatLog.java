@@ -10,11 +10,18 @@ public class ChatLog implements Log {
 	public void addElement(LogElement le) {
 		if (le instanceof ChatLogElement) {
 			ChatLogElement cle = (ChatLogElement) le;
-			log.put(cle.getTimestamp(), cle);
+			log.put(cle.getIndex(), cle);
 		}
 	}
 
-	@Override
+    @Override
+    public void removeElement(Long t) {
+        if(this.log.containsKey(t)){
+            this.log.remove(t);
+        }
+    }
+
+    @Override
 	public LogElement getElement(long t) {
 		return this.log.get(t);
 	}

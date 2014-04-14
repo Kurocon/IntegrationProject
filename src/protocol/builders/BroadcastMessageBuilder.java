@@ -2,6 +2,8 @@ package protocol.builders;
 
 import protocol.Datatype;
 
+import java.nio.ByteBuffer;
+
 public class BroadcastMessageBuilder extends DataBuilder{
 	private byte[] nickname;
 	private byte[] hostname;
@@ -28,7 +30,19 @@ public class BroadcastMessageBuilder extends DataBuilder{
 	}
 	
 	public byte[] getData(){
-		super.setData(concatByteArrays(getNick(), getHostname()));
+
+        byte[] nick = new byte[255];
+        byte[] host = new byte[255];
+        byte[] nickLength = new byte[]{(byte) this.getNick().length};
+        byte[] hostLength = new byte[]{(byte) this.getHostname().length};
+
+        System.arraycopy(this.getNick(), 0, nick, 0, this.getNick().length);
+        System.arraycopy(this.getHostname(), 0, host, 0, this.getHostname().length);
+
+        byte[] nickhost = concatByteArrays(nick, host);
+        byte[] lengths = concatByteArrays(nickLength, hostLength);
+
+		super.setData(concatByteArrays(nickhost, lengths));
 		return super.getData();
 	}
 }
