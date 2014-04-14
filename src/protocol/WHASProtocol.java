@@ -36,7 +36,9 @@ public class WHASProtocol implements Protocol {
         long ackCode = ap.getAck();
         LOGGER.log(Level.WARNING, "Received ACK with index "+ackCode+" with timestamp "+data.getTimestamp());
         AckLogElement ale = (AckLogElement) this.handler.getListener().getSAMPCA().getAckLog().getElement(ackCode);
-        ale.setAck(data.getSourceAddress(), true);
+        if(ale != null) {
+            ale.setAck(data.getSourceAddress(), true);
+        }
     }
 
     @Override
