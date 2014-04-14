@@ -14,11 +14,12 @@ import java.util.logging.Logger;
  */
 public class TimeoutTimerTask extends TimerTask {
 
-    private static final Logger LOGGER = Logger.getLogger(SAMPCA.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(TimeoutTimerTask.class.getName());
     private SAMPCA sampca;
 
     public TimeoutTimerTask(SAMPCA s){
         this.sampca = s;
+        LOGGER.setLevel(SAMPCA.GLOBAL_LOGGER_LEVEL);
     }
 
     @Override
@@ -41,16 +42,26 @@ public class TimeoutTimerTask extends TimerTask {
         // Check ack log.
         for(LogElement e : this.sampca.getAckLog().getAllElements()){
             AckLogElement ale = (AckLogElement) e;
+
+            boolean needsResending = false;
+            for(boolean b : ale.getAcks()){
+                if(!b){
+                    needsResending = true;
+                }
+            }
+
             long currentTime = Timestamp.getCurrentTimeAsLong();
             long ackTime = ale.getIndex();
 
-            LOGGER.log(Level.INFO, "Packet "+ackTime+" time since sent: "+((currentTime-ackTime)/1000)+"s");
+            if(needsResending) {
+                LOGGER.log(Level.INFO, "Packet " + ackTime + " time since sent: " + ((currentTime - ackTime) / 1000) + "s");
 
-            if(ackTime < currentTime - 14800){
-                // Timeout, retransmit message.
-                LOGGER.log(Level.INFO, "Re-transmitting packet "+ackTime+". Reason: Packet timeout: "+((currentTime-ackTime))/1000+"s");
-                PacketParser pp = ale.getData();
-                this.sampca.forwardPacket(pp);
+                if (ackTime < currentTime - 14800) {
+                    // Timeout, retransmit message.
+                    LOGGER.log(Level.INFO, "Re-transmitting packet " + ackTime + ". Reason: Packet timeout: " + ((currentTime - ackTime)) / 1000 + "s");
+                    PacketParser pp = ale.getData();
+                    this.sampca.forwardPacket(pp);
+                }
             }
             if(ackTime < currentTime - 180000){
                 // Packet timeout, remove from queue

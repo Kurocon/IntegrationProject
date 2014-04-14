@@ -27,6 +27,7 @@ public class UDPSender implements Sender, Runnable {
     private Security crypto;
 
     public UDPSender(SAMPCA s, MulticastSocket socket, InetAddress group, int port){
+        LOGGER.setLevel(SAMPCA.GLOBAL_LOGGER_LEVEL);
         this.sampca = s;
         this.socket = socket;
         this.group = group;

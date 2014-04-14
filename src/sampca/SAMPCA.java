@@ -33,6 +33,8 @@ public class SAMPCA extends Observable implements Runnable{
     public static final int PRIVATE_CHAT_HEADER_SIZE		= 4;
 
     public static final boolean ENABLE_ENCRYPTION_OF_PACKETS    = false;
+    public static final String PUBLIC_CHAT_ROOM_NAME = "Educafé";
+    public static final Level GLOBAL_LOGGER_LEVEL = Level.WARNING;
 
     private Timer timer;
     private UDPListener listener;
@@ -66,6 +68,7 @@ public class SAMPCA extends Observable implements Runnable{
     }
 
     public SAMPCA(int port, String ip, String username, String password){
+        LOGGER.setLevel(SAMPCA.GLOBAL_LOGGER_LEVEL);
         LOGGER.log(Level.INFO, "SAMPCA is starting...");
 
         this.port = port;
@@ -128,7 +131,7 @@ public class SAMPCA extends Observable implements Runnable{
         }
 
         User main_channel = new UDPUser();
-        main_channel.setName("Educafé");
+        main_channel.setName(SAMPCA.PUBLIC_CHAT_ROOM_NAME);
         main_channel.setIP(this.group);
         main_channel.setPort(this.port);
         main_channel.setHostname("main_room");
@@ -143,14 +146,14 @@ public class SAMPCA extends Observable implements Runnable{
         this.ownUser.setLastSeen(Timestamp.getCurrentTimeAsLong());
         this.addUser(this.ownUser);
 
-        LOGGER.log(Level.INFO, "-- Current configuration: --");
-        LOGGER.log(Level.INFO, "ip="+this.ip);
-        LOGGER.log(Level.INFO, "port="+this.port);
-        LOGGER.log(Level.INFO, "username="+this.username);
-        LOGGER.log(Level.INFO, "password="+this.password);
-        LOGGER.log(Level.INFO, "interface="+this.iface.getName());
-        LOGGER.log(Level.INFO, "interface_ip="+this.iface_addr.getHostAddress());
-        LOGGER.log(Level.INFO, "groupip="+this.group.getHostAddress());
+//        LOGGER.log(Level.INFO, "-- Current configuration: --");
+//        LOGGER.log(Level.INFO, "ip="+this.ip);
+//        LOGGER.log(Level.INFO, "port="+this.port);
+//        LOGGER.log(Level.INFO, "username="+this.username);
+//        LOGGER.log(Level.INFO, "password="+this.password);
+//        LOGGER.log(Level.INFO, "interface="+this.iface.getName());
+//        LOGGER.log(Level.INFO, "interface_ip="+this.iface_addr.getHostAddress());
+//        LOGGER.log(Level.INFO, "groupip="+this.group.getHostAddress());
         /*
     private String ip;
     private int port;
@@ -225,14 +228,16 @@ public class SAMPCA extends Observable implements Runnable{
         // Add packet to logging.
         PacketParser pp = new PacketParser(packet);
         // Check if this is an ACK. There is no need to log or ACK an ACK.
-        if(pp.getDataType() != Datatype.GENERIC_ACK){
+        if(Datatype.getDataTypeAsInt(pp.getDataType()) != Datatype.INT_GENERIC_ACK){
             if(this.ackLog.getElement(pp.getTimestamp()) == null){
                 // This packet is new to us.
                 AckLogElement ackLogElement = new AckLogElement();
                 ackLogElement.setIndex(pp.getTimestamp());
                 ackLogElement.setData(pp);
                 for(User u : this.getUsers()){
-                    ackLogElement.setAck(u.getIP(), false);
+                    if(!u.getName().equals(SAMPCA.PUBLIC_CHAT_ROOM_NAME)) {
+                        ackLogElement.setAck(u.getIP(), false);
+                    }
                 }
                 this.ackLog.addElement(ackLogElement);
             }else{

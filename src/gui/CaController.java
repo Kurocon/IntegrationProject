@@ -25,6 +25,7 @@ public class CaController implements ActionListener, KeyListener {
 	 *            - View of the MVC model of the Lobby UI
 	 */
 	public CaController(CaUI view, SAMPCA client) {
+        LOGGER.setLevel(SAMPCA.GLOBAL_LOGGER_LEVEL);
 		this.view = view;
 		this.client = client;
 		//this.view.getNickLabel().setText(this.client.clientInfo.nickname);

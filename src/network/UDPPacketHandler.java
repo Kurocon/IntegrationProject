@@ -2,6 +2,7 @@ package network;
 
 import protocol.*;
 import protocol.parsers.PacketParser;
+import sampca.SAMPCA;
 
 import java.net.DatagramPacket;
 import java.net.InetAddress;
@@ -22,6 +23,7 @@ public class UDPPacketHandler implements PacketHandler {
     private AckLog packetLog = new AckLog();
 
     public UDPPacketHandler(UDPListener l){
+        LOGGER.setLevel(SAMPCA.GLOBAL_LOGGER_LEVEL);
         LOGGER.log(Level.INFO, "UDPPacketHandler is starting...");
         this.listener = l;
         this.protocol = new WHASProtocol(this);
@@ -58,6 +60,12 @@ end if
         InetAddress src_addr = pp.getSourceAddress();
         InetAddress our_addr = this.listener.getSAMPCA().getOwnUser().getIP();
         InetAddress mcast_addr = this.listener.getSAMPCA().getMulticastAddress();
+
+        if(Datatype.getDataTypeAsInt(pp.getDataType()) != Datatype.INT_GENERIC_ACK){
+            // Send ack for the packet.
+            LOGGER.log(Level.WARNING, "Sending ACK with index "+pp.getTimestamp()+" around timestamp "+Timestamp.getCurrentTimeAsLong());
+            this.getListener().getSAMPCA().sendAckMessage(pp.getTimestamp(), pp.getSourceAddress());
+        }
 
         // Add to seen packet logging.
         if(this.packetLog.getElement(pp.getTimestamp()) == null){

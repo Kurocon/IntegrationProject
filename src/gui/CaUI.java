@@ -60,7 +60,6 @@ public class CaUI extends Observable implements Observer {
 	public static final String WINDOW_TITLE = "Chat and File Transfer";
 	public static final String CONNECTED_USERS = "Users";
 	public static final String ONLINE = "Online";
-	public static final String MAIN_TAB = "Educafé";
 	public static final String MAIN_TAB_HINT = "Main chat";
 	public static final String FILE_TAB = "File Transfer";
 	public static final String FILE_TAB_HINT = "Files transfered between users";
@@ -111,6 +110,7 @@ public class CaUI extends Observable implements Observer {
 	 * Create the application.
 	 */
 	public CaUI(SAMPCA client) {
+        LOGGER.setLevel(SAMPCA.GLOBAL_LOGGER_LEVEL);
 		this.client = client;
         this.initialize();
 		this.client.addObserver(this);
@@ -141,7 +141,7 @@ public class CaUI extends Observable implements Observer {
 		keyEvents[9] = KeyEvent.VK_0;
 
 		frame = new JFrame();
-		frame.setTitle(SAMPCA.PROGRAM_NAME + " - " + CaUI.MAIN_TAB + " - "
+		frame.setTitle(SAMPCA.PROGRAM_NAME + " - " + SAMPCA.PUBLIC_CHAT_ROOM_NAME + " - "
 				+ CaUI.WINDOW_TITLE);
 		frame.setMinimumSize(new Dimension(500, 400));
 		frame.setBounds(100, 100, 500, 400);
@@ -175,7 +175,7 @@ public class CaUI extends Observable implements Observer {
 		transferTextArea.setLineWrap(true);
 
 		tabs = new JTabbedPane();
-		tabs.addTab(MAIN_TAB, serverIcon, new PaneTab(nickName, null,
+		tabs.addTab(SAMPCA.PUBLIC_CHAT_ROOM_NAME, serverIcon, new PaneTab(nickName, null,
 				this.controller), MAIN_TAB_HINT);
 		tabs.setMnemonicAt(0, keyEvents[0]);
 		tabs.addTab(FILE_TAB, transferIcon, transferTextArea, FILE_TAB_HINT);

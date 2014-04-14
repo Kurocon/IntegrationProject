@@ -28,6 +28,7 @@ public class UDPListener implements Listener, Runnable {
     private Security crypto;
 
     public UDPListener(SAMPCA s, MulticastSocket socket){
+        LOGGER.setLevel(SAMPCA.GLOBAL_LOGGER_LEVEL);
         this.sampca = s;
         this.socket = socket;
         this.handler = new UDPPacketHandler(this);

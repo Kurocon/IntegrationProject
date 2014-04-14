@@ -1,5 +1,7 @@
 package network;
 
+import sampca.SAMPCA;
+
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.MessageDigest;
@@ -23,6 +25,7 @@ public class Security {
     private IvParameterSpec ivspec;
 
     public Security(){
+        LOGGER.setLevel(SAMPCA.GLOBAL_LOGGER_LEVEL);
         try {
             this.cipher = Cipher.getInstance("AES/CBC/NoPadding");
         } catch (NoSuchAlgorithmException e) {
