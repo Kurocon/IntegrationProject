@@ -198,6 +198,14 @@ public class SAMPCA extends Observable implements Runnable{
         cb.setMessage(msg);
         this.sendBuilder(cb, this.group);
     }
+    
+    public void sendAckMessage(long timestamp, InetAddress destination){
+    	AckBuilder ab = new AckBuilder();
+    	byte[] t = ByteBuffer.allocate(8).putLong(timestamp).array();
+    	ab.setAck(t);
+    	this.sendBuilder(ab, destination);
+    	
+    }
 
     public void sendPrivateMessage(String msg, InetAddress destination){
         PrivateChatBuilder pcb = new PrivateChatBuilder();

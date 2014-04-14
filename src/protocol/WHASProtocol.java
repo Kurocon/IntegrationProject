@@ -2,6 +2,7 @@ package protocol;
 
 import network.UDPUser;
 import protocol.parsers.BroadcastMessageParser;
+import network.AckLogElement;
 import network.UDPPacketHandler;
 import network.User;
 import protocol.parsers.PacketParser;
@@ -42,8 +43,14 @@ public class WHASProtocol implements Protocol {
             u.setLastSeen(Timestamp.getCurrentTimeAsLong());
         }
         this.handler.getListener().getSAMPCA().addUser(u);
-
-    }
+        
+        AckLogElement ale = new AckLogElement();
+        ale.setData(data);
+        ale.setIndex(data.getTimestamp());
+        
+        this.handler.getListener().getSAMPCA().getAckLog().addElement(ale);
+        this.handler.getListener().getSAMPCA().sendAckMessage(data.getTimestamp(), data.getSourceAddress());
+;    }
 
     @Override
     public void chat_message(PacketParser data) {
