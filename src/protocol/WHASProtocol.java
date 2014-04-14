@@ -1,5 +1,6 @@
 package protocol;
 
+import gui.CaUI;
 import network.*;
 import protocol.parsers.AckParser;
 import protocol.parsers.BroadcastMessageParser;
@@ -62,13 +63,19 @@ public class WHASProtocol implements Protocol {
     public void chat_message(PacketParser data) {
     	ChatParser cp = new ChatParser(data.getData(), data.getDataLength());
     	System.out.println(cp.getMessage());
-    	this.handler.getListener().getSAMPCA().getChatGUI().addMessage(data.getSourceAddress(), data.getDestinationAddress(), cp.getMessage(), data.getTimestamp());
+        CaUI chatGui = this.handler.getListener().getSAMPCA().getChatGUI();
+        if(chatGui != null) {
+            chatGui.addMessage(data.getSourceAddress(), data.getDestinationAddress(), cp.getMessage(), data.getTimestamp());
+        }
     }
 
     @Override
     public void private_message(PacketParser data) {
       	ChatParser cp = new ChatParser(data.getData(), data.getDataLength());
-    	this.handler.getListener().getSAMPCA().getChatGUI().addMessage(data.getSourceAddress(), data.getDestinationAddress(), cp.getMessage(), data.getTimestamp());
+        CaUI chatGui = this.handler.getListener().getSAMPCA().getChatGUI();
+        if(chatGui != null) {
+            chatGui.addMessage(data.getSourceAddress(), data.getDestinationAddress(), cp.getMessage(), data.getTimestamp());
+        }
     }
 
     /*

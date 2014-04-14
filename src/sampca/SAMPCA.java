@@ -237,6 +237,7 @@ public class SAMPCA extends Observable implements Runnable{
         pb.setDestinationAddress(pp.getDestinationAddress());
         pb.setDataType(pp.getDataType());
         pb.setData(pp.getData());
+        pb.setDataLength(pp.getDataLengthAsByteArray());
         int newHopCount = pp.getHopcount()-1;
         pb.setHopcount(new byte[]{(byte) newHopCount});
         byte[] packet = pb.getPacket();

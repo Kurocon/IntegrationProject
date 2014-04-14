@@ -20,6 +20,7 @@ public class PacketParser {
     private byte[] dataType;
     private long timestamp;
     private int dataLength;
+    private byte[] dataLengthAsByteArray;
     private int reserved;
     private byte[] data;
     private byte[] packet;
@@ -87,6 +88,7 @@ public class PacketParser {
             dataLengthBB.put(dataLength);
             dataLengthBB.position(0);
             this.dataLength = dataLengthBB.getInt();
+            this.dataLengthAsByteArray = dataLength;
             ByteBuffer reservedBB = ByteBuffer.allocate(4);
             reservedBB.position(2);
             reservedBB.put(reserved);
@@ -131,5 +133,9 @@ public class PacketParser {
 
     public byte[] getData(){
         return data;
+    }
+
+    public byte[] getDataLengthAsByteArray() {
+        return this.dataLengthAsByteArray;
     }
 }

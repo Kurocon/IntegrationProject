@@ -457,7 +457,12 @@ public class CaUI extends Observable implements Observer {
 		PaneTab selectedTab = getTab(destination);
 		if (selectedTab != null) {
 			JTextArea chatArea = selectedTab.getTetArea();
-			chatArea.append("[" + convertTime(timestamp) + "] " + client.getUser(source).getName() + ": " + body + "\n");
+            User sourceUser = client.getUser(source);
+            String userName = "Unknown User";
+            if(sourceUser != null) {
+                userName = sourceUser.getName();
+            }
+			chatArea.append("[" + convertTime(timestamp) + "] " + userName + ": " + body + "\n");
 			chatArea.setCaretPosition(chatArea.getDocument().getLength());
 		}
 	}
@@ -466,13 +471,5 @@ public class CaUI extends Observable implements Observer {
 	    Date date = new Date(time);
 	    Format format = new SimpleDateFormat("HH:mm:ss");
 	    return format.format(date);
-	}
-	
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				new SAMPCA(5555, "228.133.102.88", "Kurocon", "password");
-			}
-		});
 	}
 }

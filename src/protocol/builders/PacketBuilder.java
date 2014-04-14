@@ -90,6 +90,14 @@ public class PacketBuilder {
         }
     }
 
+    public void setDataLength(byte[] length){
+        if(length.length != 2){
+            throw new WrongArrayLengthException("Length must be 2 bytes long.");
+        }else{
+            this.dataLength = length;
+        }
+    }
+
     public void setData(DataBuilder b){
         this.dataBuilder = b;
         byte[] data = this.dataBuilder.getData();
