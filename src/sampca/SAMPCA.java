@@ -365,6 +365,10 @@ public class SAMPCA extends Observable implements Runnable{
     public AckLog getAckLog(){
         return this.ackLog;
     }
+    
+    public CaUI getChatGUI(){
+        return this.chatGui;
+    }
 
     /*
 
