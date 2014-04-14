@@ -54,7 +54,8 @@ public class WHASProtocol implements Protocol {
 
     @Override
     public void private_message(PacketParser data) {
-
+      	ChatParser cp = new ChatParser(data.getData(), data.getDataLength());
+    	this.handler.getListener().getSAMPCA().getChatGUI().addMessage(data.getSourceAddress(), data.getDestinationAddress(), cp.getMessage(), data.getTimestamp());
     }
 
     /*
