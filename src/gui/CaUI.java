@@ -70,9 +70,11 @@ public class CaUI extends Observable implements Observer {
 	public static final String FILE_TAB_HINT = "Files transfered between users";
 	public static final String PRIVATE_TAB_HINT = "Private chat with: ";
 	public static final String BTN_SEND = "Send";
-	public static final String BTN_SEND_FILE = "Send file";
+	private static final String BTN_PRIVATE_CHAT = "Start chat";
+	public static final String BTN_TRANSFER = "Send file";
 	public static final String LBL_DEFAULT_USERNAME = "(unknown)";
 
+	
 	/**
 	 * . Variable to store the frame of the UI
 	 */
@@ -94,7 +96,15 @@ public class CaUI extends Observable implements Observer {
 	 * Variable to store the chat area tabs
 	 */
 	public JTabbedPane tabs;
-
+	/**
+	 * . Variable to store the button to join a game
+	 */
+	private JButton btnTransfer;
+	/**
+	 * . Variable to store the button to join a game
+	 */
+	private JButton btnPrivateChat;
+	
 	/**
 	 * Variable to store the chat area tabs
 	 */
@@ -110,7 +120,8 @@ public class CaUI extends Observable implements Observer {
 
 	public String nickName = "";
 	private JLabel lblUsername;
-
+	public String selectedPlayer = "";
+	
 	/**
 	 * Create the application.
 	 */
@@ -187,6 +198,9 @@ public class CaUI extends Observable implements Observer {
 		tabs.setMnemonicAt(1, keyEvents[1]);
 		tabs.setSelectedIndex(0);
 
+		//addTab(tabs, new PaneTab(nickName, null, this.controller), "someone",
+		//		tabIcon);
+		
 		contentPane.setRightComponent(tabs);
 
 		JSplitPane menuPane = new JSplitPane();
@@ -202,9 +216,16 @@ public class CaUI extends Observable implements Observer {
 				FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("165px"), },
 				new RowSpec[] { FormSpecs.RELATED_GAP_ROWSPEC,
 						RowSpec.decode("25px"), FormSpecs.RELATED_GAP_ROWSPEC,
-						RowSpec.decode("25px"), FormSpecs.RELATED_GAP_ROWSPEC,
 						RowSpec.decode("25px"), }));
 
+		btnTransfer = new JButton(CaUI.BTN_TRANSFER);
+		btnTransfer.setEnabled(true);
+		buttonPanel.add(btnTransfer, "2, 2, fill, top");
+
+		btnPrivateChat = new JButton(CaUI.BTN_PRIVATE_CHAT);
+		btnPrivateChat.setEnabled(false);
+		buttonPanel.add(btnPrivateChat, "2, 4, fill, top");
+		
 		connectedPlayers = new JTree();
 		DefaultTreeCellRenderer renderer = new DefaultTreeCellRenderer();
 		// ConnectedUsersTreeRenderer renderer = new
@@ -245,12 +266,27 @@ public class CaUI extends Observable implements Observer {
 
 				/* retrieve the node that was selected */
 				Object nodeInfo = node.getUserObject();
+				selectedPlayer = nodeInfo.toString();
+			}
+		});
+		
+		connectedPlayers.addTreeSelectionListener(new TreeSelectionListener() {
+			public void valueChanged(TreeSelectionEvent e) {
+				DefaultMutableTreeNode node = (DefaultMutableTreeNode) connectedPlayers
+						.getLastSelectedPathComponent();
+
+				/* if nothing is selected */
+				if (node == null)
+					return;
+
+				/* retrieve the node that was selected */
+				Object nodeInfo = node.getUserObject();
 			}
 		});
 
 		// Add tree to pane.
 		menuPane.setLeftComponent(connectedPlayers);
-		menuPane.setDividerLocation(220);
+		menuPane.setDividerLocation(670);
 		contentPane.setDividerLocation(190);
 		frame.setSize(1000, 800);
 		frame.setLocationRelativeTo(null);
@@ -369,21 +405,15 @@ public class CaUI extends Observable implements Observer {
 			LinkedList<User> clients = this.client.getUsers();
 			ArrayList<DefaultMutableTreeNode> users = new ArrayList<DefaultMutableTreeNode>();
 			
+			LOGGER.log(Level.FINE, "Removing all children");
+			treeRoot.removeAllChildren();
+			
 			for (User client : clients) {
 				LOGGER.log(Level.FINE, "New user detected: " + client.getName());
 				DefaultMutableTreeNode user = new DefaultMutableTreeNode(client.getName());
-				users.add(user);
-			}
-
-			LOGGER.log(Level.FINE, "Removing all children");
-			treeRoot.removeAllChildren();
-
-			for (DefaultMutableTreeNode user : users) {
-				LOGGER.log(Level.FINE,
-						"Adding new user to group: " + user.getUserObject());
 				treeRoot.add(user);
 			}
-
+			
 			connectedPlayers.updateUI();
 
 			frame.repaint();
@@ -429,6 +459,7 @@ public class CaUI extends Observable implements Observer {
 		if (selectedTab != null) {
 			JTextArea chatArea = selectedTab.getTetArea();
 			chatArea.append("[" + convertTime(timestamp) + "] " + client.getUser(source).getName() + ": " + body + "\n");
+			chatArea.setCaretPosition(chatArea.getDocument().getLength());
 		}
 	}
 

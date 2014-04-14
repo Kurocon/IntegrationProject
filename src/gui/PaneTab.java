@@ -1,10 +1,9 @@
 package gui;
 
 import java.net.InetAddress;
-import java.util.Observable;
-import java.util.Observer;
 
 import javax.swing.JButton;
+import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
@@ -50,7 +49,7 @@ public class PaneTab extends JSplitPane{
 		super.setOrientation(JSplitPane.VERTICAL_SPLIT);
 		super.setEnabled(false);
 		super.setDividerSize(1);
-		super.setLeftComponent(this.textArea);
+		super.setLeftComponent(new JScrollPane(this.textArea));
 	
 		JSplitPane messagePane = new JSplitPane();
 		messagePane.setResizeWeight(1.0);
