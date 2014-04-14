@@ -2,6 +2,7 @@ package sampca;
 
 import java.io.IOException;
 import java.net.*;
+import java.nio.ByteBuffer;
 import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.Observable;
@@ -145,23 +146,6 @@ public class SAMPCA extends Observable implements Runnable{
         this.ownUser.setLastSeen(Timestamp.getCurrentTimeAsLong());
         this.addUser(this.ownUser);
 
-//        LOGGER.log(Level.INFO, "-- Current configuration: --");
-//        LOGGER.log(Level.INFO, "ip="+this.ip);
-//        LOGGER.log(Level.INFO, "port="+this.port);
-//        LOGGER.log(Level.INFO, "username="+this.username);
-//        LOGGER.log(Level.INFO, "password="+this.password);
-//        LOGGER.log(Level.INFO, "interface="+this.iface.getName());
-//        LOGGER.log(Level.INFO, "interface_ip="+this.iface_addr.getHostAddress());
-//        LOGGER.log(Level.INFO, "groupip="+this.group.getHostAddress());
-        /*
-    private String ip;
-    private int port;
-    private String username;
-    private String password;
-    private NetworkInterface iface;
-    private InetAddress group;
-         */
-
         this.startListener();
         this.startSender();
 
@@ -239,9 +223,8 @@ public class SAMPCA extends Observable implements Runnable{
                     }
                 }
                 this.ackLog.addElement(ackLogElement);
-            }else{
-                // This is a retransmission.
             }
+            // Else, this is a retransmission.
         }
 
         // Send it.
@@ -293,10 +276,8 @@ public class SAMPCA extends Observable implements Runnable{
             }
         }
         if(exists){
-            System.out.println("User "+existingUser.getName()+" already exists.");
             this.users.get(this.users.indexOf(existingUser)).setLastSeen(Timestamp.getCurrentTimeAsLong());
         }else{
-            System.out.println("User "+u.getName()+" does not exist.");
             this.users.add(u);
         }
         updateGUI();

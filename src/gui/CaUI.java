@@ -59,8 +59,7 @@ import com.jgoodies.forms.layout.RowSpec;
 
 public class CaUI extends Observable implements Observer {
 
-	private static final Logger LOGGER = Logger.getLogger(SAMPCA.class
-			.getName());
+	private static final Logger LOGGER = Logger.getLogger(CaUI.class.getName());
 
 	public static final String WINDOW_TITLE = "Chat and File Transfer";
 	public static final String CONNECTED_USERS = "Users";
@@ -466,7 +465,7 @@ public class CaUI extends Observable implements Observer {
 	public String convertTime(long time){
 	    Date date = new Date(time);
 	    Format format = new SimpleDateFormat("HH:mm:ss");
-	    return format.format(date).toString();
+	    return format.format(date);
 	}
 	
 	public static void main(String[] args) {

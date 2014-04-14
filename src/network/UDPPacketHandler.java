@@ -15,7 +15,7 @@ import java.util.logging.Logger;
  */
 public class UDPPacketHandler implements PacketHandler {
 
-    private static final Logger LOGGER = Logger.getLogger(UDPListener.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(UDPPacketHandler.class.getName());
 
     private WHASProtocol protocol = null;
     private UDPListener listener = null;
@@ -80,7 +80,6 @@ end if
                 // This is a multicast packet meant for everyone!
                 // You gotta share, you gotta care!
                 if (pp.getHopcount() > 0 && !our_addr.equals(src_addr)) {
-                    int newHopCount = pp.getHopcount() - 1;
                     // Forward packet to all.
                     this.getListener().getSAMPCA().forwardPacket(pp);
                 } else if (pp.getHopcount() <= 0) {
@@ -90,7 +89,6 @@ end if
                 }
             } else if (!our_addr.equals(dest_addr)) {
                 if (pp.getHopcount() > 0 && !our_addr.equals(src_addr)) {
-                    int newHopCount = pp.getHopcount() - 1;
                     // Forward packet to all.
                     this.getListener().getSAMPCA().forwardPacket(pp);
                 } else {
@@ -193,11 +191,9 @@ end if
                     this.protocol.image_file_gif(pp);
                     break;
             }
-        }else {
-            // This packet is familiar to us.
-            // Drop it.
-            return;
         }
+        // This packet is familiar to us.
+        // Ignore / Drop it.
     }
     
     public UDPListener getListener(){

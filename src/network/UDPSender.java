@@ -1,7 +1,5 @@
 package network;
 
-import protocol.Datatype;
-import protocol.parsers.PacketParser;
 import sampca.SAMPCA;
 
 import java.io.*;
@@ -15,7 +13,7 @@ import java.util.logging.Logger;
  */
 public class UDPSender implements Sender, Runnable {
 
-    private static final Logger LOGGER = Logger.getLogger(UDPListener.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(UDPSender.class.getName());
 
     private MulticastSocket socket = null;
     private BufferedReader inFromUser = null;

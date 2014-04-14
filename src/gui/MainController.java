@@ -9,7 +9,7 @@ import sampca.SAMPCA;
 /**
  * . Controller of the MainUI
  * 
- * @author
+ * @author Jeroen Waals
  * 
  */
 public class MainController implements ActionListener {
@@ -46,9 +46,8 @@ public class MainController implements ActionListener {
 			String serverIP = this.view.getServerField().getText();
 			String portText = this.view.getPortField().getText();
 			String nickname = this.view.getUsernameField().getText();
-            String password = "password";
-			if (!serverIP.equals("") && !portText.equals("")
-					&& !nickname.equals("")) {
+            String password = this.view.getPasswordField().getText();
+			if (!serverIP.equals("") && !portText.equals("") && !nickname.equals("") && !password.equals("")) {
 				try {
 					int port = Integer.parseInt(portText);
 					SAMPCA client = new SAMPCA(port, MainUI.LBL_DEF_First_IP_PART + serverIP, nickname, password);

@@ -9,7 +9,6 @@ import network.User;
 import protocol.parsers.PacketParser;
 import sampca.SAMPCA;
 
-import java.net.InetAddress;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -38,18 +37,6 @@ public class WHASProtocol implements Protocol {
         LOGGER.log(Level.WARNING, "Received ACK with index "+ackCode+" with timestamp "+data.getTimestamp());
         AckLogElement ale = (AckLogElement) this.handler.getListener().getSAMPCA().getAckLog().getElement(ackCode);
         ale.setAck(data.getSourceAddress(), true);
-
-        System.out.println("Current ACK-Log: ");
-        for(LogElement le : this.handler.getListener().getSAMPCA().getAckLog().getAllElements()){
-            AckLogElement ale2 = (AckLogElement) le;
-
-            System.out.println(ale2.getIndex()+": ================");
-            for(InetAddress ia : ale2.getAckIps()){
-                System.out.println(ia.toString()+" - "+ale2.getAck(ia));
-            }
-            System.out.println("");
-            System.out.println("");
-        }
     }
 
     @Override
