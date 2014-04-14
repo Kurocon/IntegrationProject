@@ -1,5 +1,6 @@
 package gui;
 
+import java.awt.Component;
 import java.awt.EventQueue;
 import java.awt.Image;
 import java.awt.Font;
@@ -11,8 +12,12 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 
 import java.io.IOException;
+import java.net.InetAddress;
 
+import java.text.Format;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.Observable;
 import java.util.Observer;
@@ -175,18 +180,12 @@ public class CaUI extends Observable implements Observer {
 		transferTextArea.setLineWrap(true);
 
 		tabs = new JTabbedPane();
-		tabs.addTab(MAIN_TAB, serverIcon, new PaneTab(nickName, null,
+		tabs.addTab(MAIN_TAB, serverIcon, new PaneTab(nickName, client.getMulticastAddress(),
 				this.controller), MAIN_TAB_HINT);
 		tabs.setMnemonicAt(0, keyEvents[0]);
 		tabs.addTab(FILE_TAB, transferIcon, transferTextArea, FILE_TAB_HINT);
 		tabs.setMnemonicAt(1, keyEvents[1]);
-		// addTab("someone");
-		addTab(tabs, new PaneTab(nickName, null, this.controller), "someone",
-				tabIcon);
-		addTab(tabs, new PaneTab(nickName, null, this.controller), "Kurocon",
-				tabIcon);
-		addTab(tabs, new PaneTab(nickName, null, this.controller),
-				"Someone else", tabIcon);
+		tabs.setSelectedIndex(0);
 
 		contentPane.setRightComponent(tabs);
 
@@ -221,8 +220,7 @@ public class CaUI extends Observable implements Observer {
 				TreeSelectionModel.SINGLE_TREE_SELECTION);
 
 		this.treeRoot = new DefaultMutableTreeNode(CaUI.CONNECTED_USERS);
-		System.out.println("|||||||| testing");
-
+		
 		//this.mainRoot = new DefaultMutableTreeNode(CaUI.ONLINE);
 
 		treeRoot.setAllowsChildren(true);
@@ -372,14 +370,12 @@ public class CaUI extends Observable implements Observer {
 			ArrayList<DefaultMutableTreeNode> users = new ArrayList<DefaultMutableTreeNode>();
 			
 			for (User client : clients) {
-				System.out.println("||||||||||||||||||" + client.getName());
 				LOGGER.log(Level.FINE, "New user detected: " + client.getName());
 				DefaultMutableTreeNode user = new DefaultMutableTreeNode(client.getName());
 				users.add(user);
 			}
 
 			LOGGER.log(Level.FINE, "Removing all children");
-			System.out.println("|||||||| testingc 2 |||||");
 			treeRoot.removeAllChildren();
 
 			for (DefaultMutableTreeNode user : users) {
@@ -415,16 +411,33 @@ public class CaUI extends Observable implements Observer {
 		return lblUsername;
 	}
 
-//	public void addMessage(String name, String body) {
-//		if (chatArea != null && messageField != null) {
-//			chatArea.append(name + ": " + body + "\n");
-//			// if (name.toLowerCase().equals(
-//			// this.client.clientInfo.nickname.toLowerCase())) {
-//			// messageField.setText("");
-//			// }
-//		}
-//	}
+	public PaneTab getTab(InetAddress ip){
+		PaneTab returnTab = null;
+		for(Component tab : this.tabs.getComponents()){
+			if(tab.getClass().equals(gui.PaneTab.class)){
+				PaneTab tempTab = (PaneTab) tab;
+				if(ip.equals(tempTab.getAddress())){
+					returnTab = tempTab;
+				}
+			}
+		}
+		return returnTab;
+	}
+	
+	public void addMessage(InetAddress source, InetAddress destination, String body, long timestamp) {
+		PaneTab selectedTab = getTab(destination);
+		if (selectedTab != null) {
+			JTextArea chatArea = selectedTab.getTetArea();
+			chatArea.append("[" + convertTime(timestamp) + "] " + client.getUser(source).getName() + ": " + body + "\n");
+		}
+	}
 
+	public String convertTime(long time){
+	    Date date = new Date(time);
+	    Format format = new SimpleDateFormat("HH:mm:ss");
+	    return format.format(date).toString();
+	}
+	
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {

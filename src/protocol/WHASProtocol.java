@@ -2,6 +2,7 @@ package protocol;
 
 import network.UDPUser;
 import protocol.parsers.BroadcastMessageParser;
+import protocol.parsers.ChatParser;
 import network.UDPPacketHandler;
 import network.User;
 import protocol.parsers.PacketParser;
@@ -47,7 +48,8 @@ public class WHASProtocol implements Protocol {
 
     @Override
     public void chat_message(PacketParser data) {
-
+    	ChatParser cp = new ChatParser(data.getData(), data.getDataLength());
+    	this.handler.getListener().getSAMPCA().getChatGUI().addMessage(data.getSourceAddress(), data.getDestinationAddress(), cp.getMessage(), data.getTimestamp());
     }
 
     @Override

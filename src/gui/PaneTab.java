@@ -10,7 +10,7 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 @SuppressWarnings("serial")
-public class PaneTab extends JSplitPane implements Observer{
+public class PaneTab extends JSplitPane{
 
 	/**
 	 * . Variable to store the message field of the chat
@@ -81,6 +81,10 @@ public class PaneTab extends JSplitPane implements Observer{
 		return this.messageField;
 	}
 	
+	public JTextArea getTetArea(){
+		return this.textArea;
+	}
+	
 	public JButton getSendButton(){
 		return this.btnSend;
 	}
@@ -91,14 +95,5 @@ public class PaneTab extends JSplitPane implements Observer{
 	
 	public InetAddress getAddress(){
 		return this.address;
-	}
-
-	@Override
-	public void update(Observable arg0, Object arg1) {
-		// TODO Auto-generated method stub
-		
-	}
-	
-	
-	
+	}	
 }
