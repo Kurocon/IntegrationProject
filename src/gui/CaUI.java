@@ -13,6 +13,7 @@ import java.awt.event.KeyEvent;
 import java.io.IOException;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.logging.Level;
@@ -41,6 +42,8 @@ import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeSelectionModel;
+
+import network.User;
 
 import sampca.SAMPCA;
 
@@ -109,9 +112,8 @@ public class CaUI extends Observable implements Observer {
 	 */
 	public CaUI(SAMPCA client) {
 		this.client = client;
-		// this.client.setCaUI(this);
-		// this.client.addObserver(this);
 		initialize();
+		this.client.addObserver(this);
 		this.frame.setVisible(true);
 	}
 
@@ -119,11 +121,12 @@ public class CaUI extends Observable implements Observer {
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
+		this.controller = new CaController(this, client);
 		// Icons
 		ImageIcon serverIcon = addIcon("server.png");
 		ImageIcon tabIcon = addIcon("user.png");
 		ImageIcon transferIcon = addIcon("transfer.png");
-		
+
 		keyEvents[0] = KeyEvent.VK_1;
 		keyEvents[1] = KeyEvent.VK_2;
 		keyEvents[2] = KeyEvent.VK_3;
@@ -134,9 +137,10 @@ public class CaUI extends Observable implements Observer {
 		keyEvents[7] = KeyEvent.VK_8;
 		keyEvents[8] = KeyEvent.VK_9;
 		keyEvents[9] = KeyEvent.VK_0;
-		
+
 		frame = new JFrame();
-		frame.setTitle(SAMPCA.PROGRAM_NAME + " - " + CaUI.MAIN_TAB  +" - " + CaUI.WINDOW_TITLE);
+		frame.setTitle(SAMPCA.PROGRAM_NAME + " - " + CaUI.MAIN_TAB + " - "
+				+ CaUI.WINDOW_TITLE);
 		frame.setMinimumSize(new Dimension(500, 400));
 		frame.setBounds(100, 100, 500, 400);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -162,27 +166,28 @@ public class CaUI extends Observable implements Observer {
 		contentPane.setDividerSize(1);
 		wrapperPane.setRightComponent(contentPane);
 
-		
 		JTextArea transferTextArea = new JTextArea();
 		transferTextArea.setEditable(false);
 		transferTextArea.setAutoscrolls(true);
 		transferTextArea.setFocusable(false);
 		transferTextArea.setLineWrap(true);
-		
+
 		tabs = new JTabbedPane();
-		tabs.addTab(MAIN_TAB, serverIcon, new PaneTab(nickName, null, this.controller),
-				MAIN_TAB_HINT);
+		tabs.addTab(MAIN_TAB, serverIcon, new PaneTab(nickName, null,
+				this.controller), MAIN_TAB_HINT);
 		tabs.setMnemonicAt(0, keyEvents[0]);
-		tabs.addTab(FILE_TAB, transferIcon, transferTextArea,
-				FILE_TAB_HINT);
+		tabs.addTab(FILE_TAB, transferIcon, transferTextArea, FILE_TAB_HINT);
 		tabs.setMnemonicAt(1, keyEvents[1]);
-		//addTab("someone");
-		addTab(tabs, new PaneTab(nickName, null, this.controller), "someone", tabIcon);
-		addTab(tabs, new PaneTab(nickName, null, this.controller), "Kurocon", tabIcon);
-		addTab(tabs, new PaneTab(nickName, null, this.controller), "Someone else", tabIcon);
-		
+		// addTab("someone");
+		addTab(tabs, new PaneTab(nickName, null, this.controller), "someone",
+				tabIcon);
+		addTab(tabs, new PaneTab(nickName, null, this.controller), "Kurocon",
+				tabIcon);
+		addTab(tabs, new PaneTab(nickName, null, this.controller),
+				"Someone else", tabIcon);
+
 		contentPane.setRightComponent(tabs);
-		
+
 		JSplitPane menuPane = new JSplitPane();
 		menuPane.setEnabled(false);
 		menuPane.setDividerSize(1);
@@ -201,7 +206,8 @@ public class CaUI extends Observable implements Observer {
 
 		connectedPlayers = new JTree();
 		DefaultTreeCellRenderer renderer = new DefaultTreeCellRenderer();
-		//ConnectedUsersTreeRenderer renderer = new ConnectedUsersTreeRenderer();
+		// ConnectedUsersTreeRenderer renderer = new
+		// ConnectedUsersTreeRenderer();
 
 		renderer.setDisabledIcon(serverIcon);
 		renderer.setClosedIcon(serverIcon);
@@ -213,12 +219,13 @@ public class CaUI extends Observable implements Observer {
 				TreeSelectionModel.SINGLE_TREE_SELECTION);
 
 		this.treeRoot = new DefaultMutableTreeNode(CaUI.CONNECTED_USERS);
+		System.out.println("|||||||| testing");
 
-		this.mainRoot = new DefaultMutableTreeNode(CaUI.ONLINE);
+		//this.mainRoot = new DefaultMutableTreeNode(CaUI.ONLINE);
 
-		mainRoot.setAllowsChildren(true);
+		treeRoot.setAllowsChildren(true);
 
-		treeRoot.add(mainRoot);
+		//treeRoot.add(mainRoot);
 
 		DefaultTreeModel treeModel = new DefaultTreeModel(treeRoot);
 		connectedPlayers.setModel(treeModel);
@@ -247,10 +254,9 @@ public class CaUI extends Observable implements Observer {
 		contentPane.setDividerLocation(190);
 		frame.setSize(1000, 800);
 		frame.setLocationRelativeTo(null);
-		this.controller = new CaController(this, client);
 	}
 
-	private ImageIcon addIcon(String image){
+	private ImageIcon addIcon(String image) {
 		Image img;
 		try {
 			img = ImageIO.read(getClass().getResource("images/" + image));
@@ -262,120 +268,122 @@ public class CaUI extends Observable implements Observer {
 
 		return new ImageIcon(img);
 	}
-	
+
 	@SuppressWarnings("serial")
-	private void addTab(final JTabbedPane tabbedPane, final PaneTab paneTab, final String nickname,
-	          final Icon icon){
-		ImageIcon closeIcon = addIcon("close.png");	
-		ImageIcon closeIcon2 = addIcon("close2.png");	
+	private void addTab(final JTabbedPane tabbedPane, final PaneTab paneTab,
+			final String nickname, final Icon icon) {
+		ImageIcon closeIcon = addIcon("close.png");
+		ImageIcon closeIcon2 = addIcon("close2.png");
 		tabs.addTab(null, paneTab);
 		tabs.setMnemonicAt(this.nextKeyEvents, keyEvents[this.nextKeyEvents]);
 		this.nextKeyEvents++;
-	    int pos = tabbedPane.indexOfComponent(paneTab);
+		int pos = tabbedPane.indexOfComponent(paneTab);
 
-	    // Create a FlowLayout that will space things 5px apart
-	    FlowLayout f = new FlowLayout(FlowLayout.CENTER, 5, 0);
+		// Create a FlowLayout that will space things 5px apart
+		FlowLayout f = new FlowLayout(FlowLayout.CENTER, 5, 0);
 
-	    // Make a small JPanel with the layout and make it non-opaque
-	    JPanel pnlTab = new JPanel(f);
-	    pnlTab.setOpaque(false);
+		// Make a small JPanel with the layout and make it non-opaque
+		JPanel pnlTab = new JPanel(f);
+		pnlTab.setOpaque(false);
 
-	    // Add a JLabel with title and the left-side tab icon
-	    JLabel lblTitle = new JLabel(nickname);
-	    lblTitle.setIcon(icon);
+		// Add a JLabel with title and the left-side tab icon
+		JLabel lblTitle = new JLabel(nickname);
+		lblTitle.setIcon(icon);
 
-	    // Create a JButton for the close tab button
-	    JButton btnClose = new JButton();
-	    btnClose.setBorderPainted(false); 
-	    btnClose.setContentAreaFilled(false); 
-	    btnClose.setFocusPainted(false); 
-	    btnClose.setOpaque(false);
-	    // Configure icon and rollover icon for button
-	    btnClose.setRolloverIcon(closeIcon2);
-	    btnClose.setRolloverEnabled(true);
-	    btnClose.setIcon(closeIcon);
+		// Create a JButton for the close tab button
+		JButton btnClose = new JButton();
+		btnClose.setBorderPainted(false);
+		btnClose.setContentAreaFilled(false);
+		btnClose.setFocusPainted(false);
+		btnClose.setOpaque(false);
+		// Configure icon and rollover icon for button
+		btnClose.setRolloverIcon(closeIcon2);
+		btnClose.setRolloverEnabled(true);
+		btnClose.setIcon(closeIcon);
 
-	    // Set border null so the button doesn't make the tab too big
-	    btnClose.setBorder(null);
+		// Set border null so the button doesn't make the tab too big
+		btnClose.setBorder(null);
 
-	    // Make sure the button can't get focus, otherwise it looks funny
-	    btnClose.setFocusable(false);
+		// Make sure the button can't get focus, otherwise it looks funny
+		btnClose.setFocusable(false);
 
-	    // Put the panel together
-	    pnlTab.add(lblTitle);
-	    pnlTab.add(btnClose);
+		// Put the panel together
+		pnlTab.add(lblTitle);
+		pnlTab.add(btnClose);
 
-	    // Add a thin border to keep the image below the top edge of the tab
-	    // when the tab is selected
-	    pnlTab.setBorder(BorderFactory.createEmptyBorder(2, 0, 0, 0));
+		// Add a thin border to keep the image below the top edge of the tab
+		// when the tab is selected
+		pnlTab.setBorder(BorderFactory.createEmptyBorder(2, 0, 0, 0));
 
-	    // Now assign the component for the tab
-	    tabbedPane.setTabComponentAt(pos, pnlTab);
+		// Now assign the component for the tab
+		tabbedPane.setTabComponentAt(pos, pnlTab);
 
-	    // Add the listener that removes the tab
-	    ActionListener listener = new ActionListener() {
-	      @Override
-	      public void actionPerformed(ActionEvent e) {
-	        // The component parameter must be declared "final" so that it can be
-	        // referenced in the anonymous listener class like this.
-	        tabbedPane.remove(paneTab);
-	      }
-	    };
-	    btnClose.addActionListener(listener);
+		// Add the listener that removes the tab
+		ActionListener listener = new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// The component parameter must be declared "final" so that it
+				// can be
+				// referenced in the anonymous listener class like this.
+				tabbedPane.remove(paneTab);
+			}
+		};
+		btnClose.addActionListener(listener);
 
-	    // Optionally bring the new tab to the front
-	    tabbedPane.setSelectedComponent(paneTab);
+		// Optionally bring the new tab to the front
+		tabbedPane.setSelectedComponent(paneTab);
 
-	    //-------------------------------------------------------------
-	    // Bonus: Adding a <Ctrl-W> keystroke binding to close the tab
-	    //-------------------------------------------------------------
-	    AbstractAction closeTabAction = new AbstractAction() {
-	      @Override
-	      public void actionPerformed(ActionEvent e) {
-	        tabbedPane.remove(paneTab);
-	      }
-	    };
+		// -------------------------------------------------------------
+		// Bonus: Adding a <Ctrl-W> keystroke binding to close the tab
+		// -------------------------------------------------------------
+		AbstractAction closeTabAction = new AbstractAction() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				tabbedPane.remove(paneTab);
+			}
+		};
 
-	    // Create a keystroke
-	    KeyStroke controlW = KeyStroke.getKeyStroke("control W");
+		// Create a keystroke
+		KeyStroke controlW = KeyStroke.getKeyStroke("control W");
 
-	    // Get the appropriate input map using the JComponent constants.
-	    // This one works well when the component is a container. 
-	    InputMap inputMap = paneTab.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+		// Get the appropriate input map using the JComponent constants.
+		// This one works well when the component is a container.
+		InputMap inputMap = paneTab
+				.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
 
-	    // Add the key binding for the keystroke to the action name
-	    inputMap.put(controlW, "closeTab");
+		// Add the key binding for the keystroke to the action name
+		inputMap.put(controlW, "closeTab");
 
-	    // Now add a single binding for the action name to the anonymous action
-	    paneTab.getActionMap().put("closeTab", closeTabAction);
-		
+		// Now add a single binding for the action name to the anonymous action
+		paneTab.getActionMap().put("closeTab", closeTabAction);
+
 	}
-	
+
 	@Override
 	public void update(Observable arg1, Object arg2) {
 		if (this.controller != null) {
 			LOGGER.log(Level.FINE, "Updating GUI");
 
-			// LOGGER.log(Level.FINE, "Number of connected clients: "
-			// + this.client.serverInfo.clients.size());
-			// ArrayList<ClientInformation> clients =
-			// this.client.serverInfo.clients;
+			LOGGER.log(Level.FINE, "Number of connected clients: "
+					+ this.client.getUsers().size());
+			LinkedList<User> clients = this.client.getUsers();
 			ArrayList<DefaultMutableTreeNode> users = new ArrayList<DefaultMutableTreeNode>();
-
-			// for (ClientInformation client : clients) {
-			// LOGGER.log(Level.FINE, "New user detected: "
-			// + client.nickname);
-			// DefaultMutableTreeNode user = new DefaultMutableTreeNode(client);
-			// users.add(user);
-			// }
+			
+			for (User client : clients) {
+				System.out.println("||||||||||||||||||" + client.getName());
+				LOGGER.log(Level.FINE, "New user detected: " + client.getName());
+				DefaultMutableTreeNode user = new DefaultMutableTreeNode(client.getName());
+				users.add(user);
+			}
 
 			LOGGER.log(Level.FINE, "Removing all children");
-			mainRoot.removeAllChildren();
+			System.out.println("|||||||| testingc 2 |||||");
+			treeRoot.removeAllChildren();
 
 			for (DefaultMutableTreeNode user : users) {
 				LOGGER.log(Level.FINE,
 						"Adding new user to group: " + user.getUserObject());
-				mainRoot.add(user);
+				treeRoot.add(user);
 			}
 
 			connectedPlayers.updateUI();
@@ -387,7 +395,7 @@ public class CaUI extends Observable implements Observer {
 			}
 		}
 	}
-	
+
 	/**
 	 * . Method to return the JTree containing all connected players
 	 * 

@@ -2,11 +2,13 @@ package gui;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.util.logging.Logger;
 
 import sampca.SAMPCA;
 
-public class CaController implements ActionListener {
+public class CaController implements ActionListener, KeyListener {
 	/**
 	 * . View of the MVC model of the Lobby UI
 	 */
@@ -74,42 +76,56 @@ public class CaController implements ActionListener {
 //			this.client.clientInfo.joiningGame = creator;l
 //			this.client.clientInfo.joinAsComputer = true;
 //		} else 
+        
         PaneTab selectedTab = (PaneTab) this.view.tabs.getSelectedComponent();
-//        if (e.getSource()){
-//        System.out.println("|||||||||||||||||||| test a");
-//        }
-        if (e.getSource() == selectedTab.getSendButton()) {
-        	System.out.println("|||||||||||||||||||| test");
-			if (!selectedTab.getMessageField().getText().isEmpty()) {
-        		System.out.println("|||||||||||||||||||| test 1");
-				String message = selectedTab.getMessageField().getText();
-				if(this.view.tabs.getSelectedIndex() == 0){
-					System.out.println("|||||||||||||||||||| test 2");
-					//Public message
-					int it = 0;
-					while(it + 1000 < message.length()){
-						client.sendPublicMessage(message.substring(it, it+999));
-						it = it+1000;
-					}
-					
-					client.sendPublicMessage(message.substring(it, message.length()));
-					
-					
-				}else{
-					System.out.println("|||||||||||||||||||| test 3");
-					//private message
-					int it = 0;
-					while((it < message.length()) && (it + 996 < message.length())){
-						client.sendPrivateMessage(message.substring(it, it+995), selectedTab.getAddress());
-						it = it+996;
-					}
-					client.sendPrivateMessage(message.substring(it, message.length()), selectedTab.getAddress());
-				}
-			}
-        	selectedTab.getMessageField().setText("");
-
+    	if (e.getSource() == selectedTab.getSendButton()) {
+    		sendMessage(selectedTab);
 		}
-        
-        
+	}
+	
+    public void keyPressed(KeyEvent e){
+    	PaneTab selectedTab = (PaneTab) this.view.tabs.getSelectedComponent();
+    	if(e.getKeyCode() == KeyEvent.VK_ENTER){
+    		sendMessage(selectedTab);
+        }       
+    }
+    
+    public void sendMessage(PaneTab selectedTab){
+    	if (!selectedTab.getMessageField().getText().isEmpty()) {
+    		String message = selectedTab.getMessageField().getText();
+			if(this.view.tabs.getSelectedIndex() == 0){
+				//Public message
+				int it = 0;
+				while(it + 1000 < message.length()){
+					client.sendPublicMessage(message.substring(it, it+999));
+					it = it+1000;
+				}
+				
+				client.sendPublicMessage(message.substring(it, message.length()));
+				
+				
+			}else{
+				//private message
+				int it = 0;
+				while((it < message.length()) && (it + 996 < message.length())){
+					client.sendPrivateMessage(message.substring(it, it+995), selectedTab.getAddress());
+					it = it+996;
+				}
+				client.sendPrivateMessage(message.substring(it, message.length()), selectedTab.getAddress());
+			}
+		}
+    	selectedTab.getMessageField().setText("");
+    }
+
+	@Override
+	public void keyReleased(KeyEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void keyTyped(KeyEvent arg0) {
+		// TODO Auto-generated method stub
+		
 	}
 }
