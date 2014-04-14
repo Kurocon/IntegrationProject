@@ -1,5 +1,7 @@
 package network;
 
+import protocol.Timestamp;
+
 import java.net.InetAddress;
 
 /**
@@ -42,7 +44,11 @@ public class UDPUser implements User {
 
     @Override
     public void logChatMessage(String msg) {
-        this.log.addElement(msg);
+        ChatLogElement cle = new ChatLogElement();
+        cle.setIndex(Timestamp.getCurrentTimeAsLong());
+        cle.setData(msg);
+        cle.setUser(this);
+        this.log.addElement(cle);
     }
 
     @Override

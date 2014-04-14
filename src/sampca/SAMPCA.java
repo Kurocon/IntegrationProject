@@ -2,6 +2,7 @@ package sampca;
 
 import java.io.IOException;
 import java.net.*;
+import java.nio.ByteBuffer;
 import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.Observable;
@@ -29,11 +30,12 @@ public class SAMPCA extends Observable implements Runnable{
     public static final int PACKET_SIZE_AFTER_ENCRYPTION    = 1024;
     public static final int GENERAL_HEADER_SIZE             = 24;
 
+    public static final boolean ENABLE_ENCRYPTION_OF_PACKETS    = true;
 
     private Timer timer;
     private UDPListener listener;
     private UDPSender sender;
-
+    private AckLog ackLog = new AckLog();
     private String ip;
     private int port;
     private String username;
@@ -169,6 +171,12 @@ public class SAMPCA extends Observable implements Runnable{
         LOGGER.log(Level.INFO, "Timer started, we are broadcasting.");
 
         this.openChatGui();
+
+
+        AckBuilder a = new AckBuilder();
+        a.setAck(ByteBuffer.allocate(8).putLong(Timestamp.getCurrentTimeAsLong()).array());
+        this.sendBuilder(a, this.group);
+
     }
 
     private void startListener(){
@@ -209,6 +217,26 @@ public class SAMPCA extends Observable implements Runnable{
         pb.setDataType(b.getDataType());
         pb.setData(b);
         byte[] packet = pb.getPacket();
+
+        // Add packet to logging.
+        PacketParser pp = new PacketParser(packet);
+        // Check if this is an ACK. There is no need to log or ACK an ACK.
+        if(pp.getDataType() != Datatype.GENERIC_ACK){
+            if(this.ackLog.getElement(pp.getTimestamp()) == null){
+                // This packet is new to us.
+                AckLogElement ackLogElement = new AckLogElement();
+                ackLogElement.setIndex(pp.getTimestamp());
+                ackLogElement.setData(pp);
+                for(User u : this.getUsers()){
+                    ackLogElement.setAck(u.getIP(), false);
+                }
+                this.ackLog.addElement(ackLogElement);
+            }else{
+                // This is a retransmission.
+            }
+        }
+
+        // Send it.
         this.sender.sendPacket(packet);
     }
 
@@ -306,6 +334,11 @@ public class SAMPCA extends Observable implements Runnable{
 		setChanged();
 		notifyObservers();
 	}
+
+    public AckLog getAckLog(){
+        return this.ackLog;
+    }
+
     /*
 
     SAMPCA Hooks:

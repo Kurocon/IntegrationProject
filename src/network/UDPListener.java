@@ -55,7 +55,9 @@ public class UDPListener implements Listener, Runnable {
 
             // Decryption!
             byte[] data = receivePacket.getData();
-            this.crypto.decryptData(data);
+            if(SAMPCA.ENABLE_ENCRYPTION_OF_PACKETS){
+                data = this.crypto.decryptData(data);
+            }
             this.receivePacket = new DatagramPacket(data, data.length);
 
             //LOGGER.log(Level.INFO, "Received data from "+IPAddress.getHostName()+":"+port);

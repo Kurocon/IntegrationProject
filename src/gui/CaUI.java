@@ -121,7 +121,8 @@ public class CaUI extends Observable implements Observer {
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
-		this.controller = new CaController(this, client);
+        this.controller = new CaController(this, client);
+
 		// Icons
 		ImageIcon serverIcon = addIcon("server.png");
 		ImageIcon tabIcon = addIcon("user.png");

@@ -1,17 +1,21 @@
 package network;
 
 import protocol.Timestamp;
+import protocol.parsers.PacketParser;
 import sampca.SAMPCA;
 
 import java.util.LinkedList;
 import java.util.TimerTask;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Created by kevin on 4/10/14.
  */
 public class TimeoutTimerTask extends TimerTask {
 
-    SAMPCA sampca;
+    private static final Logger LOGGER = Logger.getLogger(SAMPCA.class.getName());
+    private SAMPCA sampca;
 
     public TimeoutTimerTask(SAMPCA s){
         this.sampca = s;
@@ -22,7 +26,11 @@ public class TimeoutTimerTask extends TimerTask {
 
         // Remove timed-out users.
         LinkedList<User> users = this.sampca.getUsers();
+        LinkedList<User> userCopy = new LinkedList<>();
         for(User u : users){
+            userCopy.add(u);
+        }
+        for(User u : userCopy){
             if(u.getLastSeen() < Timestamp.getCurrentTimeAsLong() - 35000){
                 // Too long, timeout.
                 this.sampca.removeUser(u);
@@ -30,6 +38,26 @@ public class TimeoutTimerTask extends TimerTask {
         }
 
         // Check for timed out ACKs and resend messages accordingly
+        // Check ack log.
+        for(LogElement e : this.sampca.getAckLog().getAllElements()){
+            AckLogElement ale = (AckLogElement) e;
+            long currentTime = Timestamp.getCurrentTimeAsLong();
+            long ackTime = ale.getIndex();
+
+            LOGGER.log(Level.INFO, "Packet "+ackTime+" time since sent: "+((currentTime-ackTime)/1000)+"s");
+
+            if(ackTime < currentTime - 14800){
+                // Timeout, retransmit message.
+                LOGGER.log(Level.INFO, "Re-transmitting packet "+ackTime+". Reason: Packet timeout: "+((currentTime-ackTime))/1000+"s");
+                PacketParser pp = ale.getData();
+                this.sampca.forwardPacket(pp);
+            }
+            if(ackTime < currentTime - 180000){
+                // Packet timeout, remove from queue
+                LOGGER.log(Level.INFO, "Removing element "+ackTime+" from AckLog. Reason: Packet timeout: "+((currentTime-ackTime))/1000+"s");
+                this.sampca.getAckLog().removeElement(ackTime);
+            }
+        }
 
         // Send a broadcast to let others know we are still here
         this.sampca.sendBroadcastMessage();
