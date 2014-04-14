@@ -32,7 +32,7 @@ public class SAMPCA extends Observable implements Runnable{
     public static final int PUBLIC_CHAT_HEADER_SIZE			= 0;
     public static final int PRIVATE_CHAT_HEADER_SIZE		= 4;
 
-    public static final boolean ENABLE_ENCRYPTION_OF_PACKETS    = true;
+    public static final boolean ENABLE_ENCRYPTION_OF_PACKETS    = false;
 
     private Timer timer;
     private UDPListener listener;
@@ -203,6 +203,14 @@ public class SAMPCA extends Observable implements Runnable{
     	ChatBuilder cb = new ChatBuilder();
         cb.setMessage(msg);
         this.sendBuilder(cb, this.group);
+    }
+    
+    public void sendAckMessage(long timestamp, InetAddress destination){
+    	AckBuilder ab = new AckBuilder();
+    	byte[] t = ByteBuffer.allocate(8).putLong(timestamp).array();
+    	ab.setAck(t);
+    	this.sendBuilder(ab, destination);
+    	
     }
 
     public void sendPrivateMessage(String msg, InetAddress destination){
