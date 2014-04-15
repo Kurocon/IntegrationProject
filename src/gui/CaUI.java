@@ -484,19 +484,19 @@ public class CaUI extends Observable implements Observer {
 		PaneTab selectedTab = getTab(destination);
 		if (selectedTab != null) {
 			JTextArea chatArea = selectedTab.getTetArea();
-			User sourceUser = client.getUser(source);
-			String userName = "Unknown User";
-			String result;
-			if (sourceUser != null) {
-				userName = sourceUser.getName();
-			}
-			if(private_msg){
-				result = "[" + convertTime(timestamp) + "] " + body + "\n";
-			} else {
-				result = "[" + convertTime(timestamp) + "] " + userName
-						+ ": " + body + "\n";
-			}
-			chatArea.append(result);
+            User sourceUser = client.getUser(source);
+            String userName = source.getHostName();
+            String result;
+            if (sourceUser != null) {
+                userName = sourceUser.getName();
+            }
+            if(private_msg){
+                result = "[" + convertTime(timestamp) + "] " + body + "\n";
+            } else {
+                result = "[" + convertTime(timestamp) + "] " + userName
+                        + ": " + body + "\n";
+            }
+            chatArea.append(result);
 			chatArea.setCaretPosition(chatArea.getDocument().getLength());
 		}
 	}
