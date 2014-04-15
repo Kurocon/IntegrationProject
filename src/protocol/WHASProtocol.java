@@ -35,7 +35,6 @@ public class WHASProtocol implements Protocol {
     public void generic_ack(PacketParser data) {
         AckParser ap = new AckParser(data.getData());
         long ackCode = ap.getAck();
-        LOGGER.log(Level.WARNING, "Received ACK with index "+ackCode+" with timestamp "+data.getTimestamp());
         AckLogElement ale = (AckLogElement) this.handler.getListener().getSAMPCA().getAckLog().getElement(ackCode);
         if(ale != null) {
             ale.setAck(data.getSourceAddress(), true);
@@ -45,24 +44,21 @@ public class WHASProtocol implements Protocol {
     @Override
     public void broadcast_message(PacketParser data) {
     	BroadcastMessageParser bmp = new BroadcastMessageParser(data.getData());
-
-    	User u = this.handler.getListener().getSAMPCA().getUser(bmp.getHost());
-
+    	User u = this.handler.getListener().getSAMPCA().getUser(data.getSourceAddress());
         if(u == null){
             u = new UDPUser();
             u.setName(bmp.getNick());
             u.setHostname(bmp.getHost());
             u.setIP(data.getSourceAddress());
             u.setPort(this.handler.getListener().getSAMPCA().getPort());
-            u.setLastSeen(Timestamp.getCurrentTimeAsLong());
         }
+        u.setLastSeen(Timestamp.getCurrentTimeAsLong());
         this.handler.getListener().getSAMPCA().addUser(u);
     }
 
     @Override
     public void chat_message(PacketParser data) {
     	ChatParser cp = new ChatParser(data.getData(), data.getDataLength());
-    	System.out.println(cp.getMessage());
         CaUI chatGui = this.handler.getListener().getSAMPCA().getChatGUI();
         if(chatGui != null) {
             chatGui.addMessage(data.getSourceAddress(), data.getDestinationAddress(), cp.getMessage(), data.getTimestamp(), false);
