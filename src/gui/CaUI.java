@@ -183,11 +183,11 @@ public class CaUI extends Observable implements Observer {
 
 		JTextArea transferTextArea = new JTextArea();
 		transferTextArea.setEditable(false);
-		transferTextArea.setOpaque(false);
+		//transferTextArea.setOpaque(false);
 		transferTextArea.setAutoscrolls(true);
 		transferTextArea.setFocusable(false);
 		transferTextArea.setLineWrap(true);
-		transferTextArea.setWrapStyleWord(true);
+		//transferTextArea.setWrapStyleWord(true);
 		
 		Image bg = background.getImage();
 
