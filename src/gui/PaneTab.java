@@ -58,6 +58,7 @@ public class PaneTab extends JSplitPane {
 
 		messageField = new JTextField();
 		messageField.setColumns(10);
+		messageField.setFocusable(true);
 		messagePane.setLeftComponent(messageField);
 
 		btnSend = new JButton(CaUI.BTN_SEND);
@@ -81,7 +82,7 @@ public class PaneTab extends JSplitPane {
 		return this.messageField;
 	}
 
-	public JTextArea getTetArea() {
+	public JTextArea getTextArea() {
 		return this.textArea;
 	}
 

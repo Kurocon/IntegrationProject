@@ -10,6 +10,8 @@ import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -68,7 +70,7 @@ public class CaUI extends Observable implements Observer {
 	public static final String FILE_TAB_HINT = "Files transfered between users";
 	public static final String PRIVATE_TAB_HINT = "Private chat with: ";
 	public static final String BTN_SEND = "Send";
-	private static final String BTN_PRIVATE_CHAT = "Start chat";
+	public static final String BTN_PRIVATE_CHAT = "Start chat";
 	public static final String BTN_TRANSFER = "Send file";
 	public static final String LBL_DEFAULT_USERNAME = "(unknown)";
 
@@ -273,9 +275,30 @@ public class CaUI extends Observable implements Observer {
 				}
 			}
 		});
+		connectedPlayers.addMouseListener(new MouseAdapter() {
+			  public void mouseClicked(MouseEvent e) {
+			    if (e.getClickCount() == 2) {
+			    	DefaultMutableTreeNode node = (DefaultMutableTreeNode) connectedPlayers
+							.getLastSelectedPathComponent();
+			    	if (node != null && !node.toString().equals(CONNECTED_USERS)) {
+						/* retrieve the node that was selected */
+						User nodeInfo = (User) node.getUserObject();
+						selectedPlayer = nodeInfo;
+						if (getTab(nodeInfo.getIP()) == null
+								&& !nodeInfo.getIP().equals(
+										client.getOwnUser().getIP())) {
+			    	User user = selectedPlayer;
+					addTab(user);
+						}
+			    	}
+			      // do some action if appropriate column
+			    }
+			  }
+			});
 
 		btnTransfer.addActionListener(controller);
 		btnPrivateChat.addActionListener(controller);
+		tabs.addChangeListener(controller);
 		// Add tree to pane.
 		menuPane.setLeftComponent(connectedPlayers);
 		menuPane.setDividerLocation(670);
@@ -298,8 +321,13 @@ public class CaUI extends Observable implements Observer {
 		return new ImageIcon(img);
 	}
 
-	@SuppressWarnings("serial")
 	public void addTab(User user) {
+		String nickname = user.getName();
+		InetAddress ip = user.getIP();
+		addTab(ip, nickname);
+	}
+	
+	public void addTab(InetAddress ip, String nickname) {
 		if (nextKeyEvents > (keyEvents.length - 1)) {
 			new Popup(
 					"Reached maximum number of tabs, close one before opening a new one!");
@@ -308,9 +336,8 @@ public class CaUI extends Observable implements Observer {
 			ImageIcon closeIcon = addIcon("close.png");
 			ImageIcon closeIcon2 = addIcon("close2.png");
 
-			String nickname = user.getName();
-
-			final PaneTab paneTab = new PaneTab(nickname, user.getIP(),
+			
+			final PaneTab paneTab = new PaneTab(nickname, ip,
 					this.controller);
 
 			tabs.addTab(null, paneTab);
@@ -372,34 +399,6 @@ public class CaUI extends Observable implements Observer {
 				}
 			};
 			btnClose.addActionListener(listener);
-
-			// Optionally bring the new tab to the front
-			tabs.setSelectedComponent(paneTab);
-
-			// -------------------------------------------------------------
-			// Bonus: Adding a <Ctrl-W> keystroke binding to close the tab
-			// -------------------------------------------------------------
-			AbstractAction closeTabAction = new AbstractAction() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					tabs.remove(paneTab);
-				}
-			};
-
-			// Create a keystroke
-			KeyStroke controlW = KeyStroke.getKeyStroke("control W");
-
-			// Get the appropriate input map using the JComponent constants.
-			// This one works well when the component is a container.
-			InputMap inputMap = paneTab
-					.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
-
-			// Add the key binding for the keystroke to the action name
-			inputMap.put(controlW, "closeTab");
-
-			// Now add a single binding for the action name to the anonymous
-			// action
-			paneTab.getActionMap().put("closeTab", closeTabAction);
 		}
 	}
 
@@ -416,6 +415,9 @@ public class CaUI extends Observable implements Observer {
 					return true;
 				}
 			}
+		}
+		if(ip != null){
+			addTab(ip, ip.getHostName().replace(".local", ""));
 		}
 		return false;
 	}
@@ -508,7 +510,7 @@ public class CaUI extends Observable implements Observer {
 			selectedTab = getTab(destination);
 		}
 		if (selectedTab != null) {
-			JTextArea chatArea = selectedTab.getTetArea();
+			JTextArea chatArea = selectedTab.getTextArea();
 			User sourceUser = client.getUser(source);
 			String userName = source.getHostName().replace(".local", "");
 			if (sourceUser != null) {
@@ -519,6 +521,35 @@ public class CaUI extends Observable implements Observer {
 			chatArea.append(result);
 			chatArea.setCaretPosition(chatArea.getDocument().getLength());
 		}
+	}
+
+	public void addTransferMessage(InetAddress source, InetAddress destination,
+			String body, long timestamp) {
+		String transferMessage = "";
+		User sourceUser = client.getUser(source);
+		String sourceUserName = source.getHostName().replace(".local", "");
+		if (sourceUser != null) {
+			sourceUserName = sourceUser.getName();
+		}
+		User destinationUser = client.getUser(destination);
+		String destinationUserName = destination.getHostName().replace(".local", "");
+		if (destinationUser != null) {
+			destinationUserName = destinationUser.getName();
+		}
+		if (source.equals(this.client.getOwnUser().getIP())) {
+			transferMessage = "Send a file (" + body + ") to " + destinationUserName;
+		}
+		if (destination.equals(this.client.getOwnUser().getIP())) {
+			transferMessage = "Received a private file (" + body + ") from " + sourceUserName;
+		}
+		if (destination.equals(this.client.getMulticastAddress())) {
+			transferMessage = "Received a file (" + body + ") from " + sourceUserName;
+		}
+			JTextArea chatArea = (JTextArea) tabs.getComponent(1);
+			String result = "[" + convertTime(timestamp) + "] " + transferMessage + ": "
+					+ "\n";
+			chatArea.append(result);
+			chatArea.setCaretPosition(chatArea.getDocument().getLength());
 	}
 
 	public String convertTime(long time) {
