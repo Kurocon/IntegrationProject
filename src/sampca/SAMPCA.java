@@ -36,6 +36,9 @@ public class SAMPCA extends Observable implements Runnable{
     public static final String PUBLIC_CHAT_ROOM_NAME = "Educafé";
     public static final Level GLOBAL_LOGGER_LEVEL = Level.WARNING;
 
+    // normal, badeend
+    public static final String TEXTUREPACK = "badeend";
+    
     private Timer timer;
     private UDPListener listener;
     private UDPSender sender;
@@ -47,7 +50,7 @@ public class SAMPCA extends Observable implements Runnable{
     private NetworkInterface iface;
     private InetAddress iface_addr;
     private User ownUser;
-
+    
     private LinkedList<User> users = null;
 
     private Security crypto;
@@ -350,7 +353,7 @@ public class SAMPCA extends Observable implements Runnable{
     public CaUI getChatGUI(){
         return this.chatGui;
     }
-
+    
     /*
 
     SAMPCA Hooks:
