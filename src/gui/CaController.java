@@ -23,6 +23,8 @@ public class CaController implements ActionListener, KeyListener,
 	 * . View of the MVC model of the Lobby UI
 	 */
 	private CaUI view;
+	
+	private JFrame frame;
 
 	private static final Logger LOGGER = Logger.getLogger(SAMPCA.class
 			.getName());
@@ -57,11 +59,11 @@ public class CaController implements ActionListener, KeyListener,
 		}
 		if (e.getSource() == this.view.getTransferButton()) {
 	        //Create and set up the window.
-	        JFrame frame = new JFrame("FileChooserDemo");
+	        frame = new JFrame("FileChooserDemo");
 	        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 	 
 	        //Add content to the window.
-	        frame.add(new FileChoose(client));
+	        frame.add(new FileChoose(this, client));
 	 
 	        //Display the window.
 	        frame.pack();
@@ -97,6 +99,10 @@ public class CaController implements ActionListener, KeyListener,
 		}
 	}
 
+	public JFrame getFrame(){
+		return this.frame;
+	}
+	
 	public void keyPressed(KeyEvent e) {
 		PaneTab selectedTab = (PaneTab) this.view.tabs.getSelectedComponent();
 		if (e.getKeyCode() == KeyEvent.VK_ENTER) {

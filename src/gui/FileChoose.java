@@ -22,19 +22,22 @@ import com.jgoodies.forms.layout.RowSpec;
 
 import sampca.SAMPCA;
 
-public class FileChoose extends JPanel implements ActionListener {
-	static private final String newline = "\n";
+public class FileChoose extends JPanel{
 	private static final String LBL_SELECTED = "Currently selected file:";
 	private static final String LBL_RECEIVER = "Send file to:";
-	JButton openButton, closeButton, transferButton;
-	JTextArea log;
-	JFileChooser fc;
+	private JButton openButton, closeButton, transferButton;
+	private JTextArea log;
+	private JFileChooser fc;
 	private SAMPCA client;
+	private FileController controller;
+	private CaController control;
+	private JComboBox users;
 
-	public FileChoose(SAMPCA client) {
+	public FileChoose(CaController control, SAMPCA client) {
 		super(new BorderLayout());
-
+	
 		this.client = client;
+		this.control = control;
 
 		// Create the log first, because the action listeners
 		// need to refer to it.
@@ -43,6 +46,8 @@ public class FileChoose extends JPanel implements ActionListener {
 
 		// Create a file chooser
 		fc = new JFileChooser();
+		
+		this.controller = new FileController(this, fc, client, control);
 
 		// Uncomment one of the following lines to try a different
 		// file selection mode. The first allows just directories
@@ -56,10 +61,12 @@ public class FileChoose extends JPanel implements ActionListener {
 
 		// Create the open button. We use the image from the JLF
 		// Graphics Repository (but we extracted it from the jar).
-		openButton = new JButton("Open a File...");
-		openButton.addActionListener(this);
+		openButton = new JButton("Select a File");
+		openButton.addActionListener(controller);
 		closeButton = new JButton("Exit");
-		closeButton.addActionListener(this);
+		closeButton.addActionListener(controller);
+		transferButton = new JButton("Transfer");
+		transferButton.addActionListener(controller);
 
 		// For layout purposes, put the buttons in a separate panel
 		JPanel buttonPanel = new JPanel(); // use FlowLayout
@@ -74,9 +81,9 @@ public class FileChoose extends JPanel implements ActionListener {
 				RowSpec.decode("5px"), RowSpec.decode("15px"),
 				RowSpec.decode("5px"), RowSpec.decode("25px"), }));
 
-		JComboBox users = new JComboBox(client.getUsers().toArray());
+		users = new JComboBox(client.getUsers().toArray());
 		users.setSelectedIndex(0);
-		users.addActionListener(this);
+		users.addActionListener(controller);
 		
 		JLabel selectedLabel = new JLabel(this.LBL_SELECTED);
 		JLabel receiverLabel = new JLabel(this.LBL_RECEIVER);
@@ -87,6 +94,7 @@ public class FileChoose extends JPanel implements ActionListener {
 		center.add(users, "2, 8, fill, fill");
 
 		JPanel secondButtonPanel = new JPanel(); // use FlowLayout
+		secondButtonPanel.add(transferButton);
 		secondButtonPanel.add(closeButton);
 
 		// Add the buttons and the log to this panel.
@@ -104,24 +112,25 @@ public class FileChoose extends JPanel implements ActionListener {
 			return null;
 		}
 	}
-
-	@Override
-	public void actionPerformed(ActionEvent e) {
-
-		// Handle open button action.
-		if (e.getSource() == openButton) {
-			int returnVal = fc.showOpenDialog(FileChoose.this);
-
-			if (returnVal == JFileChooser.APPROVE_OPTION) {
-				File file = fc.getSelectedFile();
-				// This is where a real application would open the file.
-				log.setText(file.getName());
-			} else {
-				log.append("Open command cancelled by user." + newline);
-			}
-			log.setCaretPosition(log.getDocument().getLength());
-
-			// Handle save button action.
-		}
+	
+	public JButton getOpenButton() {
+		return this.openButton;
 	}
+
+	public JButton getExitButton() {
+		return this.closeButton;
+	}
+	
+	public JButton getTransferButton() {
+		return this.transferButton;
+	}
+	
+	public JTextArea getTextArea() {
+		return this.log;
+	}
+	
+	public JComboBox getUserList() {
+		return this.users;
+	}
+
 }
