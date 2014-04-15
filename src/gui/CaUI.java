@@ -460,7 +460,7 @@ public class CaUI extends Observable implements Observer {
 		if (selectedTab != null) {
 			JTextArea chatArea = selectedTab.getTetArea();
             User sourceUser = client.getUser(source);
-            String userName = "Unknown User";
+            String userName = source.getHostName();
             if(sourceUser != null) {
                 userName = sourceUser.getName();
             }
