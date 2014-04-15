@@ -37,7 +37,7 @@ public class SAMPCA extends Observable implements Runnable{
     public static final Level GLOBAL_LOGGER_LEVEL = Level.WARNING;
 
     // normal, badeend
-    public static final String TEXTUREPACK = "badeend";
+    public static final String TEXTUREPACK = "normal";
     
     private Timer timer;
     private UDPListener listener;
