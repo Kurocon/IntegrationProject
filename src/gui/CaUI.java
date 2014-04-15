@@ -183,16 +183,17 @@ public class CaUI extends Observable implements Observer {
 
 		JTextArea transferTextArea = new JTextArea();
 		transferTextArea.setEditable(false);
-		//transferTextArea.setOpaque(false);
+		// transferTextArea.setOpaque(false);
 		transferTextArea.setAutoscrolls(true);
 		transferTextArea.setFocusable(false);
 		transferTextArea.setLineWrap(true);
-		//transferTextArea.setWrapStyleWord(true);
-		
+		// transferTextArea.setWrapStyleWord(true);
+
 		Image bg = background.getImage();
 
 		tabs = new JTabbedPane();
-		PaneTab paneTab = new PaneTab(nickName, client.getMulticastAddress(), this.controller);
+		PaneTab paneTab = new PaneTab(nickName, client.getMulticastAddress(),
+				this.controller);
 		tabs.addTab(SAMPCA.PUBLIC_CHAT_ROOM_NAME, serverIcon, paneTab,
 				MAIN_TAB_HINT);
 		tabs.addTab(FILE_TAB, transferIcon, transferTextArea, FILE_TAB_HINT);
@@ -216,8 +217,8 @@ public class CaUI extends Observable implements Observer {
 		buttonPanel.setLayout(new FormLayout(new ColumnSpec[] {
 				FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("165px"), },
 				new RowSpec[] { FormSpecs.RELATED_GAP_ROWSPEC,
-				RowSpec.decode("25px"), FormSpecs.RELATED_GAP_ROWSPEC,
-				RowSpec.decode("25px"), }));
+						RowSpec.decode("25px"), FormSpecs.RELATED_GAP_ROWSPEC,
+						RowSpec.decode("25px"), }));
 
 		btnTransfer = new JButton(CaUI.BTN_TRANSFER);
 		btnTransfer.setEnabled(true);
@@ -259,13 +260,14 @@ public class CaUI extends Observable implements Observer {
 						.getLastSelectedPathComponent();
 
 				/* if nothing is selected */
-				if (node != null /*&& !node.toString().equals(CONNECTED_USERS)*/) {
+				if (node != null /* && !node.toString().equals(CONNECTED_USERS) */) {
 					/* retrieve the node that was selected */
 					User nodeInfo = (User) node.getUserObject();
 					selectedPlayer = nodeInfo;
 					if (getTab(nodeInfo.getIP()) == null
 					/*
-					 * && !nodeInfo.getIPl() .equals(client.getOwnUser().getIP())
+					 * && !nodeInfo.getIPl()
+					 * .equals(client.getOwnUser().getIP())
 					 */) {
 						btnPrivateChat.setEnabled(true);
 					}
@@ -288,7 +290,8 @@ public class CaUI extends Observable implements Observer {
 	private ImageIcon addIcon(String image) {
 		Image img;
 		try {
-			img = ImageIO.read(getClass().getResource("images/" + SAMPCA.TEXTUREPACK + "/"+ image));
+			img = ImageIO.read(getClass().getResource(
+					"images/" + SAMPCA.TEXTUREPACK + "/" + image));
 		} catch (IOException e) {
 			LOGGER.log(Level.SEVERE, "Could not load image " + image);
 			new Popup("Could not load image " + image);
@@ -368,7 +371,7 @@ public class CaUI extends Observable implements Observer {
 					tabs.remove(paneTab);
 					nextKeyEvents--;
 					updateKeys();
-					
+
 				}
 			};
 			btnClose.addActionListener(listener);
@@ -403,13 +406,27 @@ public class CaUI extends Observable implements Observer {
 		}
 	}
 
-	private void updateKeys(){
-		for(int i = 0; i < this.tabs.getTabCount(); i++){
-			tabs.setMnemonicAt(i,
-					keyEvents[i]);
+	private boolean AddIncomingTab(InetAddress ip){
+		LinkedList<User> clients = this.client.getUsers();
+		for(User user : clients){
+			if(user.getIP().equals(ip)){
+				if (nextKeyEvents > (keyEvents.length - 1)) {
+					new Popup(user.getName() + " tried to start a private chat with you. However you reached the maximum number of tabs, please close one!");
+				} else {
+					addTab(user);
+					return true;
+				}
+			}
 		}
+		return false;
 	}
 	
+	private void updateKeys() {
+		for (int i = 0; i < this.tabs.getTabCount(); i++) {
+			tabs.setMnemonicAt(i, keyEvents[i]);
+		}
+	}
+
 	@Override
 	public void update(Observable arg1, Object arg2) {
 		if (this.controller != null) {
@@ -418,16 +435,18 @@ public class CaUI extends Observable implements Observer {
 			LOGGER.log(Level.FINE, "Number of connected clients: "
 					+ this.client.getUsers().size());
 			LinkedList<User> clients = this.client.getUsers();
-			
+
 			LOGGER.log(Level.FINE, "Removing all children");
 			treeRoot.removeAllChildren();
 
 			for (User client : clients) {
-                if(!client.getIP().equals(this.client.getMulticastAddress())) {
-                    LOGGER.log(Level.FINE, "New user detected: " + client.getName());
-                    DefaultMutableTreeNode user = new DefaultMutableTreeNode(client);
-                    treeRoot.add(user);
-                }
+				if (!client.getIP().equals(this.client.getMulticastAddress())) {
+					LOGGER.log(Level.FINE,
+							"New user detected: " + client.getName());
+					DefaultMutableTreeNode user = new DefaultMutableTreeNode(
+							client);
+					treeRoot.add(user);
+				}
 			}
 
 			connectedPlayers.updateUI();
@@ -470,6 +489,7 @@ public class CaUI extends Observable implements Observer {
 		for (Component tab : this.tabs.getComponents()) {
 			if (tab.getClass().equals(gui.PaneTab.class)) {
 				PaneTab tempTab = (PaneTab) tab;
+				System.out.println(ip + " | " + tempTab.getAddress());
 				if (ip.equals(tempTab.getAddress())) {
 					returnTab = tempTab;
 				}
@@ -480,22 +500,27 @@ public class CaUI extends Observable implements Observer {
 
 	public void addMessage(InetAddress source, InetAddress destination,
 			String body, long timestamp, boolean private_msg) {
-		PaneTab selectedTab = getTab(destination);
+		PaneTab selectedTab = null;
+		if (destination.equals(this.client.getOwnUser().getIP())) {
+			if(getTab(source) != null){
+				selectedTab = getTab(source);
+			} else if (!AddIncomingTab(source)){
+				selectedTab = getTab(source);
+			}
+		}
+		if (source.equals(this.client.getOwnUser().getIP())) {
+			selectedTab = getTab(destination);
+		}
 		if (selectedTab != null) {
 			JTextArea chatArea = selectedTab.getTetArea();
-            User sourceUser = client.getUser(source);
-            String userName = source.getHostName();
-            String result;
-            if (sourceUser != null) {
-                userName = sourceUser.getName();
-            }
-            if(private_msg){
-                result = "[" + convertTime(timestamp) + "] " + body + "\n";
-            } else {
-                result = "[" + convertTime(timestamp) + "] " + userName
-                        + ": " + body + "\n";
-            }
-            chatArea.append(result);
+			User sourceUser = client.getUser(source);
+			String userName = source.getHostName();
+			String result;
+			if (sourceUser != null) {
+				userName = sourceUser.getName();
+			}
+			result = "[" + convertTime(timestamp) + "] " + userName + ": " + body + "\n";
+			chatArea.append(result);
 			chatArea.setCaretPosition(chatArea.getDocument().getLength());
 		}
 	}

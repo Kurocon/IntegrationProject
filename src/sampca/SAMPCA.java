@@ -22,7 +22,7 @@ import protocol.parsers.PacketParser;
  *
  * Created by kevin on 4/7/14.
  */
-public class SAMPCA extends Observable implements Runnable{
+public class SAMPCA extends Observable /*implements Runnable*/{
 
     private static final Logger LOGGER = Logger.getLogger(SAMPCA.class.getName());
 	public static final String PROGRAM_NAME = "SAMPCA";
@@ -83,11 +83,7 @@ public class SAMPCA extends Observable implements Runnable{
 
         this.crypto = new Security();
         this.crypto.setPassword(this.password);
-        Thread thread = new Thread(this);
-		thread.start();
-    }
-    
-    public void run() { 
+
         // Get wireless interface
         Enumeration<NetworkInterface> interfaces = null;
         try {
