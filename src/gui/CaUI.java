@@ -260,15 +260,13 @@ public class CaUI extends Observable implements Observer {
 						.getLastSelectedPathComponent();
 
 				/* if nothing is selected */
-				if (node != null /* && !node.toString().equals(CONNECTED_USERS) */) {
+				if (node != null && !node.toString().equals(CONNECTED_USERS)) {
 					/* retrieve the node that was selected */
 					User nodeInfo = (User) node.getUserObject();
 					selectedPlayer = nodeInfo;
 					if (getTab(nodeInfo.getIP()) == null
-					/*
-					 * && !nodeInfo.getIPl()
-					 * .equals(client.getOwnUser().getIP())
-					 */) {
+							&& !nodeInfo.getIP().equals(
+									client.getOwnUser().getIP())) {
 						btnPrivateChat.setEnabled(true);
 					}
 				} else {
@@ -406,12 +404,14 @@ public class CaUI extends Observable implements Observer {
 		}
 	}
 
-	private boolean AddIncomingTab(InetAddress ip){
+	private boolean AddIncomingTab(InetAddress ip) {
 		LinkedList<User> clients = this.client.getUsers();
-		for(User user : clients){
-			if(user.getIP().equals(ip)){
+		for (User user : clients) {
+			if (user.getIP().equals(ip)) {
 				if (nextKeyEvents > (keyEvents.length - 1)) {
-					new Popup(user.getName() + " tried to start a private chat with you. However you reached the maximum number of tabs, please close one!");
+					new Popup(
+							user.getName()
+									+ " tried to start a private chat with you. However you reached the maximum number of tabs, please close one!");
 				} else {
 					addTab(user);
 					return true;
@@ -420,7 +420,7 @@ public class CaUI extends Observable implements Observer {
 		}
 		return false;
 	}
-	
+
 	private void updateKeys() {
 		for (int i = 0; i < this.tabs.getTabCount(); i++) {
 			tabs.setMnemonicAt(i, keyEvents[i]);
@@ -451,7 +451,7 @@ public class CaUI extends Observable implements Observer {
 
 			connectedPlayers.updateUI();
 
-			frame.repaint();
+			//frame.repaint();
 
 			for (int i = 0; i < connectedPlayers.getRowCount(); i++) {
 				connectedPlayers.expandRow(i);
@@ -502,13 +502,11 @@ public class CaUI extends Observable implements Observer {
 			String body, long timestamp, boolean private_msg) {
 		PaneTab selectedTab = null;
 		if (destination.equals(this.client.getOwnUser().getIP())) {
-			if(getTab(source) != null){
+			if (getTab(source) != null || AddIncomingTab(source)) {
 				selectedTab = getTab(source);
-			} else if (!AddIncomingTab(source)){
-				selectedTab = getTab(source);
-			}
+			} 
 		}
-		if (source.equals(this.client.getOwnUser().getIP())) {
+		if (source.equals(this.client.getOwnUser().getIP()) || destination.equals(this.client.getMulticastAddress())) {
 			selectedTab = getTab(destination);
 		}
 		if (selectedTab != null) {
@@ -519,7 +517,8 @@ public class CaUI extends Observable implements Observer {
 			if (sourceUser != null) {
 				userName = sourceUser.getName();
 			}
-			result = "[" + convertTime(timestamp) + "] " + userName + ": " + body + "\n";
+			result = "[" + convertTime(timestamp) + "] " + userName + ": "
+					+ body + "\n";
 			chatArea.append(result);
 			chatArea.setCaretPosition(chatArea.getDocument().getLength());
 		}
