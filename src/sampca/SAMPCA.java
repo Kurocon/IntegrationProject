@@ -156,7 +156,7 @@ public class SAMPCA extends Observable /*implements Runnable*/{
         LOGGER.log(Level.INFO, "Starting Timer.");
 
         this.timer = new Timer();
-        this.timer.scheduleAtFixedRate(new TimeoutTimerTask(this), 0, 15000);
+        this.timer.scheduleAtFixedRate(new TimeoutTimerTask(this), 0, 8000);
 
         LOGGER.log(Level.INFO, "Timer started, we are broadcasting.");
 
