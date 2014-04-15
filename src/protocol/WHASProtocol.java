@@ -5,6 +5,7 @@ import network.*;
 import protocol.parsers.AckParser;
 import protocol.parsers.BroadcastMessageParser;
 import protocol.parsers.ChatParser;
+import protocol.parsers.PrivateChatParser;
 import network.UDPPacketHandler;
 import network.User;
 import protocol.parsers.PacketParser;
@@ -67,11 +68,11 @@ public class WHASProtocol implements Protocol {
 
     @Override
     public void private_message(PacketParser data) {
-      	ChatParser cp = new ChatParser(data.getData(), data.getDataLength());
-      	System.out.println(cp.getMessage());
+      	PrivateChatParser cp = new PrivateChatParser(data.getData(), data.getDataLength());
+      	System.out.println(cp.getMessageAsString());
         CaUI chatGui = this.handler.getListener().getSAMPCA().getChatGUI();
         if(chatGui != null) {
-            chatGui.addMessage(data.getSourceAddress(), data.getDestinationAddress(), cp.getMessage(), data.getTimestamp(), true);
+            chatGui.addMessage(data.getSourceAddress(), data.getDestinationAddress(), cp.getMessageAsString(), data.getTimestamp(), true);
         }
     }
 

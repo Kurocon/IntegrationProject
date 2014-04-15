@@ -183,11 +183,11 @@ public class CaUI extends Observable implements Observer {
 
 		JTextArea transferTextArea = new JTextArea();
 		transferTextArea.setEditable(false);
-		transferTextArea.setOpaque(false);
+		//transferTextArea.setOpaque(false);
 		transferTextArea.setAutoscrolls(true);
 		transferTextArea.setFocusable(false);
 		transferTextArea.setLineWrap(true);
-		transferTextArea.setWrapStyleWord(true);
+		//transferTextArea.setWrapStyleWord(true);
 		
 		Image bg = background.getImage();
 
@@ -259,13 +259,13 @@ public class CaUI extends Observable implements Observer {
 						.getLastSelectedPathComponent();
 
 				/* if nothing is selected */
-				if (node != null && !node.toString().equals(CONNECTED_USERS)) {
+				if (node != null /*&& !node.toString().equals(CONNECTED_USERS)*/) {
 					/* retrieve the node that was selected */
 					User nodeInfo = (User) node.getUserObject();
 					selectedPlayer = nodeInfo;
 					if (getTab(nodeInfo.getIP()) == null
 					/*
-					 * && !nodeInfo.getIP() .equals(client.getOwnUser().getIP())
+					 * && !nodeInfo.getIPl() .equals(client.getOwnUser().getIP())
 					 */) {
 						btnPrivateChat.setEnabled(true);
 					}
@@ -418,15 +418,14 @@ public class CaUI extends Observable implements Observer {
 			LOGGER.log(Level.FINE, "Number of connected clients: "
 					+ this.client.getUsers().size());
 			LinkedList<User> clients = this.client.getUsers();
-			ArrayList<DefaultMutableTreeNode> users = new ArrayList<DefaultMutableTreeNode>();
-
+			
 			LOGGER.log(Level.FINE, "Removing all children");
 			treeRoot.removeAllChildren();
 
 			for (User client : clients) {
                 if(!client.getIP().equals(this.client.getMulticastAddress())) {
                     LOGGER.log(Level.FINE, "New user detected: " + client.getName());
-                    DefaultMutableTreeNode user = new DefaultMutableTreeNode(client.getName());
+                    DefaultMutableTreeNode user = new DefaultMutableTreeNode(client);
                     treeRoot.add(user);
                 }
 			}
