@@ -39,7 +39,7 @@ public class TimeoutTimerTask extends TimerTask {
                 this.sampca.addUser(u);
             }
 
-            if(u.getLastSeen() < Timestamp.getCurrentTimeAsLong() - 62000){
+            if(u.getLastSeen() < Timestamp.getCurrentTimeAsLong() - 35000){
                 // Too long, timeout.
                 LOGGER.log(Level.WARNING, "Removing user "+u.getName()+". Reason: Timeout (>35s). Last seen: "+u.getLastSeen()+", Current time: "+Timestamp.getCurrentTimeAsLong());
                 this.sampca.removeUser(u);
@@ -71,7 +71,7 @@ public class TimeoutTimerTask extends TimerTask {
                     this.sampca.forwardPacket(pp);
                 }
             }
-            if(ackTime < currentTime - 180000){
+            if(ackTime < currentTime - 60000){
                 // Packet timeout, remove from queue
                 LOGGER.log(Level.WARNING, "Removing element "+ackTime+" from AckLog. Reason: Packet timeout: "+((currentTime-ackTime))/1000+"s");
                 this.sampca.getAckLog().removeElement(ackTime);

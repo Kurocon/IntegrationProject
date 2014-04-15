@@ -2,13 +2,9 @@ package protocol;
 
 import gui.CaUI;
 import network.*;
-import protocol.parsers.AckParser;
-import protocol.parsers.BroadcastMessageParser;
-import protocol.parsers.ChatParser;
-import protocol.parsers.PrivateChatParser;
+import protocol.parsers.*;
 import network.UDPPacketHandler;
 import network.User;
-import protocol.parsers.PacketParser;
 import sampca.SAMPCA;
 
 import java.util.logging.Level;
@@ -22,6 +18,8 @@ public class WHASProtocol implements Protocol {
 
     private UDPPacketHandler handler = null;
     private static final Logger LOGGER = Logger.getLogger(WHASProtocol.class.getName());
+
+    private FilePacketParser fileParser = new FilePacketParser();
 
     public WHASProtocol(UDPPacketHandler h){
         LOGGER.setLevel(SAMPCA.GLOBAL_LOGGER_LEVEL);
@@ -146,7 +144,15 @@ public class WHASProtocol implements Protocol {
 
     @Override
     public void generic_file(PacketParser data) {
-
+        fileParser.addFilePacket(data);
+        if(fileParser.isFileComplete()){
+            LOGGER.log(Level.INFO, "Received file from "+data.getSourceAddress()+", saved in "+fileParser.getSavedFilePath());
+            CaUI chatGui = this.handler.getListener().getSAMPCA().getChatGUI();
+            if(chatGui != null) {
+                chatGui.addTransferMessage(data.getSourceAddress(), data.getDestinationAddress(), fileParser.getSavedFilePath(), data.getTimestamp());
+            }
+        }
+        fileParser.removeFile();
     }
 
     @Override
