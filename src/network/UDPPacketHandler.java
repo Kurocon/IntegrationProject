@@ -61,9 +61,9 @@ end if
         InetAddress our_addr = this.listener.getSAMPCA().getOwnUser().getIP();
         InetAddress mcast_addr = this.listener.getSAMPCA().getMulticastAddress();
 
-        if(Datatype.getDataTypeAsInt(pp.getDataType()) != Datatype.INT_GENERIC_ACK){
+        if(Datatype.getDataTypeAsInt(pp.getDataType()) != Datatype.INT_GENERIC_ACK && Datatype.getDataTypeAsInt(pp.getDataType()) != Datatype.INT_BROADCAST_MESSAGE){
             // Send ack for the packet.
-            LOGGER.log(Level.WARNING, "Sending ACK with index "+pp.getTimestamp()+" around timestamp "+Timestamp.getCurrentTimeAsLong());
+            LOGGER.log(Level.INFO, "Sending ACK with index "+pp.getTimestamp()+" around timestamp "+Timestamp.getCurrentTimeAsLong());
             this.getListener().getSAMPCA().sendAckMessage(pp.getTimestamp(), pp.getSourceAddress());
         }
 

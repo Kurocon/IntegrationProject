@@ -210,8 +210,8 @@ public class SAMPCA extends Observable implements Runnable{
 
         // Add packet to logging.
         PacketParser pp = new PacketParser(packet);
-        // Check if this is an ACK. There is no need to log or ACK an ACK.
-        if(Datatype.getDataTypeAsInt(pp.getDataType()) != Datatype.INT_GENERIC_ACK){
+        // Check if this is an ACK or broadcast message. There is no need to log or ACK an ACK or broadcast message.
+        if(Datatype.getDataTypeAsInt(pp.getDataType()) != Datatype.INT_GENERIC_ACK && Datatype.getDataTypeAsInt(pp.getDataType()) != Datatype.INT_BROADCAST_MESSAGE){
             if(this.ackLog.getElement(pp.getTimestamp()) == null){
                 // This packet is new to us.
                 AckLogElement ackLogElement = new AckLogElement();
@@ -238,6 +238,7 @@ public class SAMPCA extends Observable implements Runnable{
         pb.setDataType(pp.getDataType());
         pb.setData(pp.getData());
         pb.setDataLength(pp.getDataLengthAsByteArray());
+        pb.setTimestamp(ByteBuffer.allocate(8).putLong(pp.getTimestamp()).array());
         int newHopCount = pp.getHopcount()-1;
         pb.setHopcount(new byte[]{(byte) newHopCount});
         byte[] packet = pb.getPacket();
@@ -277,7 +278,9 @@ public class SAMPCA extends Observable implements Runnable{
             }
         }
         if(exists){
-            this.users.get(this.users.indexOf(existingUser)).setLastSeen(Timestamp.getCurrentTimeAsLong());
+            this.users.remove(existingUser);
+            existingUser.setLastSeen(Timestamp.getCurrentTimeAsLong());
+            this.users.add(existingUser);
         }else{
             this.users.add(u);
         }

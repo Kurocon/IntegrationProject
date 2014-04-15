@@ -20,6 +20,7 @@ public class TimeoutTimerTask extends TimerTask {
     public TimeoutTimerTask(SAMPCA s){
         this.sampca = s;
         LOGGER.setLevel(SAMPCA.GLOBAL_LOGGER_LEVEL);
+        //LOGGER.setLevel(Level.INFO);
     }
 
     @Override
@@ -32,8 +33,15 @@ public class TimeoutTimerTask extends TimerTask {
             userCopy.add(u);
         }
         for(User u : userCopy){
-            if(u.getLastSeen() < Timestamp.getCurrentTimeAsLong() - 35000){
+            // Update time for main chat user
+            if(u.getIP().equals(this.sampca.getMulticastAddress())){
+                LOGGER.log(Level.INFO, "Updating time for main channel.");
+                this.sampca.addUser(u);
+            }
+
+            if(u.getLastSeen() < Timestamp.getCurrentTimeAsLong() - 62000){
                 // Too long, timeout.
+                LOGGER.log(Level.WARNING, "Removing user "+u.getName()+". Reason: Timeout (>35s). Last seen: "+u.getLastSeen()+", Current time: "+Timestamp.getCurrentTimeAsLong());
                 this.sampca.removeUser(u);
             }
         }
@@ -65,7 +73,7 @@ public class TimeoutTimerTask extends TimerTask {
             }
             if(ackTime < currentTime - 180000){
                 // Packet timeout, remove from queue
-                LOGGER.log(Level.INFO, "Removing element "+ackTime+" from AckLog. Reason: Packet timeout: "+((currentTime-ackTime))/1000+"s");
+                LOGGER.log(Level.WARNING, "Removing element "+ackTime+" from AckLog. Reason: Packet timeout: "+((currentTime-ackTime))/1000+"s");
                 this.sampca.getAckLog().removeElement(ackTime);
             }
         }

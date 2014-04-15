@@ -408,9 +408,11 @@ public class CaUI extends Observable implements Observer {
 			treeRoot.removeAllChildren();
 			
 			for (User client : clients) {
-				LOGGER.log(Level.FINE, "New user detected: " + client.getName());
-				DefaultMutableTreeNode user = new DefaultMutableTreeNode(client.getName());
-				treeRoot.add(user);
+                if(!client.getIP().equals(this.client.getMulticastAddress())) {
+                    LOGGER.log(Level.FINE, "New user detected: " + client.getName());
+                    DefaultMutableTreeNode user = new DefaultMutableTreeNode(client.getName());
+                    treeRoot.add(user);
+                }
 			}
 			
 			connectedPlayers.updateUI();
