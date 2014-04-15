@@ -33,13 +33,13 @@ public class FileParser extends Parser {
         maxSecNrBuffer.position(0);
         this.currentPacket = curSecNrBuffer.getInt();
         this.totalPackets = maxSecNrBuffer.getInt();
-        this.filenameLength = data[264];
+        this.filenameLength = data[263];
         this.fileNameAsBytes = new byte[this.filenameLength];
-        System.arraycopy(data, 4, this.fileNameAsBytes, 0, this.filenameLength);
+        System.arraycopy(data, 8, this.fileNameAsBytes, 0, this.filenameLength);
         this.fileNameAsString = new String(this.fileNameAsBytes);
 
         this.fileData = new byte[760];
-        System.arraycopy(data, 273, fileData, 0, 760);
+        System.arraycopy(data, 264, fileData, 0, 736);
     }
 
     public byte[] getFileData(){
