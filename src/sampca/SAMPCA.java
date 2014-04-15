@@ -220,9 +220,17 @@ public class SAMPCA extends Observable implements Runnable{
                 AckLogElement ackLogElement = new AckLogElement();
                 ackLogElement.setIndex(pp.getTimestamp());
                 ackLogElement.setData(pp);
-                for(User u : this.getUsers()){
-                    if(!u.getName().equals(SAMPCA.PUBLIC_CHAT_ROOM_NAME)) {
-                        ackLogElement.setAck(u.getIP(), false);
+                if(Datatype.getDataTypeAsInt(pp.getDataType()) != Datatype.INT_PRIVATE_MESSAGE){
+                    for(User u : this.getUsers()){
+                        if(u.getIP().equals(pp.getDestinationAddress())) {
+                            ackLogElement.setAck(u.getIP(), false);
+                        }
+                    }
+                }else{
+                    for(User u : this.getUsers()){
+                        if(!u.getIP().equals(this.getMulticastAddress())) {
+                            ackLogElement.setAck(u.getIP(), false);
+                        }
                     }
                 }
                 this.ackLog.addElement(ackLogElement);
