@@ -260,6 +260,7 @@ public class CaUI extends Observable implements Observer {
 						.getLastSelectedPathComponent();
 
 				/* if nothing is selected */
+				btnPrivateChat.setEnabled(false);
 				if (node != null && !node.toString().equals(CONNECTED_USERS)) {
 					/* retrieve the node that was selected */
 					User nodeInfo = (User) node.getUserObject();
@@ -269,8 +270,6 @@ public class CaUI extends Observable implements Observer {
 									client.getOwnUser().getIP())) {
 						btnPrivateChat.setEnabled(true);
 					}
-				} else {
-					btnPrivateChat.setEnabled(false);
 				}
 			}
 		});
@@ -489,7 +488,6 @@ public class CaUI extends Observable implements Observer {
 		for (Component tab : this.tabs.getComponents()) {
 			if (tab.getClass().equals(gui.PaneTab.class)) {
 				PaneTab tempTab = (PaneTab) tab;
-				System.out.println(ip + " | " + tempTab.getAddress());
 				if (ip.equals(tempTab.getAddress())) {
 					returnTab = tempTab;
 				}
@@ -512,12 +510,11 @@ public class CaUI extends Observable implements Observer {
 		if (selectedTab != null) {
 			JTextArea chatArea = selectedTab.getTetArea();
 			User sourceUser = client.getUser(source);
-			String userName = source.getHostName();
-			String result;
+			String userName = source.getHostName().replace(".local", "");
 			if (sourceUser != null) {
 				userName = sourceUser.getName();
 			}
-			result = "[" + convertTime(timestamp) + "] " + userName + ": "
+			String result = "[" + convertTime(timestamp) + "] " + userName + ": "
 					+ body + "\n";
 			chatArea.append(result);
 			chatArea.setCaretPosition(chatArea.getDocument().getLength());

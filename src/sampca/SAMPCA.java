@@ -128,7 +128,10 @@ public class SAMPCA extends Observable /*implements Runnable*/{
         } catch (IOException e) {
             e.printStackTrace();
         }
-
+        if(this.username.equals(MainUI.LBL_DEF_NICK) && this.iface_addr.getHostName() != null){
+        	this.username = this.iface_addr.getHostName().replace(".local", "");
+        }
+        
         User main_channel = new UDPUser();
         main_channel.setName(SAMPCA.PUBLIC_CHAT_ROOM_NAME);
         main_channel.setIP(this.group);
