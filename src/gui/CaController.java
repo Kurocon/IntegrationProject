@@ -6,6 +6,8 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.logging.Logger;
 
+import protocol.Timestamp;
+
 import network.User;
 
 import sampca.SAMPCA;
@@ -112,6 +114,7 @@ public class CaController implements ActionListener, KeyListener {
 					it = it+maxPrivateMessageLength;
 				}
 				client.sendPrivateMessage(message.substring(it, message.length()), selectedTab.getAddress());
+				this.view.addMessage(this.client.getOwnUser().getIP(), selectedTab.getAddress(), message, Timestamp.getCurrentTimeAsLong(), true);
 			}
 		}
     	selectedTab.getMessageField().setText("");
