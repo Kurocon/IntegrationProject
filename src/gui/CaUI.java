@@ -42,6 +42,7 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.JButton;
 import javax.swing.KeyStroke;
+import javax.swing.SwingUtilities;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.JTree;
@@ -276,25 +277,26 @@ public class CaUI extends Observable implements Observer {
 			}
 		});
 		connectedPlayers.addMouseListener(new MouseAdapter() {
-			  public void mouseClicked(MouseEvent e) {
-			    if (e.getClickCount() == 2) {
-			    	DefaultMutableTreeNode node = (DefaultMutableTreeNode) connectedPlayers
+			public void mouseClicked(MouseEvent e) {
+				if (e.getClickCount() == 2) {
+					DefaultMutableTreeNode node = (DefaultMutableTreeNode) connectedPlayers
 							.getLastSelectedPathComponent();
-			    	if (node != null && !node.toString().equals(CONNECTED_USERS)) {
+					if (node != null
+							&& !node.toString().equals(CONNECTED_USERS)) {
 						/* retrieve the node that was selected */
 						User nodeInfo = (User) node.getUserObject();
 						selectedPlayer = nodeInfo;
 						if (getTab(nodeInfo.getIP()) == null
 								&& !nodeInfo.getIP().equals(
 										client.getOwnUser().getIP())) {
-			    	User user = selectedPlayer;
-					addTab(user);
+							User user = selectedPlayer;
+							addTab(user);
 						}
-			    	}
-			      // do some action if appropriate column
-			    }
-			  }
-			});
+					}
+					// do some action if appropriate column
+				}
+			}
+		});
 
 		btnTransfer.addActionListener(controller);
 		btnPrivateChat.addActionListener(controller);
@@ -326,7 +328,7 @@ public class CaUI extends Observable implements Observer {
 		InetAddress ip = user.getIP();
 		addTab(ip, nickname);
 	}
-	
+
 	public void addTab(InetAddress ip, String nickname) {
 		if (nextKeyEvents > (keyEvents.length - 1)) {
 			new Popup(
@@ -336,9 +338,7 @@ public class CaUI extends Observable implements Observer {
 			ImageIcon closeIcon = addIcon("close.png");
 			ImageIcon closeIcon2 = addIcon("close2.png");
 
-			
-			final PaneTab paneTab = new PaneTab(nickname, ip,
-					this.controller);
+			final PaneTab paneTab = new PaneTab(nickname, ip, this.controller);
 
 			tabs.addTab(null, paneTab);
 			this.nextKeyEvents++;
@@ -416,7 +416,7 @@ public class CaUI extends Observable implements Observer {
 				}
 			}
 		}
-		if(ip != null){
+		if (ip != null) {
 			addTab(ip, ip.getHostName().replace(".local", ""));
 		}
 		return false;
@@ -432,31 +432,37 @@ public class CaUI extends Observable implements Observer {
 	public void update(Observable arg1, Object arg2) {
 		if (this.controller != null) {
 			LOGGER.log(Level.FINE, "Updating GUI");
+			SwingUtilities.invokeLater(new Runnable() {
+				@Override
+				public void run() {
 
-			LOGGER.log(Level.FINE, "Number of connected clients: "
-					+ this.client.getUsers().size());
-			LinkedList<User> clients = this.client.getUsers();
+					LOGGER.log(Level.FINE, "Number of connected clients: "
+							+ client.getUsers().size());
+					LinkedList<User> clients = client.getUsers();
 
-			LOGGER.log(Level.FINE, "Removing all children");
-			treeRoot.removeAllChildren();
+					LOGGER.log(Level.FINE, "Removing all children");
+					treeRoot.removeAllChildren();
 
-			for (User client : clients) {
-				if (!client.getIP().equals(this.client.getMulticastAddress())) {
-					LOGGER.log(Level.FINE,
-							"New user detected: " + client.getName());
-					DefaultMutableTreeNode user = new DefaultMutableTreeNode(
-							client);
-					treeRoot.add(user);
+					for (User connectedUser : clients) {
+						if (!connectedUser.getIP().equals(
+								client.getMulticastAddress())) {
+							LOGGER.log(Level.FINE, "New user detected: "
+									+ connectedUser.getName());
+							DefaultMutableTreeNode user = new DefaultMutableTreeNode(
+									connectedUser);
+							treeRoot.add(user);
+						}
+					}
+
+					connectedPlayers.updateUI();
+
+					frame.repaint();
+
+					for (int i = 0; i < connectedPlayers.getRowCount(); i++) {
+						connectedPlayers.expandRow(i);
+					}
 				}
-			}
-
-			connectedPlayers.updateUI();
-
-			//frame.repaint();
-
-			for (int i = 0; i < connectedPlayers.getRowCount(); i++) {
-				connectedPlayers.expandRow(i);
-			}
+			});
 		}
 	}
 
@@ -504,9 +510,10 @@ public class CaUI extends Observable implements Observer {
 		if (destination.equals(this.client.getOwnUser().getIP())) {
 			if (getTab(source) != null || AddIncomingTab(source)) {
 				selectedTab = getTab(source);
-			} 
+			}
 		}
-		if (source.equals(this.client.getOwnUser().getIP()) || destination.equals(this.client.getMulticastAddress())) {
+		if (source.equals(this.client.getOwnUser().getIP())
+				|| destination.equals(this.client.getMulticastAddress())) {
 			selectedTab = getTab(destination);
 		}
 		if (selectedTab != null) {
@@ -516,8 +523,8 @@ public class CaUI extends Observable implements Observer {
 			if (sourceUser != null) {
 				userName = sourceUser.getName();
 			}
-			String result = "[" + convertTime(timestamp) + "] " + userName + ": "
-					+ body + "\n";
+			String result = "[" + convertTime(timestamp) + "] " + userName
+					+ ": " + body + "\n";
 			chatArea.append(result);
 			chatArea.setCaretPosition(chatArea.getDocument().getLength());
 		}
@@ -532,24 +539,28 @@ public class CaUI extends Observable implements Observer {
 			sourceUserName = sourceUser.getName();
 		}
 		User destinationUser = client.getUser(destination);
-		String destinationUserName = destination.getHostName().replace(".local", "");
+		String destinationUserName = destination.getHostName().replace(
+				".local", "");
 		if (destinationUser != null) {
 			destinationUserName = destinationUser.getName();
 		}
 		if (source.equals(this.client.getOwnUser().getIP())) {
-			transferMessage = "Send a file (" + body + ") to " + destinationUserName;
+			transferMessage = "Send a file (" + body + ") to "
+					+ destinationUserName;
 		}
 		if (destination.equals(this.client.getOwnUser().getIP())) {
-			transferMessage = "Received a private file (" + body + ") from " + sourceUserName;
+			transferMessage = "Received a private file (" + body + ") from "
+					+ sourceUserName;
 		}
 		if (destination.equals(this.client.getMulticastAddress())) {
-			transferMessage = "Received a file (" + body + ") from " + sourceUserName;
+			transferMessage = "Received a file (" + body + ") from "
+					+ sourceUserName;
 		}
-			JTextArea chatArea = (JTextArea) tabs.getComponent(1);
-			String result = "[" + convertTime(timestamp) + "] " + transferMessage + ": "
-					+ "\n";
-			chatArea.append(result);
-			chatArea.setCaretPosition(chatArea.getDocument().getLength());
+		JTextArea chatArea = (JTextArea) tabs.getComponent(1);
+		String result = "[" + convertTime(timestamp) + "] " + transferMessage
+				+ ": " + "\n";
+		chatArea.append(result);
+		chatArea.setCaretPosition(chatArea.getDocument().getLength());
 	}
 
 	public String convertTime(long time) {

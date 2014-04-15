@@ -37,7 +37,7 @@ public class FileSplitter {
 				byte[] toSend = new byte[MAX_BYTES_PER_PACKET];
 				System.arraycopy(this.data, i * MAX_BYTES_PER_PACKET, toSend,
 						0, MAX_BYTES_PER_PACKET - 1);
-				this.packets[i].setData(toSend);
+				this.packets[i].setFileData(toSend);
 			}
 			this.packets[this.maxSeq - 1] = new FileBuilder();
 			this.packets[this.maxSeq - 1]
@@ -45,11 +45,11 @@ public class FileSplitter {
 			this.packets[this.maxSeq - 1].setMaxSequenceNumber(this.maxSeq);
 			this.packets[this.maxSeq - 1].setFilename((String) newpath
 					.getFileName().toString());
-			byte[] toSend = new byte[760];
+			byte[] toSend = new byte[MAX_BYTES_PER_PACKET];
 			System.arraycopy(this.data, (this.maxSeq - 1)
 					* MAX_BYTES_PER_PACKET, toSend, 0, this.length
 					- (this.maxSeq - 1) * MAX_BYTES_PER_PACKET - 1);
-			this.packets[this.maxSeq - 1].setData(toSend);
+			this.packets[this.maxSeq - 1].setFileData(toSend);
 		}
 	}
 
