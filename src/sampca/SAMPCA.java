@@ -202,6 +202,16 @@ public class SAMPCA extends Observable /*implements Runnable*/{
         this.sendBuilder(pcb, destination);
     }
 
+    public void sendFile(String path, InetAddress destination){
+        FileSplitter fs = new FileSplitter();
+        fs.setFile(path);
+        FileBuilder[] fba = fs.getBuilders();
+
+        for(FileBuilder fb : fba){
+            sendBuilder(fb, destination);
+        }
+    }
+
     public void sendBuilder(DataBuilder b, InetAddress destination){
         PacketBuilder pb = new PacketBuilder();
         pb.setSourceAddress(this.iface_addr);
