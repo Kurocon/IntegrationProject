@@ -342,6 +342,10 @@ public class MainUI implements Observer {
 		usernameField.requestFocusInWindow();
 		connectButton.addActionListener(this.controller);
 		exitButton.addActionListener(this.controller);
+		serverField.addKeyListener(controller);
+		portField.addKeyListener(controller);
+		usernameField.addKeyListener(controller);
+		passwordField.addKeyListener(controller);
 	}
 
 	/**

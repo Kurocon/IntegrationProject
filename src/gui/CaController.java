@@ -6,6 +6,8 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.logging.Logger;
 
+import network.User;
+
 import sampca.SAMPCA;
 
 public class CaController implements ActionListener, KeyListener {
@@ -46,18 +48,12 @@ public class CaController implements ActionListener, KeyListener {
 //			LOGGER.log(Level.INFO, "Creating game.");
 //			this.client.getServerHandler().sendCommand(
 //					ServerProtocol.CREATE_GAME, new String[0]);
-//		} else if (e.getSource() == this.view.getJoinGameButton()) {
-//			// This button can be a Join Game button if client has no game, or
-//			// Start Game button if user has game and is owner.
-//			if (this.view.getJoinGameButton().getText().toLowerCase()
-//					.equals(CaUI.BTN_JOIN_GAME.toLowerCase())) {
-//				// Join game of selected user.
-//				String creator = this.view.selectedPlayer;
-//				LOGGER.log(Logger.INFO, "Joining game by player " + creator
-//						+ ".");
-//				this.client.getServerHandler().sendCommand(
-//						ServerProtocol.JOIN_GAME, new String[] { creator });
-//				this.client.clientInfo.joiningGame = creator;
+//		} else
+			if (e.getSource() == this.view.getPrivateButton()) {
+				User user = this.view.selectedPlayer;
+				this.view.addTab(user);
+				this.view.getPrivateButton().setEnabled(false);
+			}
 //			} else if (this.view.getJoinGameButton().getText().toLowerCase()
 //					.equals(LobbyUI.BTN_START_GAME.toLowerCase())) {
 //				// Start game if owner.
@@ -91,7 +87,7 @@ public class CaController implements ActionListener, KeyListener {
         }       
     }
     
-    public void sendMessage(PaneTab selectedTab){
+    private void sendMessage(PaneTab selectedTab){
     	if (!selectedTab.getMessageField().getText().isEmpty()) {
     		String message = selectedTab.getMessageField().getText();
 			if(this.view.tabs.getSelectedIndex() == 0){

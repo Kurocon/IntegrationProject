@@ -85,4 +85,8 @@ public class UDPUser implements User {
     public long getLastSeen() {
         return this.lastSeen;
     }
+
+    public String toString(){
+    	return this.name;
+    }
 }

@@ -63,7 +63,6 @@ public class CaUI extends Observable implements Observer {
 
 	public static final String WINDOW_TITLE = "Chat and File Transfer";
 	public static final String CONNECTED_USERS = "Users";
-	public static final String ONLINE = "Online";
 	public static final String MAIN_TAB_HINT = "Main chat";
 	public static final String FILE_TAB = "File Transfer";
 	public static final String FILE_TAB_HINT = "Files transfered between users";
@@ -73,7 +72,6 @@ public class CaUI extends Observable implements Observer {
 	public static final String BTN_TRANSFER = "Send file";
 	public static final String LBL_DEFAULT_USERNAME = "(unknown)";
 
-	
 	/**
 	 * . Variable to store the frame of the UI
 	 */
@@ -103,7 +101,7 @@ public class CaUI extends Observable implements Observer {
 	 * . Variable to store the button to join a game
 	 */
 	private JButton btnPrivateChat;
-	
+
 	/**
 	 * Variable to store the chat area tabs
 	 */
@@ -119,30 +117,30 @@ public class CaUI extends Observable implements Observer {
 
 	public String nickName = "";
 	private JLabel lblUsername;
-	public String selectedPlayer = "";
-	
+	public User selectedPlayer;
+
 	/**
 	 * Create the application.
 	 */
 	public CaUI(SAMPCA client) {
-        LOGGER.setLevel(SAMPCA.GLOBAL_LOGGER_LEVEL);
+		LOGGER.setLevel(SAMPCA.GLOBAL_LOGGER_LEVEL);
 		this.client = client;
-        this.initialize();
+		this.initialize();
 		this.client.addObserver(this);
 		this.frame.setVisible(true);
-        this.client.updateGUI();
+		this.client.updateGUI();
 	}
 
 	/**
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
-        this.controller = new CaController(this, client);
+		this.controller = new CaController(this, client);
 
 		// Icons
 		ImageIcon serverIcon = addIcon("server.png");
-		ImageIcon tabIcon = addIcon("user.png");
 		ImageIcon transferIcon = addIcon("transfer.png");
+		ImageIcon background = addIcon("logo.png");
 
 		keyEvents[0] = KeyEvent.VK_1;
 		keyEvents[1] = KeyEvent.VK_2;
@@ -156,8 +154,8 @@ public class CaUI extends Observable implements Observer {
 		keyEvents[9] = KeyEvent.VK_0;
 
 		frame = new JFrame();
-		frame.setTitle(SAMPCA.PROGRAM_NAME + " - " + SAMPCA.PUBLIC_CHAT_ROOM_NAME + " - "
-				+ CaUI.WINDOW_TITLE);
+		frame.setTitle(SAMPCA.PROGRAM_NAME + " - "
+				+ SAMPCA.PUBLIC_CHAT_ROOM_NAME + " - " + CaUI.WINDOW_TITLE);
 		frame.setMinimumSize(new Dimension(500, 400));
 		frame.setBounds(100, 100, 500, 400);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -185,21 +183,25 @@ public class CaUI extends Observable implements Observer {
 
 		JTextArea transferTextArea = new JTextArea();
 		transferTextArea.setEditable(false);
+		transferTextArea.setOpaque(false);
 		transferTextArea.setAutoscrolls(true);
 		transferTextArea.setFocusable(false);
 		transferTextArea.setLineWrap(true);
+		transferTextArea.setWrapStyleWord(true);
+		
+		Image bg = background.getImage();
 
 		tabs = new JTabbedPane();
-		tabs.addTab(SAMPCA.PUBLIC_CHAT_ROOM_NAME, serverIcon, new PaneTab(nickName, client.getMulticastAddress(),
-				this.controller), MAIN_TAB_HINT);
-		tabs.setMnemonicAt(0, keyEvents[0]);
+		PaneTab paneTab = new PaneTab(nickName, client.getMulticastAddress(), this.controller);
+		tabs.addTab(SAMPCA.PUBLIC_CHAT_ROOM_NAME, serverIcon, paneTab,
+				MAIN_TAB_HINT);
 		tabs.addTab(FILE_TAB, transferIcon, transferTextArea, FILE_TAB_HINT);
-		tabs.setMnemonicAt(1, keyEvents[1]);
+		updateKeys();
 		tabs.setSelectedIndex(0);
 
-		//addTab(tabs, new PaneTab(nickName, null, this.controller), "someone",
-		//		tabIcon);
-		
+		// addTab(tabs, new PaneTab(nickName, null, this.controller), "someone",
+		// tabIcon);
+
 		contentPane.setRightComponent(tabs);
 
 		JSplitPane menuPane = new JSplitPane();
@@ -214,8 +216,8 @@ public class CaUI extends Observable implements Observer {
 		buttonPanel.setLayout(new FormLayout(new ColumnSpec[] {
 				FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("165px"), },
 				new RowSpec[] { FormSpecs.RELATED_GAP_ROWSPEC,
-						RowSpec.decode("25px"), FormSpecs.RELATED_GAP_ROWSPEC,
-						RowSpec.decode("25px"), }));
+				RowSpec.decode("25px"), FormSpecs.RELATED_GAP_ROWSPEC,
+				RowSpec.decode("25px"), }));
 
 		btnTransfer = new JButton(CaUI.BTN_TRANSFER);
 		btnTransfer.setEnabled(true);
@@ -224,7 +226,7 @@ public class CaUI extends Observable implements Observer {
 		btnPrivateChat = new JButton(CaUI.BTN_PRIVATE_CHAT);
 		btnPrivateChat.setEnabled(false);
 		buttonPanel.add(btnPrivateChat, "2, 4, fill, top");
-		
+
 		connectedPlayers = new JTree();
 		DefaultTreeCellRenderer renderer = new DefaultTreeCellRenderer();
 		// ConnectedUsersTreeRenderer renderer = new
@@ -238,14 +240,11 @@ public class CaUI extends Observable implements Observer {
 		connectedPlayers.setCellRenderer(renderer);
 		connectedPlayers.getSelectionModel().setSelectionMode(
 				TreeSelectionModel.SINGLE_TREE_SELECTION);
-
 		this.treeRoot = new DefaultMutableTreeNode(CaUI.CONNECTED_USERS);
-		
-		//this.mainRoot = new DefaultMutableTreeNode(CaUI.ONLINE);
+		// this.mainRoot = new DefaultMutableTreeNode(CaUI.ONLINE);
 
 		treeRoot.setAllowsChildren(true);
-
-		//treeRoot.add(mainRoot);
+		// treeRoot.add(mainRoot);
 
 		DefaultTreeModel treeModel = new DefaultTreeModel(treeRoot);
 		connectedPlayers.setModel(treeModel);
@@ -260,29 +259,24 @@ public class CaUI extends Observable implements Observer {
 						.getLastSelectedPathComponent();
 
 				/* if nothing is selected */
-				if (node == null)
-					return;
-
-				/* retrieve the node that was selected */
-				Object nodeInfo = node.getUserObject();
-				selectedPlayer = nodeInfo.toString();
-			}
-		});
-		
-		connectedPlayers.addTreeSelectionListener(new TreeSelectionListener() {
-			public void valueChanged(TreeSelectionEvent e) {
-				DefaultMutableTreeNode node = (DefaultMutableTreeNode) connectedPlayers
-						.getLastSelectedPathComponent();
-
-				/* if nothing is selected */
-				if (node == null)
-					return;
-
-				/* retrieve the node that was selected */
-				Object nodeInfo = node.getUserObject();
+				if (node != null && !node.toString().equals(CONNECTED_USERS)) {
+					/* retrieve the node that was selected */
+					User nodeInfo = (User) node.getUserObject();
+					selectedPlayer = nodeInfo;
+					if (getTab(nodeInfo.getIP()) == null
+					/*
+					 * && !nodeInfo.getIP() .equals(client.getOwnUser().getIP())
+					 */) {
+						btnPrivateChat.setEnabled(true);
+					}
+				} else {
+					btnPrivateChat.setEnabled(false);
+				}
 			}
 		});
 
+		btnTransfer.addActionListener(controller);
+		btnPrivateChat.addActionListener(controller);
 		// Add tree to pane.
 		menuPane.setLeftComponent(connectedPlayers);
 		menuPane.setDividerLocation(670);
@@ -294,7 +288,7 @@ public class CaUI extends Observable implements Observer {
 	private ImageIcon addIcon(String image) {
 		Image img;
 		try {
-			img = ImageIO.read(getClass().getResource("images/" + image));
+			img = ImageIO.read(getClass().getResource("images/" + SAMPCA.TEXTUREPACK + "/"+ image));
 		} catch (IOException e) {
 			LOGGER.log(Level.SEVERE, "Could not load image " + image);
 			new Popup("Could not load image " + image);
@@ -305,95 +299,117 @@ public class CaUI extends Observable implements Observer {
 	}
 
 	@SuppressWarnings("serial")
-	private void addTab(final JTabbedPane tabbedPane, final PaneTab paneTab,
-			final String nickname, final Icon icon) {
-		ImageIcon closeIcon = addIcon("close.png");
-		ImageIcon closeIcon2 = addIcon("close2.png");
-		tabs.addTab(null, paneTab);
-		tabs.setMnemonicAt(this.nextKeyEvents, keyEvents[this.nextKeyEvents]);
-		this.nextKeyEvents++;
-		int pos = tabbedPane.indexOfComponent(paneTab);
+	public void addTab(User user) {
+		if (nextKeyEvents > (keyEvents.length - 1)) {
+			new Popup(
+					"Reached maximum number of tabs, close one before opening a new one!");
+		} else {
+			ImageIcon tabIcon = addIcon("user.png");
+			ImageIcon closeIcon = addIcon("close.png");
+			ImageIcon closeIcon2 = addIcon("close2.png");
 
-		// Create a FlowLayout that will space things 5px apart
-		FlowLayout f = new FlowLayout(FlowLayout.CENTER, 5, 0);
+			String nickname = user.getName();
 
-		// Make a small JPanel with the layout and make it non-opaque
-		JPanel pnlTab = new JPanel(f);
-		pnlTab.setOpaque(false);
+			final PaneTab paneTab = new PaneTab(nickname, user.getIP(),
+					this.controller);
 
-		// Add a JLabel with title and the left-side tab icon
-		JLabel lblTitle = new JLabel(nickname);
-		lblTitle.setIcon(icon);
+			tabs.addTab(null, paneTab);
+			this.nextKeyEvents++;
+			updateKeys();
+			int pos = tabs.indexOfComponent(paneTab);
 
-		// Create a JButton for the close tab button
-		JButton btnClose = new JButton();
-		btnClose.setBorderPainted(false);
-		btnClose.setContentAreaFilled(false);
-		btnClose.setFocusPainted(false);
-		btnClose.setOpaque(false);
-		// Configure icon and rollover icon for button
-		btnClose.setRolloverIcon(closeIcon2);
-		btnClose.setRolloverEnabled(true);
-		btnClose.setIcon(closeIcon);
+			// Create a FlowLayout that will space things 5px apart
+			FlowLayout f = new FlowLayout(FlowLayout.CENTER, 5, 0);
 
-		// Set border null so the button doesn't make the tab too big
-		btnClose.setBorder(null);
+			// Make a small JPanel with the layout and make it non-opaque
+			JPanel pnlTab = new JPanel(f);
+			pnlTab.setOpaque(false);
 
-		// Make sure the button can't get focus, otherwise it looks funny
-		btnClose.setFocusable(false);
+			// Add a JLabel with title and the left-side tab icon
+			JLabel lblTitle = new JLabel(nickname);
+			lblTitle.setIcon(tabIcon);
 
-		// Put the panel together
-		pnlTab.add(lblTitle);
-		pnlTab.add(btnClose);
+			// Create a JButton for the close tab button
+			JButton btnClose = new JButton();
+			btnClose.setBorderPainted(false);
+			btnClose.setContentAreaFilled(false);
+			btnClose.setFocusPainted(false);
+			btnClose.setOpaque(false);
+			// Configure icon and rollover icon for button
+			btnClose.setRolloverIcon(closeIcon2);
+			btnClose.setRolloverEnabled(true);
+			btnClose.setIcon(closeIcon);
 
-		// Add a thin border to keep the image below the top edge of the tab
-		// when the tab is selected
-		pnlTab.setBorder(BorderFactory.createEmptyBorder(2, 0, 0, 0));
+			// Set border null so the button doesn't make the tab too big
+			btnClose.setBorder(null);
 
-		// Now assign the component for the tab
-		tabbedPane.setTabComponentAt(pos, pnlTab);
+			// Make sure the button can't get focus, otherwise it looks funny
+			btnClose.setFocusable(false);
 
-		// Add the listener that removes the tab
-		ActionListener listener = new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				// The component parameter must be declared "final" so that it
-				// can be
-				// referenced in the anonymous listener class like this.
-				tabbedPane.remove(paneTab);
-			}
-		};
-		btnClose.addActionListener(listener);
+			// Put the panel together
+			pnlTab.add(lblTitle);
+			pnlTab.add(btnClose);
 
-		// Optionally bring the new tab to the front
-		tabbedPane.setSelectedComponent(paneTab);
+			// Add a thin border to keep the image below the top edge of the tab
+			// when the tab is selected
+			pnlTab.setBorder(BorderFactory.createEmptyBorder(2, 0, 0, 0));
 
-		// -------------------------------------------------------------
-		// Bonus: Adding a <Ctrl-W> keystroke binding to close the tab
-		// -------------------------------------------------------------
-		AbstractAction closeTabAction = new AbstractAction() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				tabbedPane.remove(paneTab);
-			}
-		};
+			// Now assign the component for the tab
+			tabs.setTabComponentAt(pos, pnlTab);
 
-		// Create a keystroke
-		KeyStroke controlW = KeyStroke.getKeyStroke("control W");
+			// Add the listener that removes the tab
+			ActionListener listener = new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					// The component parameter must be declared "final" so that
+					// it
+					// can be
+					// referenced in the anonymous listener class like this.
+					tabs.remove(paneTab);
+					nextKeyEvents--;
+					updateKeys();
+					
+				}
+			};
+			btnClose.addActionListener(listener);
 
-		// Get the appropriate input map using the JComponent constants.
-		// This one works well when the component is a container.
-		InputMap inputMap = paneTab
-				.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+			// Optionally bring the new tab to the front
+			tabs.setSelectedComponent(paneTab);
 
-		// Add the key binding for the keystroke to the action name
-		inputMap.put(controlW, "closeTab");
+			// -------------------------------------------------------------
+			// Bonus: Adding a <Ctrl-W> keystroke binding to close the tab
+			// -------------------------------------------------------------
+			AbstractAction closeTabAction = new AbstractAction() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					tabs.remove(paneTab);
+				}
+			};
 
-		// Now add a single binding for the action name to the anonymous action
-		paneTab.getActionMap().put("closeTab", closeTabAction);
+			// Create a keystroke
+			KeyStroke controlW = KeyStroke.getKeyStroke("control W");
 
+			// Get the appropriate input map using the JComponent constants.
+			// This one works well when the component is a container.
+			InputMap inputMap = paneTab
+					.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+
+			// Add the key binding for the keystroke to the action name
+			inputMap.put(controlW, "closeTab");
+
+			// Now add a single binding for the action name to the anonymous
+			// action
+			paneTab.getActionMap().put("closeTab", closeTabAction);
+		}
 	}
 
+	private void updateKeys(){
+		for(int i = 0; i < this.tabs.getTabCount(); i++){
+			tabs.setMnemonicAt(i,
+					keyEvents[i]);
+		}
+	}
+	
 	@Override
 	public void update(Observable arg1, Object arg2) {
 		if (this.controller != null) {
@@ -403,10 +419,10 @@ public class CaUI extends Observable implements Observer {
 					+ this.client.getUsers().size());
 			LinkedList<User> clients = this.client.getUsers();
 			ArrayList<DefaultMutableTreeNode> users = new ArrayList<DefaultMutableTreeNode>();
-			
+
 			LOGGER.log(Level.FINE, "Removing all children");
 			treeRoot.removeAllChildren();
-			
+
 			for (User client : clients) {
                 if(!client.getIP().equals(this.client.getMulticastAddress())) {
                     LOGGER.log(Level.FINE, "New user detected: " + client.getName());
@@ -414,7 +430,7 @@ public class CaUI extends Observable implements Observer {
                     treeRoot.add(user);
                 }
 			}
-			
+
 			connectedPlayers.updateUI();
 
 			frame.repaint();
@@ -431,47 +447,62 @@ public class CaUI extends Observable implements Observer {
 	 * @return connectedPlayers - JTree with all connected players
 	 */
 	public JTree getConnectedPlayers() {
-		return connectedPlayers;
+		return this.connectedPlayers;
 	}
 
 	public JFrame getFrame() {
-		return frame;
+		return this.frame;
 	}
 
 	public JLabel getNickLabel() {
-		return lblUsername;
+		return this.lblUsername;
 	}
 
-	public PaneTab getTab(InetAddress ip){
+	public JButton getPrivateButton() {
+		return this.btnPrivateChat;
+	}
+
+	public JButton getTransferButton() {
+		return this.btnTransfer;
+	}
+
+	public PaneTab getTab(InetAddress ip) {
 		PaneTab returnTab = null;
-		for(Component tab : this.tabs.getComponents()){
-			if(tab.getClass().equals(gui.PaneTab.class)){
+		for (Component tab : this.tabs.getComponents()) {
+			if (tab.getClass().equals(gui.PaneTab.class)) {
 				PaneTab tempTab = (PaneTab) tab;
-				if(ip.equals(tempTab.getAddress())){
+				if (ip.equals(tempTab.getAddress())) {
 					returnTab = tempTab;
 				}
 			}
 		}
 		return returnTab;
 	}
-	
-	public void addMessage(InetAddress source, InetAddress destination, String body, long timestamp) {
+
+	public void addMessage(InetAddress source, InetAddress destination,
+			String body, long timestamp, boolean private_msg) {
 		PaneTab selectedTab = getTab(destination);
 		if (selectedTab != null) {
 			JTextArea chatArea = selectedTab.getTetArea();
             User sourceUser = client.getUser(source);
             String userName = source.getHostName();
-            if(sourceUser != null) {
+            String result;
+            if (sourceUser != null) {
                 userName = sourceUser.getName();
             }
-			chatArea.append("[" + convertTime(timestamp) + "] " + userName + ": " + body + "\n");
+            if(private_msg){
+                result = "[" + convertTime(timestamp) + "] " + body + "\n";
+            } else {
+                result = "[" + convertTime(timestamp) + "] " + userName
+                        + ": " + body + "\n";
+            }
 			chatArea.setCaretPosition(chatArea.getDocument().getLength());
 		}
 	}
 
-	public String convertTime(long time){
-	    Date date = new Date(time);
-	    Format format = new SimpleDateFormat("HH:mm:ss");
-	    return format.format(date);
+	public String convertTime(long time) {
+		Date date = new Date(time);
+		Format format = new SimpleDateFormat("HH:mm:ss");
+		return format.format(date);
 	}
 }

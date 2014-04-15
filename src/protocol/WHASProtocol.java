@@ -61,16 +61,17 @@ public class WHASProtocol implements Protocol {
     	ChatParser cp = new ChatParser(data.getData(), data.getDataLength());
         CaUI chatGui = this.handler.getListener().getSAMPCA().getChatGUI();
         if(chatGui != null) {
-            chatGui.addMessage(data.getSourceAddress(), data.getDestinationAddress(), cp.getMessage(), data.getTimestamp());
+            chatGui.addMessage(data.getSourceAddress(), data.getDestinationAddress(), cp.getMessage(), data.getTimestamp(), false);
         }
     }
 
     @Override
     public void private_message(PacketParser data) {
       	ChatParser cp = new ChatParser(data.getData(), data.getDataLength());
+      	System.out.println(cp.getMessage());
         CaUI chatGui = this.handler.getListener().getSAMPCA().getChatGUI();
         if(chatGui != null) {
-            chatGui.addMessage(data.getSourceAddress(), data.getDestinationAddress(), cp.getMessage(), data.getTimestamp());
+            chatGui.addMessage(data.getSourceAddress(), data.getDestinationAddress(), cp.getMessage(), data.getTimestamp(), true);
         }
     }
 
