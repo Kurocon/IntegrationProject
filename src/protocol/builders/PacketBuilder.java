@@ -45,7 +45,7 @@ public class PacketBuilder {
 
     public PacketBuilder(){
         this.hopcount = new byte[]{0x0F};
-        this.version = new byte[]{2};
+        this.version = new byte[]{4};
         this.timestamp = ByteBuffer.allocate(8).putLong(Timestamp.getCurrentTimeAsLong()).array();
         this.reserved = new byte[]{0x00,0x00};
     }
