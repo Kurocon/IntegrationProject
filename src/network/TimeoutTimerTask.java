@@ -71,7 +71,7 @@ public class TimeoutTimerTask extends TimerTask {
                     this.sampca.forwardPacket(pp);
                 }
             }
-            if(ackTime < currentTime - 60000){
+            if(ackTime < currentTime - 80000){
                 // Packet timeout, remove from queue
                 LOGGER.log(Level.WARNING, "Removing element "+ackTime+" from AckLog. Reason: Packet timeout: "+((currentTime-ackTime))/1000+"s");
                 this.sampca.getAckLog().removeElement(ackTime);

@@ -276,10 +276,6 @@ public class SAMPCA extends Observable /*implements Runnable*/{
 
     }
 
-    public void sendFile(String filename, byte[] data){
-
-    }
-
     public UDPListener getListener(){
         return this.listener;
     }
