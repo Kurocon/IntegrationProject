@@ -29,9 +29,7 @@ public class FilePacketParser {
         this.fileMap.put(fp.getCurrentPacketNumber(), fp.getFileData());
         this.blockLength = fp.getFileData().length;
 
-        if(isFileComplete()){
-            saveFile();
-        }
+        System.out.println("Got part "+fp.getCurrentPacketNumber()+"/"+fp.getTotalPacketsNumber());
     }
 
     public boolean isFileComplete() {
@@ -39,12 +37,15 @@ public class FilePacketParser {
         for(int i = 1; i <= this.fileLength; i++){
             if(!this.fileMap.containsKey(i)){
                 complete = false;
+//                System.out.println("Part "+i+"/"+this.fileLength+" [ERROR]");
+            }else{
+//                System.out.println("Part "+i+"/"+this.fileLength+" [OK]");
             }
         }
         return complete;
     }
 
-    private void saveFile(){
+    public void saveFile(){
         int lastPacketLength = this.fileMap.get(fileLength).length;
         int totalLength = ((this.fileLength * this.blockLength) - (this.blockLength-lastPacketLength));
         ByteBuffer fileBuffer = ByteBuffer.allocate(totalLength);

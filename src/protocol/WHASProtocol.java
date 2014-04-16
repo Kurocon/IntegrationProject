@@ -146,6 +146,7 @@ public class WHASProtocol implements Protocol {
     public void generic_file(PacketParser data) {
         fileParser.addFilePacket(data);
         if(fileParser.isFileComplete()){
+            fileParser.saveFile();
             LOGGER.log(Level.INFO, "Received file from "+data.getSourceAddress()+", saved in "+fileParser.getSavedFilePath());
             CaUI chatGui = this.handler.getListener().getSAMPCA().getChatGUI();
             if(chatGui != null) {
