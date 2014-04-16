@@ -10,6 +10,7 @@ public class FileBuilder extends DataBuilder{
 	private byte[] filename = new byte[255];
 	private byte[] filenameLength;
 	private byte[] filedata;
+    private long seqNr;
 	
 	public FileBuilder(){
 		super();
@@ -17,7 +18,8 @@ public class FileBuilder extends DataBuilder{
 	}
 	
 	public void setCurrentSequenceNumber(int i){
-		this.currentSequenceNumber = ByteBuffer.allocate(4).putInt(i).array();	
+		this.currentSequenceNumber = ByteBuffer.allocate(4).putInt(i).array();
+        this.seqNr = (long) i;
 	}
 	
 	public void setMaxSequenceNumber(int i){
@@ -43,23 +45,25 @@ public class FileBuilder extends DataBuilder{
 		return super.getData();
 	}
 
-	private byte[] getFileData() {
+	public byte[] getFileData() {
 		return this.filedata;
 	}
 
-	private byte[] getFilenameLength() {
+	public byte[] getFilenameLength() {
 		return this.filenameLength;
 	}
 
-	private byte[] getMaxSequenceNumber() {
+	public byte[] getMaxSequenceNumber() {
 		return this.maxSequenceNumber;
 	}
 
-	private byte[] getCurrentSequenceNumber() {
+	public byte[] getCurrentSequenceNumber() {
 		return this.currentSequenceNumber;
 	}
 
-	private byte[] getFilename() {
+	public byte[] getFilename() {
 		return this.filename;
 	}
+
+    public long getSeqNr(){ return this.seqNr; }
 }

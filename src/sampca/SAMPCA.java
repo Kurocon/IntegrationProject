@@ -218,6 +218,13 @@ public class SAMPCA extends Observable /*implements Runnable*/{
         pb.setDestinationAddress(destination);
         pb.setDataType(b.getDataType());
         pb.setData(b);
+
+        if(Datatype.getDataTypeAsInt(b.getDataType()) == Datatype.INT_GENERIC_FILE){
+            FileBuilder fb = (FileBuilder) b;
+            ByteBuffer ts = ByteBuffer.allocate(8).putLong(Timestamp.getCurrentTimeAsLong()+fb.getSeqNr());
+            pb.setTimestamp(ts.array());
+        }
+
         byte[] packet = pb.getPacket();
 
         // Add packet to logging.
