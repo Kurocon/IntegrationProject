@@ -5,7 +5,6 @@ import java.awt.event.ActionListener;
 import java.io.File;
 
 import javax.swing.JFileChooser;
-import javax.swing.JFrame;
 
 import protocol.Timestamp;
 
@@ -13,7 +12,7 @@ import network.User;
 
 import sampca.SAMPCA;
 
-public class FileController  implements ActionListener {
+public class FileController implements ActionListener {
 
 	private FileChoose view;
 	private SAMPCA client;
@@ -49,6 +48,7 @@ public class FileController  implements ActionListener {
 		}
 		if (e.getSource() == view.getTransferButton()) {
 			if(file != null){
+				new TransferPopup("Please wait, transfering file!\nThe program might become inresponsive.");
 				User user = (User) view.getUserList().getSelectedItem();
 				this.client.sendFile(file.getAbsolutePath(), user.getIP());
 				this.control.getGui().addTransferMessage(this.client.getOwnUser().getIP(), user.getIP(), file.getName(), Timestamp.getCurrentTimeAsLong(), false);
@@ -58,5 +58,4 @@ public class FileController  implements ActionListener {
 			}
 		}
 	}
-
 }

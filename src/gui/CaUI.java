@@ -36,6 +36,7 @@ import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.ImageIcon;
+import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
@@ -199,7 +200,7 @@ public class CaUI extends Observable implements Observer {
 				this.controller);
 		tabs.addTab(SAMPCA.PUBLIC_CHAT_ROOM_NAME, serverIcon, paneTab,
 				MAIN_TAB_HINT);
-		tabs.addTab(FILE_TAB, transferIcon, transferTextArea, FILE_TAB_HINT);
+		tabs.addTab(FILE_TAB, transferIcon, new JScrollPane(transferTextArea), FILE_TAB_HINT);
 		updateKeys();
 		tabs.setSelectedIndex(0);
 
