@@ -69,4 +69,16 @@ public class FilePacketParser {
         this.blockLength = -1;
         this.savedFilePath = "";
     }
+    
+    public int getProgress(){
+        int complete = 0;
+        for(int i = 1; i <= this.fileLength; i++){
+            if(this.fileMap.containsKey(i)){
+                complete++;
+            }
+        }
+        double status = ((double) complete / (double) this.fileLength) * 100;
+        
+        return (int) status;
+    }
 }

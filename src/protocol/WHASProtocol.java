@@ -147,7 +147,7 @@ public class WHASProtocol implements Protocol {
         FileParser fp = new FileParser(data.getData(), data.getDataLength());
         CaUI chatGui = this.handler.getListener().getSAMPCA().getChatGUI();
         if(chatGui != null) {
-        	String status = "Received file part "+fp.getCurrentPacketNumber()+"/"+fp.getTotalPacketsNumber();
+        	String status = "Received file part "+fp.getCurrentPacketNumber()+"/"+fp.getTotalPacketsNumber() + " | " + fileParser.getProgress() + "%";
         	chatGui.addTransferMessage(data.getSourceAddress(), data.getDestinationAddress(), status, data.getTimestamp(), true);
         }
         if(fileParser.isFileComplete()){
