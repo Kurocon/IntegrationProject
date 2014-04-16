@@ -166,7 +166,6 @@ end if
                     break;
                 case Datatype.INT_GENERIC_FILE:
                     LOGGER.log(Level.INFO, "Received generic file from " + pp.getSourceAddress().getHostName());
-                    System.out.println("FILE PACKET! "+pp.getTimestamp());
                     this.protocol.generic_file(pp);
                     break;
                 case Datatype.INT_IMAGE_FILE_JPEG:
@@ -193,7 +192,6 @@ end if
         if(Datatype.getDataTypeAsInt(pp.getDataType()) != Datatype.INT_GENERIC_ACK && Datatype.getDataTypeAsInt(pp.getDataType()) != Datatype.INT_BROADCAST_MESSAGE){
             // Send ack for the packet.
             LOGGER.log(Level.INFO, "Sending ACK with index "+pp.getTimestamp()+" around timestamp "+Timestamp.getCurrentTimeAsLong());
-            System.out.println("FILE ACKPAK! "+pp.getTimestamp());
             this.getListener().getSAMPCA().sendAckMessage(pp.getTimestamp(), pp.getSourceAddress());
         }
     }

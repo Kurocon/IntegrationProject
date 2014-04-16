@@ -58,7 +58,7 @@ public class PacketParser {
             byte[] timestamp = new byte[8];
             byte[] dataLength = new byte[2];
             byte[] reserved = new byte[2];
-            byte[] data = new byte[1000];
+            byte[] data = new byte[SAMPCA.MAX_PACKET_SIZE - SAMPCA.GENERAL_HEADER_SIZE];
 
             System.arraycopy(this.packet, 0, src_addr, 0, 4);
             System.arraycopy(this.packet, 4, dst_addr, 0, 4);
@@ -68,7 +68,7 @@ public class PacketParser {
             System.arraycopy(this.packet, 12, timestamp, 0, 8);
             System.arraycopy(this.packet, 20, dataLength, 0, 2);
             System.arraycopy(this.packet, 22, reserved, 0, 2);
-            System.arraycopy(this.packet, 24, data, 0, 1000);
+            System.arraycopy(this.packet, 24, data, 0, SAMPCA.MAX_PACKET_SIZE - SAMPCA.GENERAL_HEADER_SIZE);
 
             try {
                 this.src_addr = InetAddress.getByAddress(src_addr);

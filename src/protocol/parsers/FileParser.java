@@ -16,15 +16,16 @@ public class FileParser extends Parser {
     private String fileNameAsString;
     private byte[] fileNameAsBytes;
     private int filenameLength;
+    private int innerLength;
 
 //    CURRENT_SEQ_NUMBER -- 4 bytes
 //    MAX_SEQ_NUMBER -- 4 bytes
 //    FILENAME -- 255 bytes
 //    FILENAME_LENGTH -- 1 byte
 
-    public FileParser(byte[] data) {
+    public FileParser(byte[] data, int fileLength) {
         super(data);
-
+        this.innerLength = fileLength;
         byte[] curSecNrBytes = new byte[4];
         byte[] maxSecNrBytes = new byte[4];
         System.arraycopy(data, 0, curSecNrBytes, 0, 4);
@@ -37,11 +38,15 @@ public class FileParser extends Parser {
         this.totalPackets = maxSecNrBuffer.getInt();
         this.filenameLength = data[263];
         this.fileNameAsBytes = new byte[this.filenameLength];
+
+        int headerLength = 264;
+        this.innerLength = this.innerLength - headerLength;
+
         System.arraycopy(data, 8, this.fileNameAsBytes, 0, this.filenameLength);
         this.fileNameAsString = new String(this.fileNameAsBytes);
 
-        this.fileData = new byte[SAMPCA.MAX_BYTES_PER_FILE_PACKET];
-        System.arraycopy(data, 264, fileData, 0, SAMPCA.MAX_BYTES_PER_FILE_PACKET);
+        this.fileData = new byte[this.innerLength];
+        System.arraycopy(data, 264, fileData, 0, this.innerLength);
     }
 
     public byte[] getFileData(){
