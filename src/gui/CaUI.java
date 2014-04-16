@@ -531,7 +531,7 @@ public class CaUI extends Observable implements Observer {
 	}
 
 	public void addTransferMessage(InetAddress source, InetAddress destination,
-			String body, long timestamp) {
+			String body, long timestamp, boolean transfer) {
 		String transferMessage = "";
 		User sourceUser = client.getUser(source);
 		String sourceUserName = source.getHostName().replace(".local", "");
@@ -544,15 +544,25 @@ public class CaUI extends Observable implements Observer {
 		if (destinationUser != null) {
 			destinationUserName = destinationUser.getName();
 		}
-		if (source.equals(this.client.getOwnUser().getIP())) {
-			transferMessage = "Send a file (" + body + ") to "
-					+ destinationUserName;
-		}else if (destination.equals(this.client.getOwnUser().getIP())) {
-			transferMessage = "Received a private file (" + body + ") from "
-					+ sourceUserName;
-		} else if (destination.equals(this.client.getMulticastAddress())) {
-			transferMessage = "Received a file (" + body + ") from "
-					+ sourceUserName;
+		if(transfer){
+			if (destination.equals(this.client.getOwnUser().getIP())) {
+				transferMessage = "Receiving a private file from "
+						+ sourceUserName + " (Status: " + body + ")";
+			} else if (destination.equals(this.client.getMulticastAddress())) {
+				transferMessage = "Receiving a file from "
+						+ sourceUserName + " (Status: " + body + ")";;
+			}
+		} else {
+			if (source.equals(this.client.getOwnUser().getIP())) {
+				transferMessage = "Send a file (" + body + ") to "
+						+ destinationUserName;
+			}else if (destination.equals(this.client.getOwnUser().getIP())) {
+				transferMessage = "Received a private file (" + body + ") from "
+						+ sourceUserName;
+			} else if (destination.equals(this.client.getMulticastAddress())) {
+				transferMessage = "Received a file (" + body + ") from "
+						+ sourceUserName;
+			}
 		}
 		JTextArea chatArea = (JTextArea) tabs.getComponent(1);
 		String result = "[" + convertTime(timestamp) + "] " + transferMessage

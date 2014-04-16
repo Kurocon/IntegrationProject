@@ -51,7 +51,7 @@ public class FileController  implements ActionListener {
 			if(file != null){
 				User user = (User) view.getUserList().getSelectedItem();
 				this.client.sendFile(file.getAbsolutePath(), user.getIP());
-				this.control.getGui().addTransferMessage(this.client.getOwnUser().getIP(), user.getIP(), file.getName(), Timestamp.getCurrentTimeAsLong());
+				this.control.getGui().addTransferMessage(this.client.getOwnUser().getIP(), user.getIP(), file.getName(), Timestamp.getCurrentTimeAsLong(), false);
 				control.getFrame().dispose();
 			} else {
 				new Popup("No file selected");

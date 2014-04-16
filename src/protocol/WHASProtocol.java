@@ -144,12 +144,17 @@ public class WHASProtocol implements Protocol {
     @Override
     public void generic_file(PacketParser data) {
         fileParser.addFilePacket(data);
+        FileParser fp = new FileParser(data.getData(), data.getDataLength());
+        CaUI chatGui = this.handler.getListener().getSAMPCA().getChatGUI();
+        if(chatGui != null) {
+        	String status = "Received file part "+fp.getCurrentPacketNumber()+"/"+fp.getTotalPacketsNumber();
+        	chatGui.addTransferMessage(data.getSourceAddress(), data.getDestinationAddress(), status, data.getTimestamp(), true);
+        }
         if(fileParser.isFileComplete()){
             fileParser.saveFile();
             LOGGER.log(Level.INFO, "Received file from "+data.getSourceAddress()+", saved in "+fileParser.getSavedFilePath());
-            CaUI chatGui = this.handler.getListener().getSAMPCA().getChatGUI();
             if(chatGui != null) {
-                chatGui.addTransferMessage(data.getSourceAddress(), data.getDestinationAddress(), fileParser.getSavedFilePath(), data.getTimestamp());
+                chatGui.addTransferMessage(data.getSourceAddress(), data.getDestinationAddress(), fileParser.getSavedFilePath(), data.getTimestamp(), false);
             }
             fileParser.removeFile();
         }
