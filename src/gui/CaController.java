@@ -92,10 +92,11 @@ public class CaController implements ActionListener, KeyListener,
 		// this.client.clientInfo.joiningGame = creator;l
 		// this.client.clientInfo.joinAsComputer = true;
 		// } else
-
-		PaneTab selectedTab = (PaneTab) this.view.tabs.getSelectedComponent();
-		if (e.getSource() == selectedTab.getSendButton()) {
-			sendMessage(selectedTab);
+		if (view.tabs.getSelectedComponent().getClass().equals(gui.PaneTab.class)) {
+			PaneTab selectedTab = (PaneTab) this.view.tabs.getSelectedComponent();
+			if (e.getSource() == selectedTab.getSendButton()) {
+				sendMessage(selectedTab);
+			}
 		}
 	}
 
