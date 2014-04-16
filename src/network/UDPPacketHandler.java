@@ -36,6 +36,12 @@ public class UDPPacketHandler implements PacketHandler {
         // Throw it through a PacketParser!
         PacketParser pp = new PacketParser(packet.getData());
 
+        if(Datatype.getDataTypeAsInt(pp.getDataType()) != Datatype.INT_GENERIC_ACK && Datatype.getDataTypeAsInt(pp.getDataType()) != Datatype.INT_BROADCAST_MESSAGE){
+            // Send ack for the packet.
+            LOGGER.log(Level.INFO, "Sending ACK with index "+pp.getTimestamp()+" around timestamp "+Timestamp.getCurrentTimeAsLong());
+            this.getListener().getSAMPCA().sendAckMessage(pp.getTimestamp(), pp.getSourceAddress());
+        }
+
         /*
 if is not destination then
     if is source then
@@ -188,12 +194,6 @@ end if
         }
         // This packet is familiar to us.
         // Ignore / Drop it.
-
-        if(Datatype.getDataTypeAsInt(pp.getDataType()) != Datatype.INT_GENERIC_ACK && Datatype.getDataTypeAsInt(pp.getDataType()) != Datatype.INT_BROADCAST_MESSAGE){
-            // Send ack for the packet.
-            LOGGER.log(Level.INFO, "Sending ACK with index "+pp.getTimestamp()+" around timestamp "+Timestamp.getCurrentTimeAsLong());
-            this.getListener().getSAMPCA().sendAckMessage(pp.getTimestamp(), pp.getSourceAddress());
-        }
     }
     
     public UDPListener getListener(){
