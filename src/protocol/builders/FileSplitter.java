@@ -32,23 +32,17 @@ public class FileSplitter {
 				this.packets[i] = new FileBuilder();
 				this.packets[i].setCurrentSequenceNumber(i + 1);
 				this.packets[i].setMaxSequenceNumber(this.maxSeq);
-				this.packets[i].setFilename((String) newpath.getFileName()
-						.toString());
+				this.packets[i].setFilename((String) newpath.getFileName().toString());
 				byte[] toSend = new byte[MAX_BYTES_PER_PACKET];
-				System.arraycopy(this.data, i * MAX_BYTES_PER_PACKET, toSend,
-						0, MAX_BYTES_PER_PACKET - 1);
+				System.arraycopy(this.data, i * MAX_BYTES_PER_PACKET, toSend, 0, MAX_BYTES_PER_PACKET - 1);
 				this.packets[i].setFileData(toSend);
 			}
 			this.packets[this.maxSeq - 1] = new FileBuilder();
-			this.packets[this.maxSeq - 1]
-					.setCurrentSequenceNumber(this.maxSeq);
+			this.packets[this.maxSeq - 1].setCurrentSequenceNumber(this.maxSeq);
 			this.packets[this.maxSeq - 1].setMaxSequenceNumber(this.maxSeq);
-			this.packets[this.maxSeq - 1].setFilename((String) newpath
-					.getFileName().toString());
-			byte[] toSend = new byte[MAX_BYTES_PER_PACKET];
-			System.arraycopy(this.data, (this.maxSeq - 1)
-					* MAX_BYTES_PER_PACKET, toSend, 0, this.length
-					- (this.maxSeq - 1) * MAX_BYTES_PER_PACKET - 1);
+			this.packets[this.maxSeq - 1].setFilename((String) newpath.getFileName().toString());
+			byte[] toSend = new byte[this.length - (this.maxSeq - 1) * MAX_BYTES_PER_PACKET];
+			System.arraycopy(this.data, (this.maxSeq - 1) * MAX_BYTES_PER_PACKET, toSend, 0, this.length - (this.maxSeq - 1) * MAX_BYTES_PER_PACKET - 1);
 			this.packets[this.maxSeq - 1].setFileData(toSend);
 		}
 	}

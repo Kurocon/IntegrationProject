@@ -152,8 +152,8 @@ public class WHASProtocol implements Protocol {
             if(chatGui != null) {
                 chatGui.addTransferMessage(data.getSourceAddress(), data.getDestinationAddress(), fileParser.getSavedFilePath(), data.getTimestamp());
             }
+            fileParser.removeFile();
         }
-        fileParser.removeFile();
     }
 
     @Override
