@@ -208,8 +208,7 @@ public class SAMPCA extends Observable /*implements Runnable*/{
         FileBuilder[] fba = fs.getBuilders();
 
         for(FileBuilder fb : fba){
-        	System.out.println(fb + " " + destination);
-            sendBuilder(fb, destination);
+        	sendBuilder(fb, destination);
         }
     }
 

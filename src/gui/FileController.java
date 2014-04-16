@@ -7,6 +7,8 @@ import java.io.File;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 
+import protocol.Timestamp;
+
 import network.User;
 
 import sampca.SAMPCA;
@@ -48,9 +50,8 @@ public class FileController  implements ActionListener {
 		if (e.getSource() == view.getTransferButton()) {
 			if(file != null){
 				User user = (User) view.getUserList().getSelectedItem();
-				
-				
-				client.sendFile(file.getAbsolutePath(), user.getIP());
+				this.client.sendFile(file.getAbsolutePath(), user.getIP());
+				this.control.getGui().addTransferMessage(this.client.getOwnUser().getIP(), user.getIP(), file.getName(), Timestamp.getCurrentTimeAsLong());
 				control.getFrame().dispose();
 			} else {
 				new Popup("No file selected");

@@ -547,18 +547,16 @@ public class CaUI extends Observable implements Observer {
 		if (source.equals(this.client.getOwnUser().getIP())) {
 			transferMessage = "Send a file (" + body + ") to "
 					+ destinationUserName;
-		}
-		if (destination.equals(this.client.getOwnUser().getIP())) {
+		}else if (destination.equals(this.client.getOwnUser().getIP())) {
 			transferMessage = "Received a private file (" + body + ") from "
 					+ sourceUserName;
-		}
-		if (destination.equals(this.client.getMulticastAddress())) {
+		} else if (destination.equals(this.client.getMulticastAddress())) {
 			transferMessage = "Received a file (" + body + ") from "
 					+ sourceUserName;
 		}
 		JTextArea chatArea = (JTextArea) tabs.getComponent(1);
 		String result = "[" + convertTime(timestamp) + "] " + transferMessage
-				+ ": " + "\n";
+				+ "\n";
 		chatArea.append(result);
 		chatArea.setCaretPosition(chatArea.getDocument().getLength());
 	}

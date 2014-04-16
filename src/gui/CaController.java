@@ -103,6 +103,10 @@ public class CaController implements ActionListener, KeyListener,
 		return this.frame;
 	}
 	
+	public CaUI getGui(){
+		return this.view;
+	}
+	
 	public void keyPressed(KeyEvent e) {
 		PaneTab selectedTab = (PaneTab) this.view.tabs.getSelectedComponent();
 		if (e.getKeyCode() == KeyEvent.VK_ENTER) {

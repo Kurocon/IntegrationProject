@@ -339,7 +339,7 @@ public class MainUI implements Observer {
 		frame.setLocationRelativeTo(null);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.pack();
-		passwordField.requestFocusInWindow();
+		usernameField.requestFocusInWindow();
 		connectButton.addActionListener(this.controller);
 		exitButton.addActionListener(this.controller);
 		serverField.addKeyListener(controller);
