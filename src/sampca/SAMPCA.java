@@ -25,12 +25,14 @@ import protocol.parsers.PacketParser;
 public class SAMPCA extends Observable /*implements Runnable*/{
 
     private static final Logger LOGGER = Logger.getLogger(SAMPCA.class.getName());
+
 	public static final String PROGRAM_NAME = "SAMPCA";
-    public static final int MAX_PACKET_SIZE                 = 1024;
-    public static final int PACKET_SIZE_AFTER_ENCRYPTION    = 1024;
+    public static final int MAX_PACKET_SIZE                 = 524288;
+    public static final int PACKET_SIZE_AFTER_ENCRYPTION    = 524288;
     public static final int GENERAL_HEADER_SIZE             = 24;
     public static final int PUBLIC_CHAT_HEADER_SIZE			= 0;
     public static final int PRIVATE_CHAT_HEADER_SIZE		= 4;
+    public static final int MAX_BYTES_PER_FILE_PACKET       = 524000;
 
     public static final boolean ENABLE_ENCRYPTION_OF_PACKETS    = false;
     public static final String PUBLIC_CHAT_ROOM_NAME = "Educafé";
@@ -294,10 +296,14 @@ public class SAMPCA extends Observable /*implements Runnable*/{
     public void addUser(User u){
         boolean exists = false;
         User existingUser = null;
-        for(User usr : this.users){
-            if(usr.getIP().getHostName().equals(u.getIP().getHostName())){
+        LinkedList<User> userCopy = new LinkedList<>();
+        for(User usr : users){
+            userCopy.add(usr);
+        }
+        for(User user : userCopy){
+            if(user.getIP().getHostName().equals(u.getIP().getHostName())){
                 exists = true;
-                existingUser = usr;
+                existingUser = user;
             }
         }
         if(exists){
@@ -313,10 +319,14 @@ public class SAMPCA extends Observable /*implements Runnable*/{
     public void removeUser(User u){
         boolean exists = false;
         User existingUser = null;
-        for(User usr : this.users){
-            if(usr.getIP().getHostName().equals(u.getIP().getHostName())){
+        LinkedList<User> userCopy = new LinkedList<>();
+        for(User usr : users){
+            userCopy.add(usr);
+        }
+        for(User user : userCopy){
+            if(user.getIP().getHostName().equals(u.getIP().getHostName())){
                 exists = true;
-                existingUser = usr;
+                existingUser = user;
             }
         }
         if(!u.getIP().equals(this.group)){

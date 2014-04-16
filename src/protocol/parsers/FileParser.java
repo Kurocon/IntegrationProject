@@ -1,5 +1,7 @@
 package protocol.parsers;
 
+import sampca.SAMPCA;
+
 import java.nio.ByteBuffer;
 
 /**
@@ -38,8 +40,8 @@ public class FileParser extends Parser {
         System.arraycopy(data, 8, this.fileNameAsBytes, 0, this.filenameLength);
         this.fileNameAsString = new String(this.fileNameAsBytes);
 
-        this.fileData = new byte[760];
-        System.arraycopy(data, 264, fileData, 0, 736);
+        this.fileData = new byte[SAMPCA.MAX_BYTES_PER_FILE_PACKET];
+        System.arraycopy(data, 264, fileData, 0, SAMPCA.MAX_BYTES_PER_FILE_PACKET);
     }
 
     public byte[] getFileData(){
