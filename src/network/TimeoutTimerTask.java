@@ -1,5 +1,6 @@
 package network;
 
+import protocol.Datatype;
 import protocol.Timestamp;
 import protocol.parsers.PacketParser;
 import sampca.SAMPCA;
@@ -71,7 +72,7 @@ public class TimeoutTimerTask extends TimerTask {
                     this.sampca.forwardPacket(pp);
                 }
             }
-            if(ackTime < currentTime - 80000){
+            if(ackTime < currentTime - 80000 && Datatype.getDataTypeAsInt(ale.getData().getDataType()) != Datatype.INT_GENERIC_FILE){
                 // Packet timeout, remove from queue
                 LOGGER.log(Level.WARNING, "Removing element "+ackTime+" from AckLog. Reason: Packet timeout: "+((currentTime-ackTime))/1000+"s");
                 this.sampca.getAckLog().removeElement(ackTime);
