@@ -23,15 +23,12 @@ public class FilePacketParser {
     private String savedFilePath;
 
     public void addFilePacket(PacketParser data) {
-        FileParser fp = new FileParser(data.getData());
+        FileParser fp = new FileParser(data.getData(), data.getDataLength());
         this.fileName = fp.getFileName();
         this.fileLength = fp.getTotalPacketsNumber();
         this.fileMap.put(fp.getCurrentPacketNumber(), fp.getFileData());
         this.blockLength = fp.getFileData().length;
-
-        if(isFileComplete()){
-            saveFile();
-        }
+        LOGGER.log(Level.INFO, "Received file part "+fp.getCurrentPacketNumber()+"/"+fp.getTotalPacketsNumber());
     }
 
     public boolean isFileComplete() {
@@ -44,7 +41,7 @@ public class FilePacketParser {
         return complete;
     }
 
-    private void saveFile(){
+    public void saveFile(){
         int lastPacketLength = this.fileMap.get(fileLength).length;
         int totalLength = ((this.fileLength * this.blockLength) - (this.blockLength-lastPacketLength));
         ByteBuffer fileBuffer = ByteBuffer.allocate(totalLength);
