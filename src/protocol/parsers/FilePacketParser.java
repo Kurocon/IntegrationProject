@@ -36,7 +36,7 @@ public class FilePacketParser {
 
     public boolean isFileComplete() {
         boolean complete = true;
-        for(int i = 0; i < this.fileLength; i++){
+        for(int i = 1; i <= this.fileLength; i++){
             if(!this.fileMap.containsKey(i)){
                 complete = false;
             }
