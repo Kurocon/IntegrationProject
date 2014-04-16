@@ -27,12 +27,12 @@ public class SAMPCA extends Observable /*implements Runnable*/{
     private static final Logger LOGGER = Logger.getLogger(SAMPCA.class.getName());
 
 	public static final String PROGRAM_NAME = "SAMPCA";
-    public static final int MAX_PACKET_SIZE                 = 51200;
-    public static final int PACKET_SIZE_AFTER_ENCRYPTION    = 51200;
+    public static final int MAX_PACKET_SIZE                 = 16384;
+    public static final int PACKET_SIZE_AFTER_ENCRYPTION    = 16384;
     public static final int GENERAL_HEADER_SIZE             = 24;
     public static final int PUBLIC_CHAT_HEADER_SIZE			= 0;
     public static final int PRIVATE_CHAT_HEADER_SIZE		= 4;
-    public static final int MAX_BYTES_PER_FILE_PACKET       = 50912; // MAX SIZE - 288
+    public static final int MAX_BYTES_PER_FILE_PACKET       = 16096; // MAX SIZE - 288
 
     public static final boolean ENABLE_ENCRYPTION_OF_PACKETS    = false;
     public static final String PUBLIC_CHAT_ROOM_NAME = "Educafé";
