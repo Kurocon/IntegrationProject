@@ -67,8 +67,7 @@ public class WHASProtocol implements Protocol {
     @Override
     public void private_message(PacketParser data) {
       	PrivateChatParser cp = new PrivateChatParser(data.getData(), data.getDataLength());
-      	System.out.println(cp.getMessageAsString());
-        CaUI chatGui = this.handler.getListener().getSAMPCA().getChatGUI();
+      	CaUI chatGui = this.handler.getListener().getSAMPCA().getChatGUI();
         if(chatGui != null) {
             chatGui.addMessage(data.getSourceAddress(), data.getDestinationAddress(), cp.getMessageAsString(), data.getTimestamp(), true);
         }
@@ -145,7 +144,6 @@ public class WHASProtocol implements Protocol {
     @Override
     public void generic_file(PacketParser data) {
         fileParser.addFilePacket(data);
-        System.out.println("Is file complete: " + fileParser.isFileComplete());
         if(fileParser.isFileComplete()){
             LOGGER.log(Level.INFO, "Received file from "+data.getSourceAddress()+", saved in "+fileParser.getSavedFilePath());
             CaUI chatGui = this.handler.getListener().getSAMPCA().getChatGUI();
