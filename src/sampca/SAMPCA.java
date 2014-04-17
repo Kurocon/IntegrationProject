@@ -34,7 +34,7 @@ public class SAMPCA extends Observable /*implements Runnable*/{
     public static final int PRIVATE_CHAT_HEADER_SIZE		= 4;
     public static final int MAX_BYTES_PER_FILE_PACKET       = 736; // MAX SIZE - 288
 
-    public static final boolean ENABLE_ENCRYPTION_OF_PACKETS    = false;
+    public static final boolean ENABLE_ENCRYPTION_OF_PACKETS    = true;
     public static final String PUBLIC_CHAT_ROOM_NAME = "Educafé";
     public static final Level GLOBAL_LOGGER_LEVEL = Level.WARNING;
 
